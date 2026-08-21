@@ -262,6 +262,100 @@ def figure_frequency(runs, freq_path: str, out_path: str) -> None:
     save(fig, out_path)
 
 
+
+LF = chr(10)
+
+
+def figure_polish(pl_runs, ru_runs, out_path: str, large_only: bool = True) -> None:
+    """
+    The crossed design, which had no picture until now.
+
+    Polish and Russian ask for the same clock times. At :30 both count into the
+    coming hour. At :15 and :20 Polish counts from the completed hour, as
+    English does, and Russian still counts into it. So the language is held
+    roughly fixed — two Slavic languages — and the construction varies.
+
+    Every bar is annotated with which way its language counts, because that is
+    the whole argument and a reader should not have to take it on trust.
+
+    This exists because `figure_main.py` was hardcoded to ("en", "ru") in three
+    places and knew nothing about Polish, so the strongest result in the
+    project had tables and no figure.
+    """
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    order = ["half_past", "quarter_past", "n_minutes"]
+    labels = ["«половина» / «wpół do»" + LF + "07:30",
+              "«четверть» / «kwadrans po»" + LF + "07:15",
+              "«N минут» / «N po»" + LF + "07:20"]
+    # how each language counts, per clock form
+    counts = {
+        "English": ["from", "from", "from"],
+        "Polish": ["INTO", "from", "from"],
+        "Russian": ["INTO", "INTO", "INTO"],
+    }
+    colours = {"English": "#4c72b0", "Polish": "#55a868", "Russian": "#c44e52"}
+
+    def rate(runs, arm, category):
+        hits = total = 0
+        for _, episodes in runs:
+            for row in episodes:
+                if row.get("difficulty") == category and row["arm"] == arm:
+                    total += 1
+                    hits += bool(row["success"])
+        return (100 * hits / total if total else 0.0), hits, total
+
+    series = {
+        "English": [rate(pl_runs, "en", c) for c in order],
+        "Polish": [rate(pl_runs, "pl", c) for c in order],
+        "Russian": [rate(ru_runs, "ru", c) for c in order],
+    }
+
+    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    xs = list(range(len(order)))
+    width = 0.26
+    offsets = {"English": -width, "Polish": 0.0, "Russian": width}
+
+    for name, values in series.items():
+        bars = ax.bar([x + offsets[name] for x in xs], [v[0] for v in values],
+                      width, label=name, color=colours[name],
+                      edgecolor="white", linewidth=0.6)
+        for bar, (pct, hits, total), how in zip(bars, values, counts[name]):
+            centre = bar.get_x() + bar.get_width() / 2
+            ax.text(centre, bar.get_height() + 2, f"{hits}/{total}",
+                    ha="center", va="bottom", fontsize=8)
+            # A zero bar has no inside, so the construction label goes above the
+            # count instead of on top of it.
+            inside = pct > 20
+            ax.text(centre, 3 if inside else bar.get_height() + 11, how,
+                    ha="center", va="bottom", fontsize=7, rotation=90,
+                    color="white" if inside else "#333333",
+                    fontweight="bold" if how == "INTO" else "normal")
+
+    ax.set_xticks(xs)
+    ax.set_xticklabels(labels, fontsize=9)
+    ax.set_ylim(0, 132)
+    ax.set_ylabel("tasks solved, %")
+    ax.legend(loc="upper center", ncol=3, fontsize=9, frameon=False,
+              bbox_to_anchor=(0.5, 1.02))
+    ax.spines[["top", "right"]].set_visible(False)
+    scope = "27B and 120B" if large_only else "all models"
+    ax.set_title(
+        f"Same clock times, two Slavic languages, {scope}." + LF
+        + "The label on each bar is how that language counts.",
+        fontsize=10, pad=26)
+    ax.text(0.5, -0.22,
+            "Where Polish and Russian share the construction (07:30) they tie."
+            + LF +
+            "Where it differs, Polish tracks English and Russian collapses.",
+            transform=ax.transAxes, ha="center", va="top", fontsize=9)
+    fig.tight_layout(rect=(0, 0.10, 1, 1))
+    save(fig, out_path)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--probe", nargs="+", required=True,
@@ -269,6 +363,10 @@ def main() -> None:
     parser.add_argument("--tasks", default="data/tasks_time.json")
     parser.add_argument("--frequency", default=None,
                         help="results/frequency.json, to draw the third figure.")
+    parser.add_argument("--polish", nargs="*", default=None,
+                        help="Result files from the Polish probe. Paired with "
+                             "--probe, which must then be the Russian runs of "
+                             "the same models, to draw the crossed-design figure.")
     parser.add_argument("--out", default="figures")
     args = parser.parse_args()
 
@@ -282,6 +380,9 @@ def main() -> None:
     if args.frequency:
         figure_frequency(runs, args.frequency,
                          os.path.join(args.out, "frequency.png"))
+    if args.polish:
+        figure_polish([load(p) for p in args.polish], runs,
+                      os.path.join(args.out, "polish.png"))
 
 
 if __name__ == "__main__":
