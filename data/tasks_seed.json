@@ -1,0 +1,1142 @@
+{
+  "meta": {
+    "today": "2026-09-07",
+    "weekday": "Monday",
+    "note": "List names are English identifiers in BOTH languages and are always quoted. Quoting matters: it keeps the identifier out of the translation step, so an arm that translates cannot silently rename 'shopping' into 'shopping list'. Without this, the translate arms would be measuring a flaw in the task text rather than the policy.",
+    "version": "0.2"
+  },
+  "tasks": [
+    {
+      "id": "t01",
+      "difficulty": "easy",
+      "n_steps": 2,
+      "instruction": {
+        "en": "Set an alarm for 07:30 and label it 'gym'. After that, add 'protein bar' to the list called \"shopping\".",
+        "ru": "Поставь будильник на 07:30 и назови его «спортзал». После этого добавь «протеиновый батончик» в список «shopping»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:30",
+            "label_contains": "gym"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "protein bar"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:30",
+            "label_contains": "спортзал"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "протеиновый батончик"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:30",
+              "label": "gym"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "protein bar"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:30",
+              "label": "спортзал"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "протеиновый батончик"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t02",
+      "difficulty": "easy",
+      "n_steps": 2,
+      "instruction": {
+        "en": "Add a calendar event on 2026-09-11 at 14:00 with the title 'dentist appointment', and save a note that says 'bring insurance card'.",
+        "ru": "Добавь в календарь событие на 2026-09-11 в 14:00 с названием «приём у стоматолога» и сохрани заметку с текстом «взять страховой полис»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-11",
+            "time": "14:00",
+            "title_contains": "dentist"
+          },
+          {
+            "kind": "note_contains",
+            "text": "insurance card"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-11",
+            "time": "14:00",
+            "title_contains": "стоматолог"
+          },
+          {
+            "kind": "note_contains",
+            "text": "страховой полис"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-11",
+              "time": "14:00",
+              "title": "dentist appointment"
+            }
+          },
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "bring insurance card"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-11",
+              "time": "14:00",
+              "title": "приём у стоматолога"
+            }
+          },
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "взять страховой полис"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t03",
+      "difficulty": "easy",
+      "n_steps": 2,
+      "instruction": {
+        "en": "Play music by Kino, then add 'headphones' to the list called \"shopping\".",
+        "ru": "Включи музыку группы «Кино», потом добавь «наушники» в список «shopping»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "music_playing",
+            "artist": "kino"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "headphones"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "music_playing",
+            "artist": "кино"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "наушники"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "play_music",
+            "args": {
+              "artist": "Kino"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "headphones"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "play_music",
+            "args": {
+              "artist": "Кино"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "наушники"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t04",
+      "difficulty": "medium",
+      "n_steps": 3,
+      "initial_state": {
+        "alarms": [
+          {
+            "time": "06:00",
+            "label": "early"
+          },
+          {
+            "time": "08:15",
+            "label": "lecture"
+          }
+        ],
+        "calendar": [],
+        "lists": {},
+        "music": {
+          "playing": null
+        },
+        "notes": []
+      },
+      "instruction": {
+        "en": "First check which alarms I have. Delete the one at 06:00 and create a new one at 09:00 labelled 'late start'.",
+        "ru": "Сначала проверь, какие у меня есть будильники. Удали тот, что на 06:00, и создай новый на 09:00 с названием «поздний старт»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_absent",
+            "time": "06:00"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "09:00",
+            "label_contains": "late start"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "08:15"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_absent",
+            "time": "06:00"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "09:00",
+            "label_contains": "поздний старт"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "08:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "read_state",
+            "args": {}
+          },
+          {
+            "tool": "delete_alarm",
+            "args": {
+              "time": "06:00"
+            }
+          },
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:00",
+              "label": "late start"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "read_state",
+            "args": {}
+          },
+          {
+            "tool": "delete_alarm",
+            "args": {
+              "time": "06:00"
+            }
+          },
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:00",
+              "label": "поздний старт"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t05",
+      "difficulty": "medium",
+      "n_steps": 3,
+      "initial_state": {
+        "alarms": [],
+        "calendar": [],
+        "lists": {
+          "shopping": [
+            "молоко / milk",
+            "хлеб / bread"
+          ]
+        },
+        "music": {
+          "playing": null
+        },
+        "notes": []
+      },
+      "instruction": {
+        "en": "I already bought bread. Remove the bread entry from the list called \"shopping\", then add 'cheese' and 'apples' to the same list.",
+        "ru": "Хлеб я уже купил. Удали строку с хлебом из списка «shopping», потом добавь «сыр» и «яблоки» в этот же список."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "list_not_contains",
+            "list_name": "shopping",
+            "item": "bread"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "cheese"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "apples"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "list_not_contains",
+            "list_name": "shopping",
+            "item": "хлеб"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "сыр"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "яблоки"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "remove_from_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "хлеб / bread"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "cheese"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "apples"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "remove_from_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "хлеб / bread"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "сыр"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "яблоки"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t06",
+      "difficulty": "medium",
+      "n_steps": 3,
+      "instruction": {
+        "en": "Add two calendar events: 'team meeting' on 2026-09-08 at 11:00 and 'call with mentor' on 2026-09-08 at 17:30. Then save a note saying 'prepare slides'.",
+        "ru": "Добавь два события в календарь: «встреча команды» 2026-09-08 в 11:00 и «созвон с ментором» 2026-09-08 в 17:30. Потом сохрани заметку «подготовить слайды»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-08",
+            "time": "11:00",
+            "title_contains": "team meeting"
+          },
+          {
+            "kind": "event_exists",
+            "date": "2026-09-08",
+            "time": "17:30",
+            "title_contains": "call with mentor"
+          },
+          {
+            "kind": "note_contains",
+            "text": "prepare slides"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-08",
+            "time": "11:00",
+            "title_contains": "встреча команды"
+          },
+          {
+            "kind": "event_exists",
+            "date": "2026-09-08",
+            "time": "17:30",
+            "title_contains": "созвон с ментором"
+          },
+          {
+            "kind": "note_contains",
+            "text": "подготовить слайды"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-08",
+              "time": "11:00",
+              "title": "team meeting"
+            }
+          },
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-08",
+              "time": "17:30",
+              "title": "call with mentor"
+            }
+          },
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "prepare slides"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-08",
+              "time": "11:00",
+              "title": "встреча команды"
+            }
+          },
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-08",
+              "time": "17:30",
+              "title": "созвон с ментором"
+            }
+          },
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "подготовить слайды"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t07",
+      "difficulty": "hard",
+      "n_steps": 2,
+      "instruction": {
+        "en": "Today is Monday. Add an event this Friday at 19:00 called 'family dinner', and set an alarm two hours before it, labelled 'leave home'.",
+        "ru": "Сегодня понедельник. Добавь событие в эту пятницу в 19:00 под названием «семейный ужин» и поставь будильник за два часа до него с названием «выходить из дома»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-11",
+            "time": "19:00",
+            "title_contains": "family dinner"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "17:00",
+            "label_contains": "leave home"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-11",
+            "time": "19:00",
+            "title_contains": "семейный ужин"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "17:00",
+            "label_contains": "выходить из дома"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-11",
+              "time": "19:00",
+              "title": "family dinner"
+            }
+          },
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "17:00",
+              "label": "leave home"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-11",
+              "time": "19:00",
+              "title": "семейный ужин"
+            }
+          },
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "17:00",
+              "label": "выходить из дома"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t08",
+      "difficulty": "hard",
+      "n_steps": 2,
+      "instruction": {
+        "en": "Set an alarm for half past seven in the morning, label it 'train', and add 'ticket' to the list called \"shopping\".",
+        "ru": "Поставь будильник на полвосьмого утра, назови его «поезд», и добавь «билет» в список «shopping»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:30",
+            "label_contains": "train"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "ticket"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:30",
+            "label_contains": "поезд"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "билет"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:30",
+              "label": "train"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "ticket"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:30",
+              "label": "поезд"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "билет"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t09",
+      "difficulty": "hard",
+      "n_steps": 3,
+      "initial_state": {
+        "alarms": [
+          {
+            "time": "05:45",
+            "label": "flight"
+          }
+        ],
+        "calendar": [],
+        "lists": {
+          "packing": [
+            "passport",
+            "зарядка / charger"
+          ]
+        },
+        "music": {
+          "playing": "Aria"
+        },
+        "notes": []
+      },
+      "instruction": {
+        "en": "Check the current state first. Stop the music, keep the existing alarm, and add every item that is missing from the list called \"packing\": 'toothbrush' and 'socks'.",
+        "ru": "Сначала проверь текущее состояние. Выключи музыку, существующий будильник не трогай, и добавь в список «packing» то, чего там не хватает: «зубная щётка» и «носки»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "music_stopped"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "05:45"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "packing",
+            "item": "toothbrush"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "packing",
+            "item": "socks"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "music_stopped"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "05:45"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "packing",
+            "item": "зубная щётка"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "packing",
+            "item": "носки"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "read_state",
+            "args": {}
+          },
+          {
+            "tool": "stop_music",
+            "args": {}
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "packing",
+              "item": "toothbrush"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "packing",
+              "item": "socks"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "read_state",
+            "args": {}
+          },
+          {
+            "tool": "stop_music",
+            "args": {}
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "packing",
+              "item": "зубная щётка"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "packing",
+              "item": "носки"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t10",
+      "difficulty": "medium",
+      "n_steps": 2,
+      "instruction": {
+        "en": "Save a note with this exact text: 'password hint is my first school'. Then play music by Zemfira.",
+        "ru": "Сохрани заметку с таким текстом: «подсказка к паролю — моя первая школа». Потом включи музыку Земфиры."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "note_contains",
+            "text": "password hint is my first school"
+          },
+          {
+            "kind": "music_playing",
+            "artist": "zemfira"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "note_contains",
+            "text": "подсказка к паролю"
+          },
+          {
+            "kind": "music_playing",
+            "artist": "земфир"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "password hint is my first school"
+            }
+          },
+          {
+            "tool": "play_music",
+            "args": {
+              "artist": "Zemfira"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "подсказка к паролю — моя первая школа"
+            }
+          },
+          {
+            "tool": "play_music",
+            "args": {
+              "artist": "Земфира"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t11",
+      "difficulty": "hard",
+      "n_steps": 4,
+      "instruction": {
+        "en": "Do four things: set an alarm at 06:20 labelled 'airport', add an event on 2026-09-09 at 09:15 called 'flight to Moscow', add 'charger' to the list called \"packing\", and save a note that says 'check gate number'.",
+        "ru": "Сделай четыре вещи: поставь будильник на 06:20 с названием «аэропорт», добавь событие 2026-09-09 в 09:15 под названием «рейс в Москву», добавь «зарядку» в список «packing» и сохрани заметку «проверить номер выхода»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:20",
+            "label_contains": "airport"
+          },
+          {
+            "kind": "event_exists",
+            "date": "2026-09-09",
+            "time": "09:15",
+            "title_contains": "flight to moscow"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "packing",
+            "item": "charger"
+          },
+          {
+            "kind": "note_contains",
+            "text": "check gate number"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:20",
+            "label_contains": "аэропорт"
+          },
+          {
+            "kind": "event_exists",
+            "date": "2026-09-09",
+            "time": "09:15",
+            "title_contains": "рейс в москву"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "packing",
+            "item": "зарядк"
+          },
+          {
+            "kind": "note_contains",
+            "text": "проверить номер выхода"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:20",
+              "label": "airport"
+            }
+          },
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-09",
+              "time": "09:15",
+              "title": "flight to Moscow"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "packing",
+              "item": "charger"
+            }
+          },
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "check gate number"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:20",
+              "label": "аэропорт"
+            }
+          },
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-09",
+              "time": "09:15",
+              "title": "рейс в Москву"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "packing",
+              "item": "зарядка"
+            }
+          },
+          {
+            "tool": "create_note",
+            "args": {
+              "text": "проверить номер выхода"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "t12",
+      "difficulty": "medium",
+      "n_steps": 3,
+      "initial_state": {
+        "alarms": [],
+        "calendar": [],
+        "lists": {},
+        "music": {
+          "playing": "Nautilus"
+        },
+        "notes": []
+      },
+      "instruction": {
+        "en": "Stop the music, set an alarm at 22:45 labelled 'sleep', and add 'melatonin' to the list called \"shopping\".",
+        "ru": "Выключи музыку, поставь будильник на 22:45 с названием «сон» и добавь «мелатонин» в список «shopping»."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "music_stopped"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "22:45",
+            "label_contains": "sleep"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "melatonin"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "music_stopped"
+          },
+          {
+            "kind": "alarm_exists",
+            "time": "22:45",
+            "label_contains": "сон"
+          },
+          {
+            "kind": "list_contains",
+            "list_name": "shopping",
+            "item": "мелатонин"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "stop_music",
+            "args": {}
+          },
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:45",
+              "label": "sleep"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "melatonin"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "stop_music",
+            "args": {}
+          },
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:45",
+              "label": "сон"
+            }
+          },
+          {
+            "tool": "add_to_list",
+            "args": {
+              "list_name": "shopping",
+              "item": "мелатонин"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    }
+  ]
+}

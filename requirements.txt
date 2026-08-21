@@ -1,0 +1,24 @@
+# Verified working on Windows 10 + RTX 2060 6GB, Python 3.13, 2026-08-18.
+#
+# torch must come from the CUDA index, not from PyPI, or you get the CPU
+# build and every run takes hours:
+#     pip install torch --index-url https://download.pytorch.org/whl/cu126
+torch==2.13.0
+
+transformers==5.15.0
+accelerate==1.14.0
+bitsandbytes==0.50.1        # 4-bit quantisation. On Windows this is the
+                            # package most likely to fail; if it does, use WSL2.
+sentencepiece==0.2.2
+protobuf==7.35.1
+
+requests==2.34.2            # the OpenAI-compatible API backend
+nvidia-ml-py==13.610.43     # GPU power sampling for the energy numbers
+matplotlib==3.11.1          # figures
+numpy==2.4.6
+
+# Only needed when you build tasks from MASSIVE:
+#   pip install datasets
+#
+# The tests use the standard library only:
+#   python -m tests.run_all

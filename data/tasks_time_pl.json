@@ -1,0 +1,1282 @@
+{
+  "meta": {
+    "today": "2026-09-07",
+    "weekday": "Monday",
+    "version": "time-pl-1.0",
+    "note": "Polish mirror of the 24-item probe. The English half is byte-identical to data/tasks_time_v2.json, so English acts as the same within-item ceiling in both files and the two can be pooled. The Polish half is the crossed design: Polish counts INTO the coming hour for «wpół do X» (07:30 = wpół do ósmej) and FROM the completed hour for «kwadrans po X» and «N po X» (07:20 = dwadzieścia po siódmej). Russian counts into the hour for all three. So `pl_direction` splits the same clock times by construction inside one language. Prediction from the memorisation reading: Polish `into_hour` behaves like Russian and Polish `from_hour` behaves like English. The rival reading, that models are simply worse at Slavic or at lower-resource languages, predicts both Polish cells fail. WORDING NOT YET CHECKED BY A NATIVE SPEAKER — see tools/make_polish_probe.py."
+  },
+  "tasks": [
+    {
+      "id": "g01",
+      "difficulty": "half_past",
+      "pl_direction": "into_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na wpół do trzeciej po południu.» = 14:30",
+      "instruction": {
+        "en": "Set an alarm for half past two in the afternoon.",
+        "pl": "Ustaw budzik na wpół do trzeciej po południu."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g02",
+      "difficulty": "half_past",
+      "pl_direction": "into_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na wpół do siódmej rano.» = 06:30",
+      "instruction": {
+        "en": "Set an alarm for half past six in the morning.",
+        "pl": "Ustaw budzik na wpół do siódmej rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:30"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:30",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g03",
+      "difficulty": "half_past",
+      "pl_direction": "into_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na wpół do dziesiątej wieczorem.» = 21:30",
+      "instruction": {
+        "en": "Set an alarm for half past nine in the evening.",
+        "pl": "Ustaw budzik na wpół do dziesiątej wieczorem."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:30"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:30",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g04",
+      "difficulty": "half_past",
+      "pl_direction": "into_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na wpół do dwunastej przed południem.» = 11:30",
+      "instruction": {
+        "en": "Set an alarm for half past eleven in the morning.",
+        "pl": "Ustaw budzik na wpół do dwunastej przed południem."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:30"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:30",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g05",
+      "difficulty": "half_past",
+      "pl_direction": "into_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na wpół do piątej rano.» = 04:30",
+      "instruction": {
+        "en": "Set an alarm for half past four in the morning.",
+        "pl": "Ustaw budzik na wpół do piątej rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:30"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:30",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g06",
+      "difficulty": "quarter_past",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na kwadrans po piątej rano.» = 05:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past five in the morning.",
+        "pl": "Ustaw budzik na kwadrans po piątej rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:15"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:15",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g07",
+      "difficulty": "quarter_past",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na kwadrans po ósmej rano.» = 08:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past eight in the morning.",
+        "pl": "Ustaw budzik na kwadrans po ósmej rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "08:15"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "08:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "08:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "08:15",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g08",
+      "difficulty": "quarter_past",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na kwadrans po dziesiątej wieczorem.» = 22:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past ten in the evening.",
+        "pl": "Ustaw budzik na kwadrans po dziesiątej wieczorem."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:15"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:15",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g09",
+      "difficulty": "quarter_past",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na kwadrans po pierwszej po południu.» = 13:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past one in the afternoon.",
+        "pl": "Ustaw budzik na kwadrans po pierwszej po południu."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:15"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:15",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g10",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na dwadzieścia po siódmej rano.» = 07:20",
+      "instruction": {
+        "en": "Set an alarm for twenty past seven in the morning.",
+        "pl": "Ustaw budzik na dwadzieścia po siódmej rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g11",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na pięć po ósmej wieczorem.» = 20:05",
+      "instruction": {
+        "en": "Set an alarm for five past eight in the evening.",
+        "pl": "Ustaw budzik na pięć po ósmej wieczorem."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:05"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:05",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g12",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na dziesięć po dziesiątej rano.» = 10:10",
+      "instruction": {
+        "en": "Set an alarm for ten past ten in the morning.",
+        "pl": "Ustaw budzik na dziesięć po dziesiątej rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:10"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:10",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g13",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na dwadzieścia pięć po pierwszej po południu.» = 13:25",
+      "instruction": {
+        "en": "Set an alarm for twenty five past one in the afternoon.",
+        "pl": "Ustaw budzik na dwadzieścia pięć po pierwszej po południu."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:25"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:25"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:25",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:25",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g14",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na dwadzieścia po drugiej po południu.» = 14:20",
+      "instruction": {
+        "en": "Set an alarm for twenty past two in the afternoon.",
+        "pl": "Ustaw budzik na dwadzieścia po drugiej po południu."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:20"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:20",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g15",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na dziesięć po szóstej rano.» = 06:10",
+      "instruction": {
+        "en": "Set an alarm for ten past six in the morning.",
+        "pl": "Ustaw budzik na dziesięć po szóstej rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:10"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:10",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g16",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na pięć po dwunastej w południe.» = 12:05",
+      "instruction": {
+        "en": "Set an alarm for five past twelve in the afternoon.",
+        "pl": "Ustaw budzik na pięć po dwunastej w południe."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:05"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:05",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g17",
+      "difficulty": "n_minutes",
+      "pl_direction": "from_hour",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na dwadzieścia pięć po dziewiątej wieczorem.» = 21:25",
+      "instruction": {
+        "en": "Set an alarm for twenty five past nine in the evening.",
+        "pl": "Ustaw budzik na dwadzieścia pięć po dziewiątej wieczorem."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:25"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:25"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:25",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:25",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g18",
+      "difficulty": "literal",
+      "pl_direction": "digital",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na 07:20.» = 07:20",
+      "instruction": {
+        "en": "Set an alarm for 07:20.",
+        "pl": "Ustaw budzik na 07:20."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g19",
+      "difficulty": "literal",
+      "pl_direction": "digital",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na 14:30.» = 14:30",
+      "instruction": {
+        "en": "Set an alarm for 14:30.",
+        "pl": "Ustaw budzik na 14:30."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g20",
+      "difficulty": "literal",
+      "pl_direction": "digital",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na 21:15.» = 21:15",
+      "instruction": {
+        "en": "Set an alarm for 21:15.",
+        "pl": "Ustaw budzik na 21:15."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:15"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:15",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g21",
+      "difficulty": "literal",
+      "pl_direction": "digital",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik na 05:45.» = 05:45",
+      "instruction": {
+        "en": "Set an alarm for 05:45.",
+        "pl": "Ustaw budzik na 05:45."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:45"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:45",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g22",
+      "difficulty": "subtractive",
+      "pl_direction": "subtractive",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik za dwadzieścia dziewiąta rano.» = 08:40",
+      "instruction": {
+        "en": "Set an alarm for twenty to nine in the morning.",
+        "pl": "Ustaw budzik za dwadzieścia dziewiąta rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "08:40"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "08:40"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "08:40",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "08:40",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g23",
+      "difficulty": "subtractive",
+      "pl_direction": "subtractive",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik za kwadrans szósta rano.» = 05:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to six in the morning.",
+        "pl": "Ustaw budzik za kwadrans szósta rano."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:45"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:45",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "g24",
+      "difficulty": "subtractive",
+      "pl_direction": "subtractive",
+      "n_steps": 1,
+      "trap": "«Ustaw budzik za dziesięć siódma wieczorem.» = 18:50",
+      "instruction": {
+        "en": "Set an alarm for ten to seven in the evening.",
+        "pl": "Ustaw budzik za dziesięć siódma wieczorem."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "18:50"
+          }
+        ],
+        "pl": [
+          {
+            "kind": "alarm_exists",
+            "time": "18:50"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "18:50",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "pl": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "18:50",
+              "label": "budzik"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    }
+  ]
+}

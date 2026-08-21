@@ -1,0 +1,334 @@
+{
+  "meta": {
+    "today": "2026-09-07",
+    "weekday": "Monday",
+    "version": "time-1.0",
+    "note": "Single-action probe for the +60 minute effect seen in v3_main. Every task is one set_alarm call with one check on the time and nothing else, so the trap is never hidden behind an unrelated failure (F10). Four categories. into_hour: the Russian construction that names the hour being counted INTO («двадцать минут восьмого» = 07:20); English names the completed hour instead, so the same clock time has a different surface form in each language. subtractive: «без N» / 'N to', which the v3 run suggests is hard in both languages — this is the within-probe control that separates 'Russian time is hard' from 'this one construction is hard'. literal: digital times identical in both languages, which must score near 100% or the probe itself is broken. arithmetic: relative offsets. The English wording is the natural spoken English for that clock time, not a translation of the Russian form; that is the comparison we want."
+  },
+  "tasks": [
+    {
+      "id": "h01",
+      "difficulty": "into_hour",
+      "n_steps": 1,
+      "trap": "«двадцать минут восьмого» = 07:20. Model read it as 08:20 in every Russian arm of v3_main.",
+      "instruction": {
+        "en": "Set an alarm for twenty past seven in the morning.",
+        "ru": "Поставь будильник на двадцать минут восьмого утра."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "07:20"}],
+        "ru": [{"kind": "alarm_exists", "time": "07:20"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "07:20", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "07:20", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h02",
+      "difficulty": "into_hour",
+      "n_steps": 1,
+      "trap": "«половина третьего дня» = 14:30",
+      "instruction": {
+        "en": "Set an alarm for half past two in the afternoon.",
+        "ru": "Поставь будильник на половину третьего дня."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "14:30"}],
+        "ru": [{"kind": "alarm_exists", "time": "14:30"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "14:30", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "14:30", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h03",
+      "difficulty": "into_hour",
+      "n_steps": 1,
+      "trap": "«пять минут девятого вечера» = 20:05",
+      "instruction": {
+        "en": "Set an alarm for five past eight in the evening.",
+        "ru": "Поставь будильник на пять минут девятого вечера."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "20:05"}],
+        "ru": [{"kind": "alarm_exists", "time": "20:05"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "20:05", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "20:05", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h04",
+      "difficulty": "into_hour",
+      "n_steps": 1,
+      "trap": "«четверть шестого утра» = 05:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past five in the morning.",
+        "ru": "Поставь будильник на четверть шестого утра."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "05:15"}],
+        "ru": [{"kind": "alarm_exists", "time": "05:15"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "05:15", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "05:15", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h05",
+      "difficulty": "into_hour",
+      "n_steps": 1,
+      "trap": "«десять минут одиннадцатого утра» = 10:10",
+      "instruction": {
+        "en": "Set an alarm for ten past ten in the morning.",
+        "ru": "Поставь будильник на десять минут одиннадцатого утра."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "10:10"}],
+        "ru": [{"kind": "alarm_exists", "time": "10:10"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "10:10", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "10:10", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h06",
+      "difficulty": "into_hour",
+      "n_steps": 1,
+      "trap": "«половина седьмого утра» = 06:30. This is the one that broke t08 in session 1 (F6).",
+      "instruction": {
+        "en": "Set an alarm for half past six in the morning.",
+        "ru": "Поставь будильник на половину седьмого утра."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "06:30"}],
+        "ru": [{"kind": "alarm_exists", "time": "06:30"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "06:30", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "06:30", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h07",
+      "difficulty": "into_hour",
+      "n_steps": 1,
+      "trap": "«двадцать пять минут второго дня» = 13:25",
+      "instruction": {
+        "en": "Set an alarm for twenty five past one in the afternoon.",
+        "ru": "Поставь будильник на двадцать пять минут второго дня."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "13:25"}],
+        "ru": [{"kind": "alarm_exists", "time": "13:25"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "13:25", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "13:25", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h08",
+      "difficulty": "subtractive",
+      "n_steps": 1,
+      "trap": "«без двадцати девять утра» = 08:40. Both languages subtract here, so this is the control.",
+      "instruction": {
+        "en": "Set an alarm for twenty to nine in the morning.",
+        "ru": "Поставь будильник без двадцати девять утра."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "08:40"}],
+        "ru": [{"kind": "alarm_exists", "time": "08:40"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "08:40", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "08:40", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h09",
+      "difficulty": "subtractive",
+      "n_steps": 1,
+      "trap": "«без четверти шесть утра» = 05:45. In v3_main both en and ru got this wrong.",
+      "instruction": {
+        "en": "Set an alarm for quarter to six in the morning.",
+        "ru": "Поставь будильник без четверти шесть утра."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "05:45"}],
+        "ru": [{"kind": "alarm_exists", "time": "05:45"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "05:45", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "05:45", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h10",
+      "difficulty": "subtractive",
+      "n_steps": 1,
+      "trap": "«без десяти семь вечера» = 18:50",
+      "instruction": {
+        "en": "Set an alarm for ten to seven in the evening.",
+        "ru": "Поставь будильник без десяти семь вечера."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "18:50"}],
+        "ru": [{"kind": "alarm_exists", "time": "18:50"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "18:50", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "18:50", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h11",
+      "difficulty": "literal",
+      "n_steps": 1,
+      "trap": "none — digital time, identical in both languages. Must be near 100% or the probe is broken.",
+      "instruction": {
+        "en": "Set an alarm for 07:20.",
+        "ru": "Поставь будильник на 07:20."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "07:20"}],
+        "ru": [{"kind": "alarm_exists", "time": "07:20"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "07:20", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "07:20", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h12",
+      "difficulty": "literal",
+      "n_steps": 1,
+      "trap": "none",
+      "instruction": {
+        "en": "Set an alarm for 14:30.",
+        "ru": "Поставь будильник на 14:30."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "14:30"}],
+        "ru": [{"kind": "alarm_exists", "time": "14:30"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "14:30", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "14:30", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h13",
+      "difficulty": "literal",
+      "n_steps": 1,
+      "trap": "none",
+      "instruction": {
+        "en": "Set an alarm for 20:05.",
+        "ru": "Поставь будильник на 20:05."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "20:05"}],
+        "ru": [{"kind": "alarm_exists", "time": "20:05"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "20:05", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "20:05", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h14",
+      "difficulty": "literal",
+      "n_steps": 1,
+      "trap": "none",
+      "instruction": {
+        "en": "Set an alarm for 05:45.",
+        "ru": "Поставь будильник на 05:45."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "05:45"}],
+        "ru": [{"kind": "alarm_exists", "time": "05:45"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "05:45", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "05:45", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h15",
+      "difficulty": "literal",
+      "n_steps": 1,
+      "trap": "none",
+      "instruction": {
+        "en": "Set an alarm for 23:50.",
+        "ru": "Поставь будильник на 23:50."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "23:50"}],
+        "ru": [{"kind": "alarm_exists", "time": "23:50"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "23:50", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "23:50", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h16",
+      "difficulty": "arithmetic",
+      "n_steps": 1,
+      "trap": "«полтора часа» = 90 minutes. In v3_main every Russian arm subtracted only 30.",
+      "instruction": {
+        "en": "Set an alarm for an hour and a half before 19:00.",
+        "ru": "Поставь будильник за полтора часа до 19:00."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "17:30"}],
+        "ru": [{"kind": "alarm_exists", "time": "17:30"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "17:30", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "17:30", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h17",
+      "difficulty": "arithmetic",
+      "n_steps": 1,
+      "trap": "addition, not subtraction",
+      "instruction": {
+        "en": "Set an alarm for forty minutes after 08:00.",
+        "ru": "Поставь будильник через сорок минут после 08:00."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "08:40"}],
+        "ru": [{"kind": "alarm_exists", "time": "08:40"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "08:40", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "08:40", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    },
+    {
+      "id": "h18",
+      "difficulty": "arithmetic",
+      "n_steps": 1,
+      "trap": "subtraction across the hour boundary",
+      "instruction": {
+        "en": "Set an alarm for twenty minutes before 06:00.",
+        "ru": "Поставь будильник за двадцать минут до 06:00."
+      },
+      "checks": {
+        "en": [{"kind": "alarm_exists", "time": "05:40"}],
+        "ru": [{"kind": "alarm_exists", "time": "05:40"}]
+      },
+      "gold": {
+        "en": [{"tool": "set_alarm", "args": {"time": "05:40", "label": "alarm"}}, {"tool": "done", "args": {}}],
+        "ru": [{"tool": "set_alarm", "args": {"time": "05:40", "label": "будильник"}}, {"tool": "done", "args": {}}]
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------
+# Personal. Never publish these.
+# ---------------------------------------------------------------
+# HANDOFF.md holds full name, school, SAT/GPA/IELTS scores, family
+# financial details and the college application plan. A public repo is
+# indexed by search engines. Keep this file local.
+HANDOFF.md
+
+# Outreach strategy and email drafts. Not secret, but there is no reason
+# for the people being written to to read the plan first.
+outreach/
+
+# Russian working notes and the old project plan.
+ЧТО_ДЕЛАТЬ.md
+
+# ---------------------------------------------------------------
+# The paper stays out until it is submitted.
+# ---------------------------------------------------------------
+paper/
+
+# ---------------------------------------------------------------
+# Environment
+# ---------------------------------------------------------------
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------
+# Secrets. Nothing here should ever exist, but if it does, it stays out.
+# ---------------------------------------------------------------
+.env
+*.env
+!requirements.txt
+*.key
+*_token
+groq.env
+secrets.json
+
+# ---------------------------------------------------------------
+# Junk
+# ---------------------------------------------------------------
+data/.zip
+*.tmp
+*.log
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
+
+# ---------------------------------------------------------------
+# Result files that are superseded or were produced by a broken harness.
+# Kept locally for the record, not worth publishing.
+#
+# results/v2.jsonl and results/qwen3b.jsonl came from runs where the
+# output budget silently truncated every long plan (see NOTES.md, F11).
+# Publishing them invites someone to quote numbers that measure our bug.
+# ---------------------------------------------------------------
+results/v2.jsonl
+results/qwen3b.jsonl
+results/_*.jsonl
