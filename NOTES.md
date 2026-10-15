@@ -1926,3 +1926,69 @@ the carrier frame, which does not exist yet.
    and Polish cannot answer it because it has no productive counting-into form.
 3. Gorman's glossing conventions.
 4. Native speaker for the Polish items. Still outstanding since August.
+
+---
+
+## 2026-10-15 — session 15: few-shot, written down before it is run
+
+Both reviewers asked the same question, and it was promised to Sproat. The arms
+exist, the oracle passes, nothing has been run on a model yet.
+
+### The design, and the three ways it could have produced a fake result
+
+**The demonstrated times are 09:05, 19:10 and 08:25, and none of them appears
+in any probe.** Checked by a test, not by eye. A demonstration at a probe time
+would let the model score by recalling what it was shown, and we would be
+measuring recall of three items while calling it rule acquisition.
+
+**All three languages demonstrate the same three clock times**, differing only
+in wording. This is the dangerous one. `validate_tasks.py` guards the task
+files, but the few-shot block lives in the prompt, where nothing looked. An
+English block with easier or more numerous examples would reproduce the paper's
+entire effect without any model doing anything unusual, and every existing
+guard would have passed. `TestFewShotBlocks` now pins the parallelism: same
+times, same order, same count, and no overlap with any probe.
+
+**No reasoning inside the examples.** Input to output and nothing between.
+Chain of thought is a separate arm, and mixing them would make it impossible to
+say which one did the work.
+
+49 tests. Oracle on the new arms: 48/48.
+
+### Prediction, recorded now
+
+Writing it down first is the only reason F19 → F21 and the Polish outcome mean
+anything, so the same discipline applies.
+
+**I expect three examples to repair it, at least on the large models.** The
+failure looks like a missing rule rather than a missing capability, and a
+demonstration supplies the rule directly. Specifically: Russian `n_minutes`
+goes from 0/32 to somewhere above 20/32 on the two large models.
+
+**If it does not repair it, that is the stronger result** and it changes the
+paper's claim. A model that cannot apply the rule even when shown it three
+times is not missing an instruction; something about the construction resists
+the demonstration. That would be worth more than everything else in the paper.
+
+**The awkward middle outcome to name in advance:** few-shot fixes the three
+demonstrated minute-counts (five, ten, twenty-five past) and fails on the
+others. That would be memorisation of the demonstrations rather than
+acquisition of the rule, and it is detectable — the probe has eight
+`n_minutes` items and the demonstrations cover only some of the minute values.
+Split the result by minute-count before concluding anything.
+
+### The runs
+
+```
+python -m src.run_experiment --backend local --model Qwen/Qwen2.5-3B-Instruct \
+    --tasks data/tasks_time_v2.json --arms en_fewshot ru_fewshot --repeats 1 \
+    --max-new-tokens 384 --out results/fs_qwen3b.jsonl
+
+python -m src.run_experiment --backend local --model microsoft/Phi-3.5-mini-instruct \
+    --tasks data/tasks_time_v2.json --arms en_fewshot ru_fewshot --repeats 1 \
+    --max-new-tokens 384 --out results/fs_phi.jsonl
+```
+
+then the same through Groq for `qwen/qwen3.6-27b` and `openai/gpt-oss-120b`
+with `--max-new-tokens 1024`, writing `results/fs_qwen27b.jsonl` and
+`results/fs_gptoss120b.jsonl`. `python -m src.stats` reads all four.

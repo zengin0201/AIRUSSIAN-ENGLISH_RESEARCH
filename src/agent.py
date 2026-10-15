@@ -11,7 +11,8 @@ from .environment import Environment, render_tools, verify
 
 ARMS = ["en", "ru", "ru_sys_ru", "ru_translate", "ru_translate_safe",
         "en_cot", "ru_cot",
-        "pl", "pl_cot"]
+        "pl", "pl_cot",
+        "en_fewshot", "ru_fewshot", "pl_fewshot"]
 ARM_LANGUAGE = {
     "en": "en",
     "en_cot": "en",
@@ -22,6 +23,9 @@ ARM_LANGUAGE = {
     "ru_translate_safe": "ru",
     "pl": "pl",
     "pl_cot": "pl",
+    "en_fewshot": "en",
+    "ru_fewshot": "ru",
+    "pl_fewshot": "pl",
 }
 
 
@@ -44,6 +48,69 @@ Rules:
   translate them and do not transliterate them.
 - Tool names and argument names are always English.
 - When the whole request is complete, call done."""
+
+
+# Few-shot demonstrations, asked for by both reviewers of the August draft.
+#
+#   Richard Sproat, 2026-10-14: "Does few-shot prompting help? Not that this
+#   is necessarily a desirable approach as a general solution, but it would be
+#   interesting to know."
+#
+# Three design decisions, each of which could silently produce a fake result.
+#
+# **The demonstrated clock times are not in any probe.** 09:05, 19:10 and 08:25
+# appear in no task file. If a demonstration used a probe time the model could
+# score by recalling the answer it was shown, and we would be measuring recall
+# of three items rather than acquisition of a rule.
+#
+# **The three languages demonstrate the same three clock times.** Only the
+# wording differs. `validate_tasks.py` guards the task files, but nothing
+# guards the prompt, and an English arm given easier demonstrations than the
+# Russian one would reproduce the whole effect out of thin air. The test
+# `test_fewshot_blocks_are_parallel` pins this.
+#
+# **No reasoning in the examples.** Input to output, nothing between. Chain of
+# thought is a separate arm and mixing the two would make it impossible to say
+# which one did the work.
+#
+# The demonstrations use the productive counting-into form in Russian, because
+# that is the cell that fails. If three worked examples repair it, the model
+# can apply the rule when handed it and simply does not have it. If they do
+# not, the failure is deeper than a missing instruction, and the paper's claim
+# gets stronger.
+FEWSHOT_TIMES = ("09:05", "19:10", "08:25")
+
+FEWSHOT = {
+    "en": """
+
+Examples:
+User: Set an alarm for five past nine in the morning.
+You: {{"tool": "set_alarm", "args": {{"time": "09:05", "label": "alarm"}}}}
+User: Set an alarm for ten past seven in the evening.
+You: {{"tool": "set_alarm", "args": {{"time": "19:10", "label": "alarm"}}}}
+User: Set an alarm for twenty five past eight in the morning.
+You: {{"tool": "set_alarm", "args": {{"time": "08:25", "label": "alarm"}}}}""",
+
+    "ru": """
+
+Examples:
+User: Поставь будильник на пять минут десятого утра.
+You: {{"tool": "set_alarm", "args": {{"time": "09:05", "label": "будильник"}}}}
+User: Поставь будильник на десять минут восьмого вечера.
+You: {{"tool": "set_alarm", "args": {{"time": "19:10", "label": "будильник"}}}}
+User: Поставь будильник на двадцать пять минут девятого утра.
+You: {{"tool": "set_alarm", "args": {{"time": "08:25", "label": "будильник"}}}}""",
+
+    "pl": """
+
+Examples:
+User: Ustaw budzik na pięć po dziewiątej rano.
+You: {{"tool": "set_alarm", "args": {{"time": "09:05", "label": "budzik"}}}}
+User: Ustaw budzik na dziesięć po siódmej wieczorem.
+You: {{"tool": "set_alarm", "args": {{"time": "19:10", "label": "budzik"}}}}
+User: Ustaw budzik na dwadzieścia pięć po ósmej rano.
+You: {{"tool": "set_alarm", "args": {{"time": "08:25", "label": "budzik"}}}}""",
+}
 
 
 SYSTEM_COT = """You are a personal assistant agent. Today is {today} ({weekday}).
@@ -411,6 +478,8 @@ def run_episode(
         template = SYSTEM_RU
     else:
         template = SYSTEM_EN
+    if arm.endswith("_fewshot"):
+        template = template + FEWSHOT[check_lang]
     system_text = template.format(
         today=today, weekday=weekday, tools=render_tools()
     )

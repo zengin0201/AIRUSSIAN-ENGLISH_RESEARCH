@@ -15,6 +15,9 @@ differently for Cyrillic text than for Latin text.
 
 from __future__ import annotations
 
+import json
+import pathlib
+import re
 import unittest
 
 from src.agent import (
@@ -26,6 +29,7 @@ from src.agent import (
 )
 from src.backends import Generation
 from src.environment import Environment, norm, verify
+from src.agent import FEWSHOT, FEWSHOT_TIMES
 from src.metrics import fisher_exact
 
 
@@ -330,6 +334,54 @@ class TestFisherExact(unittest.TestCase):
     def test_negative_counts_are_rejected(self):
         with self.assertRaises(ValueError):
             fisher_exact(-1, 4, 10, 58)
+
+
+class TestFewShotBlocks(unittest.TestCase):
+    """
+    The few-shot demonstrations live in the prompt, not in a task file, so
+    `validate_tasks.py` cannot see them. Nothing else checks that the English
+    arm and the Russian arm are shown the same thing.
+
+    An English block with easier or more numerous demonstrations would
+    reproduce the paper's entire effect without any model behaving oddly, and
+    no existing guard would notice. These tests are that guard.
+    """
+
+    def _times_in(self, text):
+        return re.findall(r'"time": "(\d\d:\d\d)"', text)
+
+    def test_every_language_demonstrates_the_same_clock_times(self):
+        for lang, block in FEWSHOT.items():
+            self.assertEqual(self._times_in(block), list(FEWSHOT_TIMES),
+                             f"{lang} demonstrates different times")
+
+    def test_every_language_shows_the_same_number_of_examples(self):
+        counts = {lang: block.count("User:") for lang, block in FEWSHOT.items()}
+        self.assertEqual(len(set(counts.values())), 1, counts)
+        for lang, block in FEWSHOT.items():
+            self.assertEqual(block.count("User:"), block.count("You:"), lang)
+
+    def test_no_demonstrated_time_appears_in_any_probe(self):
+        # A demonstration the model is later tested on would measure recall of
+        # three items, not acquisition of a rule.
+        used = set()
+        for path in sorted(pathlib.Path("data").glob("tasks_*.json")):
+            with open(path, "r", encoding="utf-8") as handle:
+                for task in json.load(handle)["tasks"]:
+                    for check in task["checks"]["en"]:
+                        if "time" in check:
+                            used.add(check["time"])
+        overlap = used & set(FEWSHOT_TIMES)
+        self.assertFalse(overlap, f"demonstrated time also in a probe: {overlap}")
+
+    def test_the_block_survives_prompt_formatting(self):
+        # SYSTEM_EN goes through str.format, so a single brace in the examples
+        # would raise instead of rendering the JSON.
+        from src.agent import SYSTEM_EN
+        rendered = (SYSTEM_EN + FEWSHOT["ru"]).format(
+            today="2026-09-07", weekday="Monday", tools="(tools)")
+        self.assertIn('{"tool": "set_alarm"', rendered)
+        self.assertNotIn("{{", rendered)
 
 
 if __name__ == "__main__":

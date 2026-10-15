@@ -105,6 +105,15 @@ EVENT_RUNS = [
     ("Phi-3.5-mini", "results/v2_phi.jsonl", "results/event_phi.jsonl"),
     ("gpt-oss-120b", "results/v2_gptoss120b.jsonl", "results/event_gptoss120b.jsonl"),
 ]
+# Few-shot, paired with the plain run of the same model. Asked for by both
+# reviewers of the August draft; see NOTES.md, session 15.
+FEWSHOT_RUNS = [
+    ("Qwen2.5-3B", "results/v2_qwen3b.jsonl", "results/fs_qwen3b.jsonl"),
+    ("Phi-3.5-mini", "results/v2_phi.jsonl", "results/fs_phi.jsonl"),
+    ("qwen3.6-27b", "results/v2_qwen27b.jsonl", "results/fs_qwen27b.jsonl"),
+    ("gpt-oss-120b", "results/v2_gptoss120b.jsonl", "results/fs_gptoss120b.jsonl"),
+]
+
 STABILITY_RUNS = [
     ("gpt-oss-120b", "results/stab_gptoss120b.jsonl"),
     ("Qwen2.5-3B", "results/stab_qwen3b.jsonl"),
@@ -340,6 +349,52 @@ def section_cot(report: Report) -> None:
     print("  Qwen2.5-3B carries a caveat: it emits no reasoning at all on English")
     print("  input and reasons in Mandarin on Russian input, so its two CoT arms")
     print("  are not doing the same thing. Its 0/8 does not depend on that.")
+
+
+def section_fewshot(report: Report) -> None:
+    """
+    Does handing the model three worked examples repair the productive form?
+
+    The demonstrations are at clock times that appear in no probe, so a score
+    here cannot come from recalling what was shown. English gets the same three
+    times, so an improvement in Russian alone is attributable to the
+    demonstrations and not to the examples teaching the output format.
+    """
+    report.head("Few-shot — three worked examples, none at a probe time")
+    print(f"  {'model':<16}{'ru «N минут» base':>20}{'+ few-shot':>13}"
+          f"{'ru all base':>14}{'+ few-shot':>13}{'en all base':>14}{'+ few-shot':>13}")
+
+    base_ok = base_n = fs_ok = fs_n = 0
+    any_run = False
+    for name, base_path, fs_path in FEWSHOT_RUNS:
+        base, fs = load(base_path), load(fs_path)
+        if not base or not fs:
+            continue
+        any_run = True
+        b_nm = tally(base, "ru", ["n_minutes"])
+        f_nm = tally(fs, "ru_fewshot", ["n_minutes"])
+        base_ok += b_nm[0]
+        base_n += b_nm[1]
+        fs_ok += f_nm[0]
+        fs_n += f_nm[1]
+        cells = [b_nm, f_nm, tally(base, "ru"), tally(fs, "ru_fewshot"),
+                 tally(base, "en"), tally(fs, "en_fewshot")]
+        widths = [20, 13, 14, 13, 14, 13]
+        print(f"  {name:<16}" + "".join(
+            f"{f'{ok}/{n}':>{w}}" for (ok, n), w in zip(cells, widths)))
+
+    if not any_run:
+        print("  no few-shot runs yet. Commands are in NOTES.md, session 15.")
+        return
+
+    print()
+    print(f"  Russian productive form: {base_ok}/{base_n} zero-shot "
+          f"-> {fs_ok}/{fs_n} with three examples")
+    if base_n and fs_n:
+        p = fisher_exact(fs_ok, fs_n - fs_ok, base_ok, base_n - base_ok)
+        report.p_values.append(p)
+        print(f"  few-shot against zero-shot, same items: {format_p(p)} "
+              f"[exact {p:.2e}]")
 
 
 def section_domain(report: Report) -> None:
@@ -695,6 +750,7 @@ def main() -> int:
     section_error(report)
     section_robustness(report)
     section_cot(report)
+    section_fewshot(report)
     section_domain(report)
     section_stability(report)
     section_first_probe(report)
