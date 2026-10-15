@@ -107,10 +107,13 @@ EVENT_RUNS = [
 ]
 # Few-shot, paired with the plain run of the same model. Asked for by both
 # reviewers of the August draft; see NOTES.md, session 15.
+# qwen3.6-27b left the Groq catalogue before few-shot could be run on it
+# (F41), so qwen3.8-27b stands in — run on all four arms in one pass, which is
+# why its baseline and few-shot paths are the same file.
 FEWSHOT_RUNS = [
     ("Qwen2.5-3B", "results/v2_qwen3b.jsonl", "results/fs_qwen3b.jsonl"),
     ("Phi-3.5-mini", "results/v2_phi.jsonl", "results/fs_phi.jsonl"),
-    ("qwen3.6-27b", "results/v2_qwen27b.jsonl", "results/fs_qwen27b.jsonl"),
+    ("qwen3.8-27b", "results/fs_qwen38.jsonl", "results/fs_qwen38.jsonl"),
     ("gpt-oss-120b", "results/v2_gptoss120b.jsonl", "results/fs_gptoss120b.jsonl"),
 ]
 

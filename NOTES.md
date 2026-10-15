@@ -1992,3 +1992,91 @@ python -m src.run_experiment --backend local --model microsoft/Phi-3.5-mini-inst
 then the same through Groq for `qwen/qwen3.6-27b` and `openai/gpt-oss-120b`
 with `--max-new-tokens 1024`, writing `results/fs_qwen27b.jsonl` and
 `results/fs_gptoss120b.jsonl`. `python -m src.stats` reads all four.
+
+### F41 — one of the four models no longer exists
+
+`qwen/qwen3.6-27b`, a row in the main table since session 7, is gone from the
+Groq catalogue as of 2026-10-15. The replacement at the same size is
+`qwen/qwen3.8-27b`, a generation newer.
+
+**That run can never be reproduced.** Everything we have of it is
+`results/v2_qwen27b.jsonl`, `results/time_qwen27b.jsonl` and
+`results/pl_qwen27b.jsonl` in this repository. This is the first time the
+"keep every log, never a summary" rule has been the only thing standing
+between the project and a lost result, and it is worth noting that hosted
+models are not a stable substrate: a paper whose numbers live only in a
+provider's current catalogue is not reproducible by anyone, including its
+author.
+
+Consequence for the few-shot run: comparing few-shot on qwen3.8 against
+zero-shot on qwen3.6 would compare two different models and call it an effect
+of the prompt. So qwen3.8-27b is being run on **both** conditions, keeping the
+comparison within one model.
+
+That substitution also buys something the paper did not have. The four models
+in the main table are all from mid-2026 or earlier, and "does this persist in
+the next generation?" is a question a reviewer will ask. qwen3.8-27b at the
+same parameter count answers it directly.
+
+### F42 — few-shot moves it, does not repair it, and the two large models disagree
+
+Two hosted runs done. `qwen/qwen3.6-27b` is gone from the catalogue (F41), so
+`qwen/qwen3.8-27b` was run on **all four arms in one pass**, keeping the
+few-shot comparison inside one model.
+
+**The manipulation was verified before the result was believed.** The logs do
+not store the system prompt, so a null could have been a prompt that never
+reached the model — exactly the shape of the six harness artifacts. First-turn
+`prompt_tokens` rose by +122 (English) and +139 (Russian) against the base run.
+The demonstrations arrived.
+
+| model | ru «N минут» | ru whole family | en whole probe |
+|---|---|---|---|
+| gpt-oss-120b | 0/8 → **1/8** | 5/17 → 7/17 | 24/24 → 24/24 |
+| qwen3.8-27b | 0/8 → **5/8** | 5/17 → 12/17 | 24/24 → 24/24 |
+
+Pooled over the two: «N минут» **0/16 → 6/16**, p = .018. Whole family 10/34 →
+19/34, p = .049. English sits at ceiling in both conditions on both models, so
+the demonstrations did not simply teach the output format.
+
+**My prediction was wrong.** Session 15 recorded: "I expect three examples to
+repair it [...] somewhere above 20/32 on the two large models." That is above
+60 percent; the actual is 6/16, under 40. Few-shot moves the productive form
+off zero and does not fix it.
+
+**The pre-registered memorisation check came out negative, which is the good
+news.** Demonstrated minute counts 5/12, undemonstrated 1/4, p = 1.0. The
+models are not simply replaying the three examples; qwen3.8 resolved the
+undemonstrated "twenty past" once in two attempts. Whatever few-shot buys, it
+is not recall of the demonstrations. The cell is thin — four undemonstrated
+items — so this is a check that failed to fire, not a positive finding.
+
+**The two large models disagree, and that is the part worth reporting.**
+gpt-oss-120b barely moves, qwen3.8-27b goes to 5/8. A single number for "does
+few-shot help" would hide this. The honest answer to Sproat's question is:
+partially, and it depends on the model.
+
+### F43 — the effect survives into the next generation
+
+qwen3.8-27b is a generation newer than qwen3.6-27b at the same parameter
+count, and it was not in the paper. Zero-shot, it reproduces the result:
+
+- counting-into family: English **17/17**, Russian **5/17**, p < .01
+- `literal` 4/4 both, `subtractive` 3/3 both — controls clean
+- «половина» 5/5, «четверть» 0/4, «N минут» 0/8 — the gradient, again
+  monotone, in a model that did not exist when the gradient was predicted
+
+That last point matters. The ordering was written down in session 7 from
+watching two models, confirmed in session 9 on four, and has now held on a
+fifth released afterwards. Run audit: zero parse errors, zero truncation, zero
+looping across all four arms.
+
+### What this does to the paper
+
+The claim gets more precise, not weaker. Before: models have not learned the
+rule. Now: **handed the rule three times in worked examples, the strongest
+model still resolves the productive form once in eight.** A missing
+instruction would be repaired by an instruction. This is not.
+
+Still needed before any of it is written up: the two local models, which
+Aleksey is running.
