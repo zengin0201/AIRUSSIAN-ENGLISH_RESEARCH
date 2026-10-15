@@ -2080,3 +2080,73 @@ instruction would be repaired by an instruction. This is not.
 
 Still needed before any of it is written up: the two local models, which
 Aleksey is running.
+
+### F44 — the two local few-shot runs, audited before being believed
+
+**Qwen2.5-3B: usable, as noisy as it always was.** 48/48 episodes. 70 turns in
+`ru_fewshot` failed to parse, which looked alarming until compared with the
+base run: `no_json` is 41% and 37% of turns in base en/ru, against 35% and 42%
+with few-shot. Same rate, only the surface form moved — the model writes bare
+`done` in the base run and `done()` with few-shot. This is F16, the model's
+long-standing refusal to call `done` in the required format, not something the
+demonstrations caused. Scores: ru «N минут» 0/8 → 0/8.
+
+**Phi-3.5-mini: unusable, rerun it.** Two faults.
+
+The run stopped at g19, so 13 of 48 episodes never happened and the missing
+items are g18–g24 — every `literal` and every `subtractive` task, which is both
+controls in their entirety. A probe without its controls says nothing.
+
+And `en_fewshot` has **19 truncated turns against 0 in the base run at the same
+384-token budget**. That one is caused by the demonstrations. The block is
+written as `User: … You: …` pairs, and Phi continues the dialogue instead of
+stopping after one answer, running past the output budget. F11 again, in a new
+costume: an output limit producing what looks like a result. Any number from
+this run is a measurement of the budget.
+
+**Action:** rerun Phi with a budget that does not truncate, and let it finish.
+Comparing a base arm at 0 truncations against a few-shot arm at 19 is not a
+comparison.
+
+A design note for later: the `User:`/`You:` framing is the standard way to
+write few-shot examples and it works on the three larger models, but it invites
+a small model to keep producing turns. If Phi still truncates at a higher
+budget, the examples should be reformatted so they do not look like an
+unfinished dialogue.
+
+### F45 — few-shot helps only at scale, and inconsistently even there
+
+All four models now run. Phi was rerun and completed 48/48.
+
+| model | ru «N минут» | ru family | en whole probe |
+|---|---|---|---|
+| Qwen2.5-3B | 0/8 → **0/8** | 0/17 → 1/17 | 18/24 → 20/24 |
+| Phi-3.5-mini | 0/8 → **0/8** | 1/17 → 0/17 | *budget-contaminated* |
+| qwen3.8-27b | 0/8 → **5/8** | 5/17 → 12/17 | 24/24 → 24/24 |
+| gpt-oss-120b | 0/8 → **1/8** | 5/17 → 7/17 | 24/24 → 24/24 |
+
+Pooled: **0/32 → 6/32**, p = .024.
+
+The shape is cleaner than the pooled number suggests. **At 3–4B, three worked
+examples do nothing at all** — zero to zero on both small models. **At 27–120B
+they move it, and the two large models disagree about how much**, 5/8 against
+1/8.
+
+So the answer to Sproat's question is neither yes nor no: few-shot helps only
+once the model is large enough to use a demonstration, and even then it does
+not repair the form. The strongest model in the set, which reads English 24/24,
+goes to one in eight after being shown the rule three times.
+
+**One arm is still not usable.** Phi's `en_fewshot` has 22 truncated turns
+against 0 in its base run at the same 384-token budget; the rerun used 384
+again. Its Russian arm is clean — 0 truncations, 20 of 24 episodes ending in
+`done` — so the Phi row above is sound for Russian and the English cell is not.
+The conclusion does not rest on it: three of the four models give an
+uncontaminated English control, all flat or slightly up. But before this goes
+in the paper Phi's English arm should be rerun at 640.
+
+Qwen2.5-3B is clean on truncation, 0 in both arms, and carries its usual F16
+looping noise: 17 of 24 and 23 of 24 episodes stopped by the loop detector in
+the two arms. Same as every Qwen run in this project. It does not touch the
+accuracy result — the model never wrote a correct productive-form time in any
+of the repeated attempts.
