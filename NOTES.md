@@ -1807,3 +1807,122 @@ carrier sentence works, and the large models resolving 22 of 24 items shows the
 phrases are intelligible, which is much stronger evidence than we had. But
 "intelligible to a model" is not "what a Pole would say", and the paper should
 not claim more than that until someone reads the 24 sentences.
+
+---
+
+## 2026-10-15 — session 14: review from Kyle Gorman and Richard Sproat
+
+The August draft went to two people who have built exactly the systems this
+paper is about. Both replied with substance. This entry records what they said
+and what changed because of it.
+
+### F38 — the p-values were reported in a form the test does not license
+
+Kyle Gorman (CUNY Graduate Center), 13 October:
+
+> "If you are using Fisher for null hypothesis testing, you shouldn't report
+> miniscule p-values. Rather you should set an alpha-level (.05, or .01 are
+> normal) and then report p < .01 [...] it doesn't matter HOW MUCH SMALLER THAN
+> THE ALPHA-LEVEL a p-value is, it just matters WHETHER it's smaller."
+
+He is right, and this is the second time the statistics in this project have
+been wrong in a way the author could not see. F32 was arithmetic — five values
+that no code computed. This one is conceptual: the arithmetic was correct and
+the reporting was not. A frequentist test answers one question, whether the
+result clears the threshold, and `p = 1.4e-22` on 68 items answers a question
+nobody asked while inviting a reviewer to check a number that carries no
+information.
+
+**Changed.** `src/stats.py` gains `ALPHA = 0.01` and `format_p()`. Above the
+threshold it prints two significant digits, below it `p < .01`. Two significant
+digits rather than two decimal places, because at two decimals a p of .0114
+prints as ".01" and reads as if the test landed exactly on the alpha level.
+
+The exact value is still computed and still printed by the script in brackets,
+because the notebook wants the record and `--check` needs it. It just does not
+go in the paper. `NOTES.md` keeps exact values throughout; the public documents
+do not.
+
+**`--check` now enforces the convention as well as the arithmetic.** It flags
+any `p = <value below alpha>` in a document and tells the author what to write
+instead, and it verifies that a `p < X` claim is actually supported by a
+computed value. Ten violations in `paper.md`, seven in `README.md`, five in
+`HANDOFF.md`, eight in `tutorial.md`. All fixed.
+
+Gorman also pointed at linguistic glossing conventions
+(wellformedness.com, "How to write linguistic examples") and noted that Cyrillic
+does not need the «» quotes since the script already sets it off, while the
+Polish examples should be italicised. **Not yet done.**
+
+### F39 — Sproat's data-volume numbers do not check out, and the claim they supported is gone
+
+Richard Sproat, 14 October, on the obvious confound:
+
+> "one assumes that these models have probably seen a great deal less Russian
+> data in total than they have English data [...] I like to use the number of
+> Wikipedia articles as a proxy. As of now, there are over 2.5 million English
+> pages, 800K German articles and 320 Russian pages (even less than Dutch, which
+> sits at 480K). Polish has 540K."
+
+Checked against meta.wikimedia.org today:
+
+| language | Sproat's figure | actual |
+|---|---|---|
+| English | 2.5M | 7.25M |
+| German | 800K | 3.16M |
+| Dutch | 480K | 2.23M |
+| **Russian** | **320K** | **2.12M** |
+| **Polish** | **540K** | **1.71M** |
+
+Every figure is roughly a third of the current one, which looks like an old
+snapshot quoted from memory. That part does not matter. **What matters is that
+the ordering of the key pair is reversed**: he has Russian below Polish, and in
+fact Russian has more.
+
+This is load-bearing, because §4.4 said "Polish is the lower-resourced of the
+two languages and it is the one that succeeds". On the one proxy available that
+sentence is false, and it was repeated back to Sproat in correspondence.
+
+**Changed.** The sentence is cut. What replaces it is better anyway, because it
+does not depend on measuring corpus share at all:
+
+> Whatever the two languages' relative share of the training corpus is, it is
+> the same quantity in both halves of this comparison. A constant cannot produce
+> an effect that appears on one clock form and vanishes on another.
+
+The matched/crossed design *is* the control for data volume. Saying so directly
+is stronger than any proxy, and it cannot be falsified by someone with better
+numbers.
+
+Wikipedia article count is a weak proxy for LLM training data in any case —
+what matters is web-scale corpus composition, which is not public for any model
+here. Limitations now names the confound and says plainly that we do not
+measure it.
+
+### F40 — every probe item is in the citation form
+
+Sproat:
+
+> "Двадцать минут восьмого will not always show up in that form, if for example
+> the time expression is found in a context that requires a different case form
+> (e.g. двадцати минутах восьмого). This adds further noise to the task."
+
+Correct, and it is a genuine gap. The alarm frame takes one case throughout, so
+the probe tests one surface form of a paradigm a speaker produces in several. A
+model that resolves the citation form and fails the oblique ones would look
+identical to ours. Added to Limitations; measuring it needs a probe that varies
+the carrier frame, which does not exist yet.
+
+### Still open after this session
+
+1. **Few-shot prompting.** Both reviewers asked. Promised to Sproat. Not run.
+   Prediction, written down now: two or three worked examples repair it, because
+   the failure looks like a missing rule and a demonstration supplies the rule.
+   If few-shot does *not* fix it, that is a much stronger result than the paper
+   currently claims.
+2. **German or Dutch.** Sproat's actual question: both count into the coming
+   hour and both have more data than Russian — does the volume help? This is the
+   experiment that separates "construction" from "construction plus scarcity",
+   and Polish cannot answer it because it has no productive counting-into form.
+3. Gorman's glossing conventions.
+4. Native speaker for the Polish items. Still outstanding since August.

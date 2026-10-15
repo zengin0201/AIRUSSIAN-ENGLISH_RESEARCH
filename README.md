@@ -10,7 +10,7 @@ Russian says «двадцать минут восьмого» for 07:20. The ord
 |---|---|---|
 | counting-into-the-hour expressions | **64 / 68** | **10 / 68** |
 
-Fisher exact, two-tailed: **p = 1.4e-22**. Of the 68 Russian answers, **33 are wrong by exactly +60 minutes**. English is exactly right in 64 of them, on the same clock times.
+Fisher exact, two-tailed: **p < .01**. Of the 68 Russian answers, **33 are wrong by exactly +60 minutes**. English is exactly right in 64 of them, on the same clock times.
 
 ## Why this is not just "small models are bad at time"
 
@@ -35,9 +35,9 @@ Splitting the construction by how fixed the phrase is gives a clean gradient, po
 
 | category | English | Russian | Fisher exact |
 |---|---|---|---|
-| «половина X» — the common fixed phrase | 19/20 (95%) | 9/20 (45%) | p = 0.00125 |
-| «четверть X» — intermediate | 15/16 (94%) | 1/16 (6%) | p = 8.6e-07 |
-| «N минут X-ого» — fully productive | 30/32 (94%) | **0/32 (0%)** | p = 6.1e-16 |
+| «половина X» — the common fixed phrase | 19/20 (95%) | 9/20 (45%) | p < .01 |
+| «четверть X» — intermediate | 15/16 (94%) | 1/16 (6%) | p < .01 |
+| «N минут X-ого» — fully productive | 30/32 (94%) | **0/32 (0%)** | p < .01 |
 
 Both large models produce that ordering independently. English stays flat.
 
@@ -79,8 +79,8 @@ two are crossed. On the two large models:
 
 | | Polish | Russian | Fisher exact |
 |---|---|---|---|
-| matched form, both count INTO the hour | 10/10 | 8/10 | p = 0.47 |
-| **crossed forms, identical clock times** | **24/24** | **1/24** | **p = 1.6e-12** |
+| matched form, both count INTO the hour | 10/10 | 8/10 | p = .47 |
+| **crossed forms, identical clock times** | **24/24** | **1/24** | **p < .01** |
 
 **Where the two Slavic languages share the construction they tie. Where the
 construction differs they separate completely.** gpt-oss-120b reads the whole
@@ -120,7 +120,7 @@ The models are not failing to think. They are missing the rule.
 
 The same 24 expressions asked as calendar events instead of alarms
 (`data/tasks_event.json`) reproduce the effect: pooled over three models,
-English 46/51 against Russian 3/51 on the counting-into family, p = 2.7e-19,
+English 46/51 against Russian 3/51 on the counting-into family, p < .01,
 against 47/51 versus 6/51 on the alarm probe.
 
 ## Three mitigations that do not work

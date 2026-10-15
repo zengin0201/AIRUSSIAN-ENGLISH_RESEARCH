@@ -33,6 +33,44 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from .metrics import fisher_exact
 
+# Alpha level for null hypothesis testing, and how a p-value gets reported.
+#
+# Kyle Gorman (CUNY), 2026-10-13, reviewing this draft:
+#
+#   "If you are using Fisher for null hypothesis testing, you shouldn't report
+#    miniscule p-values. Rather you should set an alpha-level (.05, or .01 are
+#    normal) and then report p < .01 [...] it doesn't matter HOW MUCH SMALLER
+#    THAN THE ALPHA-LEVEL a p-value is, it just matters WHETHER it's smaller."
+#
+# He is right, and the draft he read printed things like p = 1.4e-22 on 68
+# items. Under frequentist NHST that number carries no information the
+# threshold does not, and quoting it to two significant figures invites a
+# reviewer to check it — which is how a tiny arithmetic difference turns into
+# a question about whether the author understands their own test.
+#
+# The exact value is still computed and still printed by this script, because
+# the lab notebook wants it and because `--check` needs it to verify that a
+# "p < .01" claim in a document is actually true. It just does not go in the
+# paper.
+ALPHA = 0.01
+
+
+def format_p(p: float, alpha: float = ALPHA) -> str:
+    """
+    The reportable form. Linguistics drops the leading zero: `p < .01`.
+
+    Above the threshold the value itself is the information, so it is printed
+    to two digits. Below it, only the threshold is.
+    """
+    if p < alpha:
+        return f"p < {('%.2f' % alpha).lstrip('0')}"
+    if p >= 1:
+        return "p = 1.0"
+    # Two significant digits, not two decimal places: at two decimals a p of
+    # .0114 prints as ".01", which is the alpha level itself and reads as if
+    # the test were exactly on the threshold.
+    return f"p = {('%.2g' % p).lstrip('0')}"
+
 # The Russian forms that count into the coming hour. `into_hour` is the
 # undivided category from the first probe; the other three are its split.
 FAMILY = ("half_past", "quarter_past", "n_minutes")
@@ -182,8 +220,11 @@ class Report:
         self.p_values.append(p)
         en_pct = 100 * en_ok / en_n if en_n else 0.0
         other_pct = 100 * other_ok / other_n if other_n else 0.0
+        # Reportable form first, because that is what goes in the paper. The
+        # exact value follows in brackets for the notebook only.
         print(f"  {label:<26} en {en_ok:>3}/{en_n:<3} ({en_pct:5.1f}%)   "
-              f"{lang} {other_ok:>3}/{other_n:<3} ({other_pct:5.1f}%)   p = {p:.2e}")
+              f"{lang} {other_ok:>3}/{other_n:<3} ({other_pct:5.1f}%)   "
+              f"{format_p(p):<9} [exact {p:.2e}]")
         return p
 
 
@@ -587,28 +628,53 @@ def section_frequency(report: Report) -> None:
 # checking a document against what we just computed
 # --------------------------------------------------------------------------
 
-P_IN_TEXT = re.compile(r"p\s*=\s*([0-9]+\.?[0-9]*(?:e-?[0-9]+)?)", re.IGNORECASE)
+P_EQUALS = re.compile(r"p\s*=\s*(\.?[0-9]+\.?[0-9]*(?:e-?[0-9]+)?)", re.IGNORECASE)
+P_LESS = re.compile(r"p\s*<\s*(\.?[0-9]+\.?[0-9]*)", re.IGNORECASE)
 
 
-def check_document(path: str, computed: List[float]) -> int:
-    """Flag any `p = ...` in a document that this script did not produce."""
+def check_document(path: str, computed: List[float], alpha: float = ALPHA) -> int:
+    """
+    Check a document's p-values against what this script computed.
+
+    Two jobs now. The original one: catch a number no code here produced,
+    which is why this exists at all (F32 — five fabricated p-values).
+
+    The second, added after Kyle Gorman's review: enforce the reporting
+    convention. A document that prints `p = 1.4e-22` is not wrong, it is
+    reporting something a frequentist test does not license. That is a
+    defect the author should see before a reviewer does.
+    """
     if not os.path.exists(path):
         print(f"  !! {path} not found")
         return 0
     with open(path, "r", encoding="utf-8") as handle:
         text = handle.read()
 
+    smallest = min(computed) if computed else 1.0
     bad = 0
     for line_no, line in enumerate(text.splitlines(), 1):
-        for raw in P_IN_TEXT.findall(line):
-            value = float(raw)
-            # Two significant figures is what the paper prints, so compare there.
-            if any(abs(value - c) <= 0.05 * max(value, c) for c in computed):
+        for raw in P_EQUALS.findall(line):
+            value = float(raw if not raw.startswith(".") else "0" + raw)
+            if value < alpha:
+                print(f"  {path}:{line_no}: p = {raw} is below alpha — report "
+                      f"'{format_p(value, alpha)}' instead (Gorman, 2026-10-13)")
+                bad += 1
                 continue
-            print(f"  {path}:{line_no}: p = {raw} is not a value this script computes")
-            bad += 1
+            # Two significant figures is what gets printed, so compare there.
+            if not any(abs(value - c) <= 0.05 * max(value, c) for c in computed):
+                print(f"  {path}:{line_no}: p = {raw} is not a value this "
+                      f"script computes")
+                bad += 1
+
+        for raw in P_LESS.findall(line):
+            threshold = float(raw if not raw.startswith(".") else "0" + raw)
+            if smallest >= threshold:
+                print(f"  {path}:{line_no}: claims p < {raw}, but the smallest "
+                      f"p this script computes is {smallest:.2g}")
+                bad += 1
+
     if not bad:
-        print(f"  {path}: every p-value matches")
+        print(f"  {path}: p-values check out")
     return bad
 
 
