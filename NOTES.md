@@ -2876,3 +2876,77 @@ of them are.
 real claim, needs the two local models; 15/15 and 7/15 are two points. The
 regional cell goes the predicted way at both scales and reaches significance at
 neither.
+
+
+### F59 — all four models on the powered probe: F57's main claim holds, F50 is finished
+
+                        120B      27B     3.8B       3B
+    English            48/48    46/48    33/48    29/48
+    digital              5/5      5/5      5/5      5/5
+    from_hour (nach)   12/12    12/12    10/12     9/12
+    into_hour (halb)   15/15     7/15     1/15     1/15
+    regional            8/12     4/12     1/12     0/12
+    subtractive          4/4      4/4      1/4      0/4
+
+**`digital` is 5/5 on every model.** The German carrier sentence works at every
+scale, so every cell above is interpretable as German, including on the two
+models whose English arm drops.
+
+**The English drop on the small models is my probe's fault, and it is not a
+broken ceiling.** Split by the English form used:
+
+                     en counting-from   en subtractive
+    gpt-oss 120B         38/38              10/10
+    qwen3.8  27B         36/38              10/10
+    Phi     3.8B         33/38               0/10
+    Qwen3B    3B         28/38               1/10
+
+Six of the twelve regional items render *dreiviertel N* in English as "quarter
+to X", which is the subtractive control this project has found failing in
+English since the first probe. So I built ten English subtractive items into a
+48-item file and then read the total as a ceiling. The counting-from English
+holds at 87% and 74% on the two small models; the ceiling is lower than the big
+models' but it is not gone.
+
+**Consequence: the regional cell's English baseline is contaminated** on the
+small models and should not be used as a within-item ceiling there. The German
+comparisons are untouched, because they are German against German.
+
+**The result, on all four models.** Within German, counting-into against
+counting-from:
+
+    gpt-oss 120B   halb 15/15   nach 12/12    p = 1.0
+    qwen3.8  27B   halb  7/15   nach 12/12    p < .01   (3.1e-03)
+    Phi     3.8B   halb  1/15   nach 10/12    p < .01   (7.7e-05)
+    Qwen3B    3B   halb  1/15   nach  9/12    p < .01   (7.6e-04)
+
+**Three of four models read German's fixed counting-into phrases as broken
+while reading counting-from correctly.** Only the 120B model is immune. Phi's
+German arm carries 10% truncation and 15% looping, and that cannot produce a
+gap between 1/15 and 10/12 inside the same run under the same noise — noise
+that uniform would move both cells.
+
+**F57's main claim holds.** `halb` is monotonically non-decreasing in model
+size: 1/15, 1/15, 7/15, 15/15 at 3B, 3.8B, 27B, 120B. Extremes 15/15 against
+1/15, p < .01 (2.1e-07). None of the three falsification conditions fired —
+it is not at ceiling everywhere, not at floor everywhere, and the ordering does
+not break.
+
+**F50 is finished.** It predicted German's three fixed phrases would be read
+correctly because frequent fixed phrases are memorisable where a rule is not.
+On three of four models they are not read correctly, and on the smallest two
+they are at 1/15. The account that replaces it is **frequency against
+capacity**: the memorised reading has to win against the compositional one,
+which needs the phrase frequent enough and the model large enough. Productivity
+was never the variable.
+
+**What this does to the paper.** Section 4.4 currently argues the failure is
+about the construction. That survives — counting-from is 12/12, 12/12, 10/12,
+9/12 while counting-into collapses — but the paper's implicit claim that a
+language with fixed phrases escapes it does not, and the German data has to go
+in with the scale axis rather than as a fourth language that behaves. This is a
+larger edit than adding a column and should not be done by reflex.
+
+**Not resolved by any of this:** no native speaker has checked either German
+file; the regional forms still need a verifier from a region that uses them;
+and Sproat's case-variation question is still untouched.
