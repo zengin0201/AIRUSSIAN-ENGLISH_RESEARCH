@@ -2513,3 +2513,103 @@ Same shape as the Polish `Report.compare` bug and the `else "ru"` language
 plumbing: a second language was added and one hardcoded `"ru"` stayed behind. It
 is the third time. The difference here is that nothing failed and nothing
 printed wrong — a section simply did not appear, which is why it lasted.
+
+
+### F54 — German on all four models, and the pooling that would be cheating
+
+`results/de_phi.jsonl`, `results/de_qwen3b.jsonl` added to the two hosted runs.
+Local runs were launched without `--repeats 1`, so they carry `repeats=3`.
+
+**Counts below are distinct items, not episodes.** See F55: the three repeats
+were byte-identical, so dividing the local numbers by three is not a choice, it
+is the correction.
+
+    model                 halb    nach   viertel-N   EN      halb vs nach
+    gpt-oss-120b  120B     5/5   10/10       0/2    24/24    p = 1.0
+    qwen3.8-27b    27B     3/5   10/10       0/2    24/24    p = .095
+    Phi-3.5-mini  3.8B     1/5    9/10       0/2    20/24    p = .017
+    Qwen2.5-3B      3B     0/5    7/10       1/2    18/24    p = .026
+
+    digital: 4/4 on every model, all four. The carrier sentence is fine
+    everywhere, so every cell above is interpretable as far as the German goes.
+
+**The harness audit disqualifies the bottom row and bruises the one above it.**
+
+- **Qwen2.5-3B: 100% of English episodes killed by the loop detector**, and its
+  English arm scores 18/24. The English ceiling is gone. By the rule this
+  project has applied since F16, these numbers are ours and not the model's.
+  Its `viertel-N` cell at 1/2 is also *higher* than its `halb` cell at 0/5,
+  which is incoherent under every account on the table and is what noise looks
+  like. **Unusable.**
+- **Phi-3.5-mini: German 17% truncation and 17% looping against English 8% and
+  0%.** Asymmetric in the direction that manufactures the effect. This is the
+  same asymmetry that got Phi's English few-shot arm excluded in F44.
+
+**The pooling that would be cheating, written down so it is not done later.**
+
+    all four models, halb 9/20 vs nach 36/40     p < .01  (3.1e-04)
+    two clean hosted runs, halb 8/10 vs 20/20    p = .1
+
+The German counting-into form only separates from the counting-from form once
+the two compromised runs are in the pool. **Reaching significance by adding a
+run whose English arm is 100% looping is not a result, it is the choice of
+pool.** The number that goes in any write-up is p = .1 on the clean runs, with
+the other two reported and flagged.
+
+**What holds regardless of which pool is used.**
+
+    German nach  36/40  vs  Russian productive INTO  0/32
+    German halb   8/10  vs  Russian productive INTO  0/32   p < .01 (3.8e-07)
+
+German reads counting-from perfectly and reads its counting-into phrases far
+better than Russian reads its productive one, on clean runs, with the direction
+of counting held constant. That is the result German was run for and it stands.
+
+**What is now genuinely open, and is more interesting than the question asked.**
+`halb` goes 5/5, 3/5, 1/5, 0/5 down the model sizes 120B, 27B, 3.8B, 3B. That
+is monotonic. If it is real it says the account was too coarse: German's three
+fixed phrases are not inherently safe, they are **memorised by large models and
+not by small ones**, and a small model falls back on the same broken
+compositional reading that breaks Russian. That is a frequency-by-capacity
+interaction, and it sits with F45, where few-shot helped only at scale.
+
+It is also exactly what the pre-registered falsification condition described —
+German `into_hour` below `from_hour` with `digital` intact — and on the two
+small models that condition is approached (p = .017, p = .026) without being
+met at our α = .01. **So F50 is neither confirmed nor falsified.** The two
+models that could falsify it are the two whose harness audit fails.
+
+**Do not run the expansion until this is fixed**, or it will produce the same
+ambiguity at greater length:
+
+1. **More items.** Five per cell is the binding constraint on every comparison
+   above, not the model count.
+2. **`--repeats 1` at temperature 0.** See F55.
+3. **Qwen2.5-3B's looping, or drop the model.** Its English arm has to reach
+   ceiling before its German arm means anything.
+4. **Pre-register the scale hypothesis before testing it.** It was found by
+   looking at this table, which is the weakest possible provenance for a claim.
+
+### F55 — repeats at temperature 0 are exact duplicates and buy nothing
+
+Checked rather than assumed: in both local runs, **48 of 48 item-arm cells gave
+identical outcomes across all three repeats, zero disagreement.** Every error
+bucket came in exact multiples of three, which is what first prompted the check.
+
+So `--repeats 3` at `--temperature 0.0` tripled the GPU time and added no
+information. Roughly forty minutes of a 2060 spent re-deriving the same 48
+answers twice more. Reporting such a run as n = 72 inflates the denominator by
+three while the numerator rises with it, which leaves the percentage honest and
+every confidence interval and p-value far too narrow.
+
+**Audited the whole results directory for this.** Files with `repeats > 1` at
+temperature 0 are: the two German local runs from today, the oracle replays
+(validity checks, not statistics), and one old `qwen3b.jsonl`. The paper does
+not touch any of them — `src/stats.py` reads `v2_qwen3b.jsonl`, which is
+`repeats=1`. The only `repeats=3` file the paper does use is
+`stab_qwen3b.jsonl`, at temperature **0.7**, where repeats are the entire point
+of the stability section.
+
+**So no published number has an inflated n.** The design was already right;
+today's runs simply left the flag off. Repeats belong with temperature > 0 and
+nowhere else.
