@@ -649,6 +649,106 @@ def section_polish_vs_russian(report: Report) -> None:
     print("  vanishes on another. The variable is the construction.")
 
 
+# German. German counts into the coming hour exactly as Russian does, but only
+# with a closed set of three lexical items (halb, viertel, dreiviertel). There
+# is no German form for 07:20 that counts into the eighth hour, so the
+# counting-from cell is the language's only option there. Direction of counting
+# is held constant across the two cells and productivity is varied.
+#
+# The models are listed smallest first, because the result is a scale effect
+# and the ordering is the claim.
+GERMAN_RUNS = [
+    ("Qwen2.5-3B", "3B", "results/de2_qwen3b.jsonl"),
+    ("Phi-3.5-mini", "3.8B", "results/de2_phi.jsonl"),
+    ("qwen3.8-27b", "27B", "results/de2_qwen38.jsonl"),
+    ("gpt-oss-120b", "120B", "results/de2_gptoss120b.jsonl"),
+]
+
+# difficulty label in tasks_time_de2.json -> what the cell is
+GERMAN_CELLS = [
+    ("literal", "digital", "health check"),
+    ("n_minutes", "counting-from", "N nach X, the only option German has"),
+    ("half_past", "counting-into", "halb X, the closed set"),
+    ("quarter_into", "counting-into (regional)", "viertel X, east and south"),
+    ("subtractive", "subtractive", "control, fails in English too"),
+]
+
+
+def section_german(report: Report) -> None:
+    """German: the direction of counting held constant, productivity varied."""
+    report.head("German — a closed counting-into set, across four model sizes")
+
+    available = [(n, s, p) for n, s, p in GERMAN_RUNS if os.path.exists(p)]
+    if not available:
+        print("  runs missing, skipped")
+        return
+
+    print(f"    {'cell':<26}" + "".join(f"{s:>9}" for _, s, _ in available))
+    totals: Dict[str, List[int]] = {}
+    for difficulty, caption, _note in GERMAN_CELLS:
+        cells = []
+        ok_all = n_all = 0
+        for _, _, path in available:
+            ok, n = tally(load(path), "de", [difficulty])
+            cells.append(f"{ok}/{n}")
+            ok_all += ok
+            n_all += n
+        totals[caption] = [ok_all, n_all]
+        print(f"    {caption:<26}" + "".join(f"{c:>9}" for c in cells))
+
+    print()
+    into_ok, into_n = totals["counting-into"]
+    from_ok, from_n = totals["counting-from"]
+    p = fisher_exact(into_ok, into_n - into_ok, from_ok, from_n - from_ok)
+    report.p_values.append(p)
+    print(f"    counting-into {into_ok}/{into_n} vs counting-from {from_ok}/{from_n}"
+          f"   {format_p(p)} [exact {p:.2e}]")
+
+    # The scale claim: the same cell, the two largest models against the two
+    # smallest. This is the dissociation the section exists for, because the
+    # Russian productive form does not move with scale at all.
+    small = available[:2]
+    large = available[2:]
+    if len(small) == 2 and len(large) == 2:
+        def cell(runs, difficulty):
+            ok = n = 0
+            for _, _, path in runs:
+                a, b = tally(load(path), "de", [difficulty])
+                ok += a
+                n += b
+            return ok, n
+
+        s_ok, s_n = cell(small, "half_past")
+        l_ok, l_n = cell(large, "half_past")
+        p = fisher_exact(l_ok, l_n - l_ok, s_ok, s_n - s_ok)
+        report.p_values.append(p)
+        print(f"    counting-into, two large {l_ok}/{l_n} vs two small {s_ok}/{s_n}"
+              f"   {format_p(p)} [exact {p:.2e}]")
+
+    # Per model, within German, so the reader can see which models break.
+    print()
+    print("    within German, counting-into against counting-from, per model:")
+    for name, size, path in available:
+        rows = load(path)
+        i_ok, i_n = tally(rows, "de", ["half_past"])
+        f_ok, f_n = tally(rows, "de", ["n_minutes"])
+        p = fisher_exact(i_ok, i_n - i_ok, f_ok, f_n - f_ok)
+        report.p_values.append(p)
+        print(f"      {name:<14} {size:>5}  into {i_ok:>2}/{i_n:<3} from {f_ok:>2}/{f_n:<3}"
+              f"  {format_p(p)} [exact {p:.2e}]")
+
+    print()
+    print("    German is high-resource in every corpus, so a data-volume account")
+    print("    has no room here. The counting-from cell is intact at every size")
+    print("    while the counting-into cell collapses below 120B.")
+    print()
+    print("    Six of the twelve regional items render dreiviertel N in English")
+    print("    as 'quarter to X', which is the subtractive control. The English")
+    print("    half of that cell is therefore depressed on the small models by a")
+    print("    known effect and is not a usable within-item ceiling there. The")
+    print("    German-against-German comparisons above are unaffected.")
+
+
 def section_frequency(report: Report) -> None:
     report.head("Corpus frequency against accuracy")
     path = "results/frequency.json"
@@ -769,6 +869,7 @@ def main() -> int:
     section_first_probe(report)
     section_polish(report)
     section_polish_vs_russian(report)
+    section_german(report)
     section_frequency(report)
 
     if args.check:

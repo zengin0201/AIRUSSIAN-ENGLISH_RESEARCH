@@ -356,6 +356,94 @@ def figure_polish(pl_runs, ru_runs, out_path: str, large_only: bool = True) -> N
     save(fig, out_path)
 
 
+def figure_german(de_runs, ru_runs, out_path: str) -> None:
+    """
+    The scale axis, which is what German added.
+
+    German counts into the coming hour as Russian does, but with a closed set
+    of three phrases and no productive form. So the picture is three lines:
+
+      German counting-from   flat at ceiling, every size
+      German counting-into   climbs from floor to ceiling with scale
+      Russian productive     flat on the floor, every size
+
+    The gap between the second and third lines is the paper's claim in one
+    image: scale supplies the missing units and never the missing rule.
+
+    `de_runs` and `ru_runs` are lists of (label, episodes) ordered smallest
+    model first. Russian may be empty, in which case its line is omitted.
+    """
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    def rate(rows, arm, difficulty):
+        ok = n = 0
+        for row in rows:
+            # The first line of a result file is the run header, which has
+            # no arm. Other figures reach it through helpers that strip it.
+            if row.get("arm") != arm or row.get("difficulty") != difficulty:
+                continue
+            n += 1
+            ok += bool(row["success"])
+        return (100.0 * ok / n if n else None), ok, n
+
+    sizes = [label for label, _ in de_runs]
+    x = list(range(len(sizes)))
+
+    series = []
+    into = [rate(rows, "de", "half_past") for _, rows in de_runs]
+    frm = [rate(rows, "de", "n_minutes") for _, rows in de_runs]
+    series.append(("German counting-from" + LF + "N nach X", frm, "#4c72b0", "o", "-"))
+    series.append(("German counting-into" + LF + "halb X", into, "#dd8452", "s", "-"))
+    if ru_runs:
+        ru = [rate(rows, "ru", "n_minutes") for _, rows in ru_runs]
+        if any(v[0] is not None for v in ru):
+            series.append(("Russian productive" + LF + "N минут X-ого",
+                           ru, "#c44e52", "^", "--"))
+
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    for rank, (name, values, colour, marker, style) in enumerate(series):
+        ys = [v[0] for v in values]
+        ax.plot(x, ys, marker=marker, color=colour, linestyle=style,
+                linewidth=2, markersize=8, label=name)
+        # The Russian line is flat at the floor and its per-point labels
+        # collided with the German counting-into ones, which sit just above it
+        # at the small sizes. It is constant, so one label says everything.
+        points = list(zip(x, values))
+        if style == "--":
+            points = points[-1:]
+        for xi, (pct, ok, n) in points:
+            if pct is None:
+                continue
+            above = pct < 90
+            dy = (9 + 11 * rank) if above else (-17 - 11 * rank)
+            ax.annotate(f"{ok}/{n}" + (" at every size" if style == "--" else ""),
+                        (xi, pct), textcoords="offset points",
+                        xytext=(0, dy), ha="right" if style == "--" else "center",
+                        fontsize=8, color=colour)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(sizes)
+    ax.set_xlabel("model size")
+    ax.set_ylabel("accuracy (%)")
+    ax.set_ylim(-6, 112)
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.grid(axis="y", alpha=0.3)
+    ax.set_axisbelow(True)
+    ax.legend(loc="center left", bbox_to_anchor=(1.01, 0.5), frameon=False,
+              fontsize=8)
+    ax.set_title("Scale repairs the closed set and never the productive rule",
+                 fontsize=10)
+    fig.tight_layout()
+    for ext in ("png", "pdf"):
+        fig.savefig(out_path.rsplit(".", 1)[0] + "." + ext, dpi=200,
+                    bbox_inches="tight")
+    plt.close(fig)
+    print(f"wrote {out_path}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--probe", nargs="+", required=True,
@@ -367,6 +455,14 @@ def main() -> None:
                         help="Result files from the Polish probe. Paired with "
                              "--probe, which must then be the Russian runs of "
                              "the same models, to draw the crossed-design figure.")
+    parser.add_argument("--german", nargs="*", default=None,
+                        help="German probe result files, smallest model first, "
+                             "to draw the scale figure.")
+    parser.add_argument("--german-labels", nargs="*", default=None,
+                        help="Size labels matching --german, e.g. 3B 3.8B 27B 120B.")
+    parser.add_argument("--german-russian", nargs="*", default=None,
+                        help="Russian probe runs in the same size order, to draw "
+                             "the productive-form reference line.")
     parser.add_argument("--out", default="figures")
     args = parser.parse_args()
 
@@ -383,6 +479,19 @@ def main() -> None:
     if args.polish:
         figure_polish([load(p) for p in args.polish], runs,
                       os.path.join(args.out, "polish.png"))
+    if args.german:
+        labels = args.german_labels or [f"model {i+1}" for i in range(len(args.german))]
+        if len(labels) != len(args.german):
+            raise SystemExit("--german-labels must match --german in length")
+        ru_scale = []
+        if args.german_russian:
+            if len(args.german_russian) != len(args.german):
+                raise SystemExit("--german-russian must match --german in length")
+            ru_scale = [(lab, load(path)[1])
+                        for lab, path in zip(labels, args.german_russian)]
+        figure_german([(lab, load(path)[1])
+                       for lab, path in zip(labels, args.german)],
+                      ru_scale, os.path.join(args.out, "german.png"))
 
 
 if __name__ == "__main__":
