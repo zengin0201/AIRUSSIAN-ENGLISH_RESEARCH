@@ -567,7 +567,7 @@ def section_polish(report: Report) -> None:
         p = fisher_exact(frm[0], frm[1] - frm[0], into[0], into[1] - into[0])
         report.p_values.append(p)
         print(f"    {label:<38} «po» {frm[0]}/{frm[1]}  «wpół do» {into[0]}/{into[1]}"
-              f"   p = {p:.2f}")
+              f"   {format_p(p)}")
 
     literal = pooled["digital"]["pl"]
     if literal[1] and literal[0] / literal[1] < 0.9:
@@ -638,7 +638,7 @@ def section_polish_vs_russian(report: Report) -> None:
             p = fisher_exact(pl_ok, pl_n - pl_ok, ru_ok, ru_n - ru_ok)
             report.p_values.append(p)
             print(f"    {caption:<42} pl {pl_ok:>2}/{pl_n:<3} ru {ru_ok:>2}/{ru_n:<3}"
-                  f"  p = {p:.2e}")
+                  f"  {format_p(p)} [exact {p:.2e}]")
         print()
 
     print("  Polish is the lower-resource of the two languages and is the one that")
@@ -686,8 +686,14 @@ def section_frequency(report: Report) -> None:
 # checking a document against what we just computed
 # --------------------------------------------------------------------------
 
-P_EQUALS = re.compile(r"p\s*=\s*(\.?[0-9]+\.?[0-9]*(?:e-?[0-9]+)?)", re.IGNORECASE)
-P_LESS = re.compile(r"p\s*<\s*(\.?[0-9]+\.?[0-9]*)", re.IGNORECASE)
+# A trailing decimal point must be followed by digits. The first version was
+# `\.?[0-9]+\.?[0-9]*`, which happily matched ".024." at the end of a sentence
+# and then crashed converting it to a float — so the one tool that guards every
+# number in the paper silently stopped checking the moment the paper started
+# using the reporting convention the tool itself enforces.
+_NUM = r"(\.[0-9]+|[0-9]+(?:\.[0-9]+)?(?:[eE]-?[0-9]+)?)"
+P_EQUALS = re.compile(r"p\s*=\s*" + _NUM, re.IGNORECASE)
+P_LESS = re.compile(r"p\s*<\s*" + _NUM, re.IGNORECASE)
 
 
 def check_document(path: str, computed: List[float], alpha: float = ALPHA) -> int:

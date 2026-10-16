@@ -31,6 +31,7 @@ from src.backends import Generation
 from src.environment import Environment, norm, verify
 from src.agent import FEWSHOT, FEWSHOT_TIMES
 from src.metrics import fisher_exact
+from src.stats import P_EQUALS, P_LESS, format_p
 
 
 class TestNormalisation(unittest.TestCase):
@@ -382,6 +383,42 @@ class TestFewShotBlocks(unittest.TestCase):
             today="2026-09-07", weekday="Monday", tools="(tools)")
         self.assertIn('{"tool": "set_alarm"', rendered)
         self.assertNotIn("{{", rendered)
+
+
+class TestPValueReporting(unittest.TestCase):
+    """
+    Gorman's convention, and the regex that polices it.
+
+    The first version of that regex matched ".024." at the end of a sentence
+    and crashed on float(), so `--check` stopped checking the moment the paper
+    adopted the convention the checker exists to enforce. It failed silently:
+    the header printed, nothing followed, and the exit code looked like
+    ordinary violations.
+    """
+
+    def test_a_trailing_sentence_period_is_not_part_of_the_number(self):
+        self.assertEqual(P_EQUALS.findall("the result (p = .024)."), [".024"])
+        self.assertEqual(P_EQUALS.findall("p = .024."), [".024"])
+        self.assertEqual(P_LESS.findall("p < .01."), [".01"])
+
+    def test_every_match_converts_to_a_float(self):
+        text = "p = .024. p = 1.4e-22, p = 0.47; p = 1.0 and p < .01."
+        for raw in P_EQUALS.findall(text) + P_LESS.findall(text):
+            float(raw if not raw.startswith(".") else "0" + raw)
+
+    def test_below_alpha_reports_the_threshold(self):
+        for tiny in (1.36e-22, 6.1e-16, 0.00125, 0.0099):
+            self.assertEqual(format_p(tiny), "p < .01")
+
+    def test_above_alpha_reports_two_significant_digits(self):
+        self.assertEqual(format_p(0.47), "p = .47")
+        self.assertEqual(format_p(0.0114), "p = .011")
+        self.assertEqual(format_p(1.0), "p = 1.0")
+
+    def test_a_value_just_above_alpha_is_not_printed_as_alpha(self):
+        # At two decimal places .0114 prints as ".01", which reads as if the
+        # test landed exactly on the threshold.
+        self.assertNotEqual(format_p(0.0114), "p = .01")
 
 
 if __name__ == "__main__":
