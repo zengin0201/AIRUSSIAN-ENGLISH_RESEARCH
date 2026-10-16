@@ -1,0 +1,2602 @@
+{
+  "meta": {
+    "today": "2026-09-07",
+    "weekday": "Monday",
+    "version": "time-de-2.0",
+    "note": "Powered German probe, 48 items. Same cells and same carrier as data/tasks_time_de.json, with the into_hour cell grown from 5 items to 15 and the regional cell from 2 to 12, because five items could not separate any two models. Kept as a separate file because the first run happened before the scale hypothesis existed, and merging would test that hypothesis partly on the data that suggested it; see F57 for the pre-registration. No clock time here repeats one from the first probe and none is a few-shot demonstration. German counts INTO the coming hour with a closed set of three items (halb, viertel, dreiviertel) and has no productive counting-into form, so from_hour items can only be N nach X. The twelve regional items are flagged de_regional: viertel N and dreiviertel N are used in the east and south, their gold label is contested among native speakers, and they must be excluded from any primary comparison unless deliberately included. viertel is lowercase throughout on purpose so the minimal pair differs by one word and not also by capitalisation. WORDING NOT YET CHECKED BY A NATIVE SPEAKER — see tools/make_german_probe2.py."
+  },
+  "tasks": [
+    {
+      "id": "h01",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb eins nachts = 00:30",
+      "instruction": {
+        "en": "Set an alarm for half past twelve at night.",
+        "de": "Stelle den Wecker auf halb eins nachts."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "00:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "00:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "00:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "00:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h02",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb zwei nachts = 01:30",
+      "instruction": {
+        "en": "Set an alarm for half past one at night.",
+        "de": "Stelle den Wecker auf halb zwei nachts."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h03",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb drei morgens = 02:30",
+      "instruction": {
+        "en": "Set an alarm for half past two in the morning.",
+        "de": "Stelle den Wecker auf halb drei morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "02:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "02:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "02:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "02:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h04",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb vier morgens = 03:30",
+      "instruction": {
+        "en": "Set an alarm for half past three in the morning.",
+        "de": "Stelle den Wecker auf halb vier morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h05",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb sechs morgens = 05:30",
+      "instruction": {
+        "en": "Set an alarm for half past five in the morning.",
+        "de": "Stelle den Wecker auf halb sechs morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "05:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "05:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h06",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb acht morgens = 07:30",
+      "instruction": {
+        "en": "Set an alarm for half past seven in the morning.",
+        "de": "Stelle den Wecker auf halb acht morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h07",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb neun morgens = 08:30",
+      "instruction": {
+        "en": "Set an alarm for half past eight in the morning.",
+        "de": "Stelle den Wecker auf halb neun morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "08:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "08:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "08:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "08:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h08",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb zehn vormittags = 09:30",
+      "instruction": {
+        "en": "Set an alarm for half past nine in the morning.",
+        "de": "Stelle den Wecker auf halb zehn vormittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "09:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "09:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h09",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb elf vormittags = 10:30",
+      "instruction": {
+        "en": "Set an alarm for half past ten in the morning.",
+        "de": "Stelle den Wecker auf halb elf vormittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h10",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb eins mittags = 12:30",
+      "instruction": {
+        "en": "Set an alarm for half past twelve in the afternoon.",
+        "de": "Stelle den Wecker auf halb eins mittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h11",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb zwei nachmittags = 13:30",
+      "instruction": {
+        "en": "Set an alarm for half past one in the afternoon.",
+        "de": "Stelle den Wecker auf halb zwei nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h12",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb vier nachmittags = 15:30",
+      "instruction": {
+        "en": "Set an alarm for half past three in the afternoon.",
+        "de": "Stelle den Wecker auf halb vier nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "15:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "15:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "15:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "15:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h13",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb sechs abends = 17:30",
+      "instruction": {
+        "en": "Set an alarm for half past five in the evening.",
+        "de": "Stelle den Wecker auf halb sechs abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "17:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "17:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "17:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "17:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h14",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb acht abends = 19:30",
+      "instruction": {
+        "en": "Set an alarm for half past seven in the evening.",
+        "de": "Stelle den Wecker auf halb acht abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "19:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "19:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "19:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "19:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h15",
+      "difficulty": "half_past",
+      "de_direction": "into_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "halb elf abends = 22:30",
+      "instruction": {
+        "en": "Set an alarm for half past ten in the evening.",
+        "de": "Stelle den Wecker auf halb elf abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:30"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:30",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h16",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "viertel zwei nachts = 01:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past one at night.",
+        "de": "Stelle den Wecker auf viertel zwei nachts."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:15"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:15",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h17",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "viertel vier morgens = 03:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past three in the morning.",
+        "de": "Stelle den Wecker auf viertel vier morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:15"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:15",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h18",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "viertel sieben morgens = 06:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past six in the morning.",
+        "de": "Stelle den Wecker auf viertel sieben morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:15"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:15",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h19",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "viertel zehn vormittags = 09:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past nine in the morning.",
+        "de": "Stelle den Wecker auf viertel zehn vormittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "09:15"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "09:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:15",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h20",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "viertel drei nachmittags = 14:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past two in the afternoon.",
+        "de": "Stelle den Wecker auf viertel drei nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:15"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:15",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h21",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "viertel acht abends = 19:15",
+      "instruction": {
+        "en": "Set an alarm for quarter past seven in the evening.",
+        "de": "Stelle den Wecker auf viertel acht abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "19:15"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "19:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "19:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "19:15",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h22",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "dreiviertel zwei nachts = 01:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to two at night.",
+        "de": "Stelle den Wecker auf dreiviertel zwei nachts."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h23",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "dreiviertel fünf morgens = 04:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to five in the morning.",
+        "de": "Stelle den Wecker auf dreiviertel fünf morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h24",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "dreiviertel acht morgens = 07:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to eight in the morning.",
+        "de": "Stelle den Wecker auf dreiviertel acht morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h25",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "dreiviertel elf vormittags = 10:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to eleven in the morning.",
+        "de": "Stelle den Wecker auf dreiviertel elf vormittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h26",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "dreiviertel vier nachmittags = 15:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to four in the afternoon.",
+        "de": "Stelle den Wecker auf dreiviertel vier nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "15:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "15:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "15:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "15:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h27",
+      "difficulty": "quarter_into",
+      "de_direction": "into_hour_regional",
+      "de_regional": true,
+      "n_steps": 1,
+      "trap": "dreiviertel neun abends = 20:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to nine in the evening.",
+        "de": "Stelle den Wecker auf dreiviertel neun abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h28",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zehn nach eins nachts = 01:10",
+      "instruction": {
+        "en": "Set an alarm for ten past one at night.",
+        "de": "Stelle den Wecker auf zehn nach eins nachts."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:10"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "01:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "01:10",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h29",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zwanzig nach drei morgens = 03:20",
+      "instruction": {
+        "en": "Set an alarm for twenty past three in the morning.",
+        "de": "Stelle den Wecker auf zwanzig nach drei morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:20"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:20",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h30",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "fünf nach sechs morgens = 06:05",
+      "instruction": {
+        "en": "Set an alarm for five past six in the morning.",
+        "de": "Stelle den Wecker auf fünf nach sechs morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:05"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:05",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h31",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "fünfundzwanzig nach sieben morgens = 07:25",
+      "instruction": {
+        "en": "Set an alarm for twenty five past seven in the morning.",
+        "de": "Stelle den Wecker auf fünfundzwanzig nach sieben morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:25"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:25"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:25",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:25",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h32",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zehn nach neun vormittags = 09:10",
+      "instruction": {
+        "en": "Set an alarm for ten past nine in the morning.",
+        "de": "Stelle den Wecker auf zehn nach neun vormittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "09:10"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "09:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "09:10",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h33",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zwanzig nach elf vormittags = 11:20",
+      "instruction": {
+        "en": "Set an alarm for twenty past eleven in the morning.",
+        "de": "Stelle den Wecker auf zwanzig nach elf vormittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:20"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:20",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h34",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "fünf nach eins nachmittags = 13:05",
+      "instruction": {
+        "en": "Set an alarm for five past one in the afternoon.",
+        "de": "Stelle den Wecker auf fünf nach eins nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:05"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:05",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h35",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "fünfundzwanzig nach drei nachmittags = 15:25",
+      "instruction": {
+        "en": "Set an alarm for twenty five past three in the afternoon.",
+        "de": "Stelle den Wecker auf fünfundzwanzig nach drei nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "15:25"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "15:25"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "15:25",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "15:25",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h36",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zehn nach vier nachmittags = 16:10",
+      "instruction": {
+        "en": "Set an alarm for ten past four in the afternoon.",
+        "de": "Stelle den Wecker auf zehn nach vier nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "16:10"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "16:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "16:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "16:10",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h37",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zwanzig nach sechs abends = 18:20",
+      "instruction": {
+        "en": "Set an alarm for twenty past six in the evening.",
+        "de": "Stelle den Wecker auf zwanzig nach sechs abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "18:20"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "18:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "18:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "18:20",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h38",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "fünf nach neun abends = 21:05",
+      "instruction": {
+        "en": "Set an alarm for five past nine in the evening.",
+        "de": "Stelle den Wecker auf fünf nach neun abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:05"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:05",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h39",
+      "difficulty": "n_minutes",
+      "de_direction": "from_hour",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zehn nach elf abends = 23:10",
+      "instruction": {
+        "en": "Set an alarm for ten past eleven at night.",
+        "de": "Stelle den Wecker auf zehn nach elf abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "23:10"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "23:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "23:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "23:10",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h40",
+      "difficulty": "literal",
+      "de_direction": "digital",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "02:45 = 02:45",
+      "instruction": {
+        "en": "Set an alarm for 02:45.",
+        "de": "Stelle den Wecker auf 02:45."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "02:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "02:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "02:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "02:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h41",
+      "difficulty": "literal",
+      "de_direction": "digital",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "04:20 = 04:20",
+      "instruction": {
+        "en": "Set an alarm for 04:20.",
+        "de": "Stelle den Wecker auf 04:20."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:20"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:20",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h42",
+      "difficulty": "literal",
+      "de_direction": "digital",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "13:35 = 13:35",
+      "instruction": {
+        "en": "Set an alarm for 13:35.",
+        "de": "Stelle den Wecker auf 13:35."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:35"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:35"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:35",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:35",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h43",
+      "difficulty": "literal",
+      "de_direction": "digital",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "17:05 = 17:05",
+      "instruction": {
+        "en": "Set an alarm for 17:05.",
+        "de": "Stelle den Wecker auf 17:05."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "17:05"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "17:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "17:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "17:05",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h44",
+      "difficulty": "literal",
+      "de_direction": "digital",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "21:50 = 21:50",
+      "instruction": {
+        "en": "Set an alarm for 21:50.",
+        "de": "Stelle den Wecker auf 21:50."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:50"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:50"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:50",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:50",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h45",
+      "difficulty": "subtractive",
+      "de_direction": "subtractive",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zwanzig vor vier morgens = 03:40",
+      "instruction": {
+        "en": "Set an alarm for twenty to four in the morning.",
+        "de": "Stelle den Wecker auf zwanzig vor vier morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:40"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:40"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:40",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:40",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h46",
+      "difficulty": "subtractive",
+      "de_direction": "subtractive",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "viertel vor sieben morgens = 06:45",
+      "instruction": {
+        "en": "Set an alarm for quarter to seven in the morning.",
+        "de": "Stelle den Wecker auf viertel vor sieben morgens."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:45"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:45",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h47",
+      "difficulty": "subtractive",
+      "de_direction": "subtractive",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zehn vor zwei nachmittags = 13:50",
+      "instruction": {
+        "en": "Set an alarm for ten to two in the afternoon.",
+        "de": "Stelle den Wecker auf zehn vor zwei nachmittags."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:50"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:50"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:50",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:50",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "h48",
+      "difficulty": "subtractive",
+      "de_direction": "subtractive",
+      "de_regional": false,
+      "n_steps": 1,
+      "trap": "zwanzig vor zehn abends = 21:40",
+      "instruction": {
+        "en": "Set an alarm for twenty to ten in the evening.",
+        "de": "Stelle den Wecker auf zwanzig vor zehn abends."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:40"
+          }
+        ],
+        "de": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:40"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:40",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "de": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:40",
+              "label": "Wecker"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    }
+  ]
+}

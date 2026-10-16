@@ -46,6 +46,20 @@ def main(argv: List[str] | None = None) -> int:
     parser.add_argument("--out", required=True)
     args = parser.parse_args(argv)
 
+    # Checked before anything is loaded, because the point is to fail before
+    # the GPU is spent. Repeats at temperature 0 are exact duplicates: F55
+    # measured 48 of 48 item-arm cells identical across all three repeats in
+    # two local runs, zero disagreement. The default of 3 exists for the
+    # stability runs, which use temperature 0.7. Left on by accident at
+    # temperature 0 it triples the run time, adds nothing, and inflates every
+    # interval threefold if the episodes are later counted as n.
+    if args.repeats > 1 and args.temperature == 0.0 and args.backend != "oracle":
+        raise SystemExit(
+            f"--repeats {args.repeats} at --temperature 0.0 runs every task "
+            f"{args.repeats} times for the same answer every time (F55). "
+            f"Pass --repeats 1, or raise the temperature if you want variation."
+        )
+
     data = load_tasks(args.tasks)
     tasks = data["tasks"]
     if args.limit:

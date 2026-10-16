@@ -2517,6 +2517,11 @@ printed wrong — a section simply did not appear, which is why it lasted.
 
 ### F54 — German on all four models, and the pooling that would be cheating
 
+> **RETRACTED in F56.** The admissibility call below is wrong. Both local
+> runs are usable for accuracy, and the pooled result F54 refused to report
+> is the result. Read F56 before using anything in this entry.
+
+
 `results/de_phi.jsonl`, `results/de_qwen3b.jsonl` added to the two hosted runs.
 Local runs were launched without `--repeats 1`, so they carry `repeats=3`.
 
@@ -2613,3 +2618,168 @@ of the stability section.
 **So no published number has an inflated n.** The design was already right;
 today's runs simply left the flag off. Repeats belong with temperature > 0 and
 nowhere else.
+
+
+### F56 — F54 was wrong about admissibility, and the correction reverses the conclusion
+
+**Retracting the central claim of F54.** It said the two local runs were
+disqualified by the harness audit and that pooling all four models "would be
+cheating". That was asserted from the summary percentages without opening the
+episodes. Opening them reverses it.
+
+**Qwen2.5-3B, "100% of English episodes killed as looping".** True, and
+irrelevant to accuracy. The looping is universal — every episode in both arms,
+successes included: **54 of 72 English episodes succeeded while looping.** The
+model simply never emits `done`; the detector stops it after two turns of
+repeating actions it has already run, and success is read off the environment
+state, which is already correct by then. The detector is not premature and
+there is no harness bug to fix.
+
+The English failures are real. The first time written is the model's answer and
+it is already wrong before any looping: g05 wrote 04:45 for 04:30, g16 wrote
+13:05 for 12:05, g24 wrote 21:10 for 21:25. Qwen2.5-3B is a weak model with a
+genuine 18/24 English ceiling on this probe, which is a different thing from a
+broken measurement.
+
+What looping *does* corrupt is steps and tokens, so this run's CPST is not
+comparable. Accuracy is fine.
+
+**Phi-3.5-mini, "17% German truncation versus 8% English".** Also true, also
+not the explanation. Checked per episode: **all four failing `halb` items have
+`truncated_turns = 0`**, single clean answers, and three of the four are
+exactly +60.
+
+    g01  14:30 -> 15:30   (+60)   not truncated
+    g02  06:30 -> 07:30   (+60)   not truncated
+    g04  11:30 -> 09:30  (-120)   not truncated
+    g05  04:30 -> 05:30   (+60)   not truncated
+
+Truncation is spread across outcomes rather than concentrated in failures: 3 of
+14 German successes were truncated too. It is noise in the file, not the cause
+of the effect.
+
+**So all four runs are admissible for accuracy**, and `digital` is 4/4 on every
+one of them, which was the condition F50 set for interpreting the rest.
+
+**The conclusion that follows, which is the opposite of F54's.**
+
+    pooled, distinct items:   halb 9/20  vs  nach 36/40   p < .01  (3.1e-04)
+
+That is not a choice of pool. It is the result, and F54's refusal to report it
+was the error, not the caution it presented itself as.
+
+**Which means the pre-registered prediction failed.** F50 predicted German
+`into_hour` would be read correctly at 80% or better, because three frequent
+fixed phrases are memorisable where a rule is not. Pooled across four models it
+is 9 of 20, and the pre-registered falsification condition — German
+`into_hour` below German `from_hour` with `digital` intact — **is met**.
+
+German's counting-into phrases are **not inherently safe**. Saying so plainly
+because the Polish pre-registration failed too, and the value of writing
+predictions down in advance is entirely in reporting it when they lose.
+
+**What survives, and is now better specified than the account that lost.** The
+gradient is monotonic in model size:
+
+    gpt-oss-120b   120B    halb 5/5
+    qwen3.8-27b     27B    halb 3/5
+    Phi-3.5-mini   3.8B    halb 1/5
+    Qwen2.5-3B       3B    halb 0/5
+
+The three German phrases are memorised by large models and not by small ones,
+and a small model falls back on the same compositional reading that breaks
+Russian — in German the +60 signature is there at every scale, three of Phi's
+four `halb` errors and the Russian error exactly. So the variable is not
+productivity versus lexicalisation as F50 framed it. It is **frequency against
+capacity**: a phrase has to be frequent enough *and* the model large enough for
+the memorised reading to win over the compositional one. That sits with F45,
+where few-shot helped only at scale, and it explains the thing F50 flagged as
+needing an explanation — why Russian «половина» sits at 45% rather than at
+ceiling.
+
+**This is a hypothesis arrived at by looking at the table.** It is not tested.
+It gets pre-registered before the next run and not written into the paper
+before that, which is the point of F57.
+
+**The methodological lesson, which is the one worth keeping.** F54 read four
+summary lines — loop%, truncation%, English total — and concluded two files
+were unusable. Every one of those numbers was real and every inference from
+them was wrong. The project's own rule from F16, that a bad harness audit means
+the numbers are ours, is a trigger to open the episodes, **not a verdict**.
+Used as a verdict it throws away real data, and it did: it came within one
+commit of discarding the two models that carry the actual finding, in the name
+of rigour.
+
+
+### F57 — the powered German probe, pre-registered before it is run
+
+`data/tasks_time_de2.json`, 48 items. Committed before any model sees it.
+
+**Provenance of the hypothesis, stated first because it is the weak point.**
+The scale gradient was found by looking at the table in F56. It was not
+predicted. A pattern across four points, each resting on five items, noticed
+after the fact, is the weakest kind of claim this project makes, which is the
+entire reason this file exists as a separate confirmatory run rather than as
+more rows added to the first one.
+
+**The hypothesis.** F50 said German's counting-into forms are safe because
+three frequent fixed phrases are memorisable where a rule is not. F56 showed
+that is false below a certain model size: *halb* goes 5/5, 3/5, 1/5, 0/5 at
+120B, 27B, 3.8B, 3B, and the +60 signature is present at every scale. The
+refined account is **frequency against capacity**: the memorised reading has to
+beat the compositional one, which needs the phrase to be frequent enough *and*
+the model large enough. Productivity is not the variable. Frequency is, and
+capacity decides whether frequency is enough.
+
+**The probe.** into_hour 15 items, into_hour_regional 12, from_hour 12, digital
+5, subtractive 4. No clock time overlaps the first German probe or the few-shot
+demonstrations. The regional cell grew from 2 items to 12 and gained
+*dreiviertel*, because it is now the sharpest test available: *viertel neun* is
+a fixed phrase from the same closed set as *halb*, so if it fails where *halb*
+succeeds, what separates them is frequency alone.
+
+**Predictions, per model, on 15 halb items.**
+
+    gpt-oss-120b   120B   halb >= 13/15
+    qwen3.8-27b     27B   halb  8-13/15
+    Phi-3.5-mini   3.8B   halb <=  6/15
+    Qwen2.5-3B       3B   halb <=  4/15
+
+**The ordered prediction, which is the real one:** halb accuracy is
+monotonically non-decreasing in model size across the four. This is a single
+claim that four numbers can break, and it is what the file was built to test.
+
+**Predictions for the other cells, all four models.**
+
+1. `digital` >= 4/5 on every model. Health check. If it fails anywhere, that
+   model's file is uninterpretable and nothing else in it gets read.
+2. `from_hour` >= 10/12 on every model. German's only option for these times;
+   Russian scores 0/32 on the equivalent.
+3. `into_hour_regional` **below** `into_hour` within every model. Same closed
+   set, same direction of counting, rarer phrase. With 12 items this cell can
+   finally carry a comparison instead of hinting.
+4. `subtractive` low in German and English alike. Control.
+
+**What falsifies the scale account, stated now.**
+
+- `halb` at ceiling on all four models — then the F56 gradient was five-item
+  noise and the original F50 account was right after all.
+- `halb` at floor on all four — then size is not the variable and something
+  else is doing the work.
+- Any non-monotonic ordering across the four sizes — then the scale story is
+  wrong as stated, whatever else is true.
+
+**Reporting rules, fixed in advance.**
+
+- The 24-item run is reported as what it was: the exploratory run that
+  generated the hypothesis. It is **not** pooled with this one.
+- Every model is run with `--repeats 1` at temperature 0. F55; the runner now
+  refuses the alternative.
+- All four models get run, and all four get reported, including any whose
+  harness audit looks bad. F56 is the reason: a bad audit line is a trigger to
+  open the episodes, not a licence to drop the file.
+- The twelve regional items stay flagged and out of the primary comparison
+  unless their inclusion is stated.
+
+**Still true and still unfixed:** no native speaker has checked the German, and
+the regional forms need a verifier from a region that uses them.
