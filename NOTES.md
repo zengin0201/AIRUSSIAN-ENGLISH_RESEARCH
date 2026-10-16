@@ -2150,3 +2150,118 @@ looping noise: 17 of 24 and 23 of 24 episodes stopped by the loop detector in
 the two arms. Same as every Qwen run in this project. It does not touch the
 accuracy result — the model never wrote a correct productive-form time in any
 of the repeated attempts.
+
+
+### F46 — Gorman's own conventions say the opposite of what the paper did
+
+Read the rules off his page rather than guessing them. Examples are
+**italicised and never quoted** — "never underlined, bolded, or placed in
+single or double quotes, regardless of the script used." Glosses are
+**single-quoted**, immediately after the example, with no "meaning" preamble.
+
+The paper did the exact inverse: examples in guillemets, glosses in italics.
+Writing to him in a format he has published a page about, backwards, is a bad
+first impression for a reason that has nothing to do with the research.
+
+**Changed.** 47 Cyrillic spans lose the guillemets and stand bare, because
+Cyrillic is already set off by being Cyrillic and italic Cyrillic through
+fontspec is fragile. The 7 Polish spans become italics — Polish is Latin
+script, so his primary rule applies. English clock forms move from double
+quotes into italics. Three glosses move from italics into single quotes. The
+sentence quoted from Mazzia et al. stays in double quotes: it is a quotation,
+not an example. The two emphasis italics stay.
+
+A worry that turned out to be unfounded: `build_tex.py` wraps Russian in
+`\ru{}` for the Cyrillic font, and if it had detected Russian by the
+guillemets, removing them would have silently dropped the font switch and
+produced tofu in the PDF. It keys off the codepoint range instead. The comment
+at that regex records an earlier bug where the character class *did* include
+guillemets and swallowed them.
+
+### F47 — the quotes were already wrong in TeX, and my fix was wrong too
+
+Two bugs, one pre-existing and one mine, both in the same two lines.
+
+**Pre-existing.** `inline()` ended with `out.replace('"', "''")`. TeX quotes
+are directional: an opening double quote is two backticks and a closing one is
+two apostrophes. Every double-quoted span in the paper was therefore rendered
+with *closing* quotes at both ends. It had been that way for as long as the
+builder has existed and nobody looked, because the only remaining double-quoted
+span is one sentence in §2.
+
+**Mine.** I replaced it with a rule for doubles and then a rule for singles,
+in that order, with `*` in the single rule's content class. The double rule
+turned `"x"` into ``` ``x'' ```; the single rule then matched the two
+apostrophes it had just produced, with an empty capture between them, and
+emitted ``` `' ```. The quotation closed with a backtick. Single rule first,
+and `+` instead of `*` so it cannot match nothing.
+
+Caught it by grepping the generated `.tex` for the exact strings expected,
+which is the only reason it did not go into the PDF. Six tests in
+`TestExampleTypography` now cover both directions, apostrophes inside words
+(don't, model's), and the Cyrillic wrap. Plus one test that reads `paper.md`
+and fails if guillemets reappear or if more than one double-quoted span exists.
+
+### F48 — neither thing we wanted to cite is published
+
+The plan was two Related Work citations: Sproat's mod-12 rule for reading
+Russian clock forms, and Gorman's observation that seq2seq models confuse 20
+and 30 in Russian number names. Searched for both. **Neither is published.**
+Both came up in correspondence, so citing them means "personal communication"
+and asking permission for a claim a reader cannot check.
+
+Published substitutes exist and are better:
+
+- **Sproat & Jaitly (2017)**, Interspeech 754–758. An RNN text normaliser with
+  very high overall accuracy whose residual errors would still be unacceptable
+  in a speech application; they reduce them with an FST filter rather than with
+  more data.
+- **Zhang et al. (2019)**, Computational Linguistics 45(2):293–337. Names the
+  class: *unrecoverable* errors, where a listener who cannot see the input has
+  no way to know the system misread it. Fix is finite-state covering grammars.
+  **Gorman and Sproat are both co-authors.**
+
+So the paper now cites, in print, the thing each of them said in email — the
+silent-failure framing and the deterministic-layer answer — and credits a paper
+they wrote together. Better than a personal-communication footnote, and it
+needs no permission.
+
+### F49 — the retraction trap fired a sixth time
+
+"Polish is the lower-resourced of the two languages and it is the one that
+succeeds" was cut from the paper last session after Sproat's numbers turned out
+to have the ordering reversed (ru 2.12M > pl 1.71M on Wikipedia articles). The
+cut landed in `paper/paper.md`. It did **not** land in `README.md`, which is
+the public face of the repository, or in the console output of
+`src/stats.py`, which prints it under the Polish-vs-Russian section every time
+the analysis runs.
+
+So for a session the repo was publicly asserting a false claim while the paper
+had already retracted it, and the tool that is supposed to be the single source
+of every number was printing it too.
+
+**The pattern, now six for six:** a fix gets applied where the problem was
+noticed and nowhere else. Every previous firing was this. `grep` for the
+claim's wording across the whole repo is the whole fix, and it takes ten
+seconds. The reason it keeps happening is that the claim gets *rewritten* in
+the paper, so the old wording survives only elsewhere, where nothing points at
+it.
+
+**Changed.** Both now carry the design argument, which needs no measurement:
+whatever the two languages' relative corpus share is, it is the same quantity
+in both halves of the comparison, and a constant cannot produce an effect that
+appears on one clock form and vanishes on another. `stats.py` carries a comment
+saying not to put the resource claim back, with the numbers.
+
+### Still open after session 16
+
+- **Body is 3113 words**, up 138 from the new paragraph, against roughly 2565
+  for four pages in ACL two-column. About 550 over. Do not trim until the
+  actual venue and its limit are known — four pages is an assumption, and some
+  workshops allow more.
+- **The local PDF is 7 pages A4 single-column** from reportlab. That is not the
+  ACL page count and never was. The real number needs the XeLaTeX build.
+- **Native Polish speaker check.** Outstanding since August. Blocker.
+- **German or Dutch probe.** Sproat's actual question. Needs a native verifier
+  before it is worth running.
+- **Phi's English few-shot arm** stays excluded, reason documented in F44.
