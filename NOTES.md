@@ -2265,3 +2265,149 @@ saying not to put the resource claim back, with the numbers.
 - **German or Dutch probe.** Sproat's actual question. Needs a native verifier
   before it is worth running.
 - **Phi's English few-shot arm** stays excluded, reason documented in F44.
+
+
+### F50 — German, pre-registered before a single run
+
+Written before any German data exists. The Polish pre-registration was wrong
+and that was worth more than being right, so this one is specific enough to be
+wrong in the same way.
+
+**Why German is not a third replication.** German counts into the coming hour
+exactly as Russian does — *halb acht* 07:30, *viertel acht* 07:15,
+*dreiviertel acht* 07:45, all naming the hour being entered. But German's
+counting-into inventory is a **closed set of three lexical items**. There is no
+German form for 07:20 that counts into the eighth hour; *zwanzig acht* does not
+exist, and 07:20 can only be *zwanzig nach sieben*. Russian's construction is
+**productive**: any minute value takes it, and «двадцать минут восьмого» is
+built by rule rather than retrieved.
+
+So German holds the direction of counting constant and varies productivity.
+Every previous probe varied the direction.
+
+**This is the first probe that can prove the account wrong.** Everything so far
+predicted a failure, and a theory that only predicts failures is cheap. Here
+the prediction is success.
+
+Also, German is high-resource in every corpus anyone trains on. Russian-vs-
+Polish needed a paragraph arguing that corpus share cannot be the variable.
+German removes that explanation without an argument.
+
+**The baselines these predictions are measured against** (from F30/F45 and the
+frequency table):
+
+    English, all cells                      ~94%
+    Russian «N минут X-ого», productive     0/32   = 0%
+    Russian «четверть X»                    6%
+    Russian «половина X»                    45%
+    Polish «wpół do», INTO but fixed        5/5
+    Polish «po», FROM                       like English
+
+**Predictions, our account.**
+
+1. **`digital` ≥ 90%.** Health check, not a finding. If this drops, the German
+   carrier sentence is broken and nothing else in the file may be interpreted.
+   Stop and get a native speaker before reading any other cell.
+2. **`from_hour` (10 items, *N nach X*) indistinguishable from English.** This
+   is the cell where Russian scores 0 of 32. German has only the English option
+   here, so if the construction is the variable, German must score like English.
+3. **`into_hour` (5 items, *halb*) ≥ 80%, and clearly above Russian «половина»
+   at 45%.** This is the load-bearing prediction.
+4. **`subtractive` low in German and in English alike.** It fails in English
+   too; it is a control, not a result.
+5. **German overall ≈ English overall**, no significant gap.
+
+**Prediction, the rival account** — "counting into the coming hour is simply
+hard, whatever the language":
+
+- `into_hour` fails, at or below 50%, patterning with Russian while `digital`
+  stays clean.
+
+**What falsifies us, stated now so it cannot be renegotiated later:** German
+`into_hour` significantly below German `from_hour` with `digital` intact. If
+that is what comes back, the memorisation account is wrong, the rival is right,
+and §4.4 of the paper loses its central claim.
+
+**The mechanism prediction, which is the interesting part.** If German *halb*
+lands near 95% while Russian «половина» sits at 45%, both being the frequent
+fixed counting-into phrase of their language, the difference needs a reason.
+The one this account offers: Russian «половина восьмого» lives inside a
+**productive paradigm** — it is one member of a family of counting-into forms
+that the model handles by a broken analysis, and it gets dragged into that
+analysis. German *halb acht* has no paradigm to be dragged into, because the
+set has three members and no rule. So:
+
+- German *halb* ≈ 95% and Russian «половина» ≈ 45% **supports** paradigm
+  contamination.
+- German *halb* ≈ 45%, matching Russian, **argues against** it: then the fixed
+  frequent counting-into phrase is just unreliable everywhere, paradigm or no
+  paradigm, and the frequency story needs rewriting rather than extending.
+
+Both outcomes are publishable. Only one of them is the one we expect.
+
+**The two regional items are not evidence, and are flagged in the data.** g07
+*viertel neun* 08:15 and g09 *viertel zwei* 13:15 count into the hour but are
+used only in the east and south; a Hamburg speaker may not parse them at all.
+Their gold label is contested among natives, which is worse than unverified.
+`de_regional` is set on both so they cannot enter a primary comparison by
+accident. Under this account they should fail more than *halb* — rarer, so less
+memorised — and if they do, **that is a hint at n = 2 and nothing more.** Saying
+so now, because two items going the predicted way is exactly the kind of thing
+that gets written up as if it were a result.
+
+**The errors are diagnostic, so log them rather than scoring only accuracy.**
+For *viertel neun* = 08:15: a reading of 09:15 is the named hour treated as
+already reached, the +60 analogue of the Russian error. A reading of 08:45 is
+the model falling back on standard *viertel vor neun*. Those are different
+mistakes and they mean different things. For *halb drei* = 14:30, the +60
+analogue is 15:30.
+
+**The minimal pair.** g06 *viertel nach fünf* 05:15 and g08 *viertel nach zehn*
+22:15 against g07 *viertel neun* 08:15 and g09 *viertel zwei* 13:15. Same word,
+same clock position, one word of difference, opposite readings.
+
+**Two disclosures that belong with the data, not in a footnote later.**
+*viertel* is written lowercase throughout, including in *viertel nach fünf*
+where the noun would normally be capitalised, so that the pair differs by one
+word and not also by capitalisation — otherwise a model could key off the case
+instead of the construction. And the German has not been checked by a native
+speaker, same status as the Polish. The probe is partly self-checking: bad
+German drops `digital` too, so we would know the file is worthless rather than
+drawing a conclusion from it. A clean `digital` score does not make the rest
+idiomatic.
+
+**Wiring checked before the run.** `tests/run_all.py` reports the file as "24
+tasks, comparing en against de" and structurally parallel. The oracle backend
+replays every German gold trace, 144 of 144, so the environment accepts the
+file and the checks are reachable. `ARM_LANGUAGE` has `de`, `de_cot` and
+`de_fewshot`; `TestArmLanguagePlumbing` now fails if any arm is missing from
+that table, which nothing had been guarding before.
+
+### F51 — the Russian few-shot block demonstrates the tested construction, on purpose
+
+Found while adding a guard that turned out to encode the wrong rule.
+
+I wrote a test asserting that no few-shot block may demonstrate the
+construction its probe tests, and it failed on Russian: «пять минут десятого» =
+09:05 **is** the productive counting-into construction. The premise was wrong,
+not the code. The few-shot arm exists to ask whether showing the construction
+three times repairs the reading, so of course it shows it. The guard that
+matters is the one already there — no demonstrated clock time appears in any
+probe, so it is not recall of the same item.
+
+But German is a genuine exception, and the asymmetry needs stating or someone
+will "fix" one of the two blocks later:
+
+- **Russian may demonstrate its construction.** It is a rule with unboundedly
+  many instances. Three of them do not hand over the answer.
+- **German may not demonstrate *halb*, *viertel* or *dreiviertel*.** The
+  inventory is three fixed phrases and the probe tests those exact three. One
+  demonstration is a third of the test.
+
+What keeps the arms comparable is a different rule, now tested: each language
+demonstrates the **same three clock times in that language's ordinary form**.
+English, Polish and German count from the hour because that is how those
+languages say 09:05. Russian counts into it because Russian has no other way.
+`TestFewShotDemonstrations` checks the ordinary-form rule for every language
+and the closed-set rule for German, and the comment in `agent.py` that wrongly
+claimed an existing guard covered this has been corrected.

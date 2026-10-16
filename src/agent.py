@@ -12,7 +12,8 @@ from .environment import Environment, render_tools, verify
 ARMS = ["en", "ru", "ru_sys_ru", "ru_translate", "ru_translate_safe",
         "en_cot", "ru_cot",
         "pl", "pl_cot",
-        "en_fewshot", "ru_fewshot", "pl_fewshot"]
+        "de", "de_cot",
+        "en_fewshot", "ru_fewshot", "pl_fewshot", "de_fewshot"]
 ARM_LANGUAGE = {
     "en": "en",
     "en_cot": "en",
@@ -23,9 +24,12 @@ ARM_LANGUAGE = {
     "ru_translate_safe": "ru",
     "pl": "pl",
     "pl_cot": "pl",
+    "de": "de",
+    "de_cot": "de",
     "en_fewshot": "en",
     "ru_fewshot": "ru",
     "pl_fewshot": "pl",
+    "de_fewshot": "de",
 }
 
 
@@ -110,6 +114,28 @@ User: Ustaw budzik na dziesięć po siódmej wieczorem.
 You: {{"tool": "set_alarm", "args": {{"time": "19:10", "label": "budzik"}}}}
 User: Ustaw budzik na dwadzieścia pięć po ósmej rano.
 You: {{"tool": "set_alarm", "args": {{"time": "08:25", "label": "budzik"}}}}""",
+
+    # German demonstrates the counting-from form, which is the ordinary way to
+    # say these three times in German — the language has no productive
+    # counting-into form at all.
+    #
+    # Note the asymmetry with the Russian block above, which does demonstrate
+    # the construction its probe tests. That is deliberate in both cases.
+    # Russian's construction is a rule with unboundedly many instances, so
+    # three of them do not give the answer away, and the few-shot arm exists to
+    # ask whether showing the rule repairs the reading. German's counting-into
+    # inventory is three fixed phrases and the probe tests those exact three,
+    # so a demonstration of halb would hand over a third of the test.
+    # TestFewShotDemonstrations guards both halves of this.
+    "de": """
+
+Examples:
+User: Stelle den Wecker auf fünf nach neun morgens.
+You: {{"tool": "set_alarm", "args": {{"time": "09:05", "label": "Wecker"}}}}
+User: Stelle den Wecker auf zehn nach sieben abends.
+You: {{"tool": "set_alarm", "args": {{"time": "19:10", "label": "Wecker"}}}}
+User: Stelle den Wecker auf fünfundzwanzig nach acht morgens.
+You: {{"tool": "set_alarm", "args": {{"time": "08:25", "label": "Wecker"}}}}""",
 }
 
 

@@ -29,7 +29,7 @@ from src.agent import (
 )
 from src.backends import Generation
 from src.environment import Environment, norm, verify
-from src.agent import FEWSHOT, FEWSHOT_TIMES
+from src.agent import ARMS, ARM_LANGUAGE, FEWSHOT, FEWSHOT_TIMES
 from src.metrics import fisher_exact
 from src.stats import P_EQUALS, P_LESS, format_p
 
@@ -472,6 +472,140 @@ class TestExampleTypography(unittest.TestCase):
         self.assertNotIn("«", body, "guillemets are back in the paper body")
         # One double-quoted span is allowed: the sentence quoted from TRD.
         self.assertEqual(len(re.findall('"[^"]+"', body)), 1)
+
+
+# The ordinary way to say 09:05, 19:10 and 08:25 in each language. English,
+# Polish and German count from the completed hour; Russian has no such form and
+# counts into the coming one. That is not a flaw in the demonstrations, it is
+# the asymmetry the whole project is about.
+NATURAL_RENDERING = {
+    "en": "past",
+    "ru": "\u043c\u0438\u043d\u0443\u0442",
+    "pl": "po",
+    "de": "nach",
+}
+
+# German's counting-into inventory is closed and has three members. Showing one
+# of them in a demonstration is showing a third of what the probe tests.
+GERMAN_CLOSED_SET = ("halb", "viertel", "dreiviertel")
+
+
+class TestFewShotDemonstrations(unittest.TestCase):
+    """What the demonstrations may and may not contain.
+
+    An earlier version of this class asserted that no block demonstrates the
+    construction under test. That is wrong, and worth recording so nobody
+    "fixes" the Russian block later: *\u043f\u044f\u0442\u044c \u043c\u0438\u043d\u0443\u0442 \u0434\u0435\u0441\u044f\u0442\u043e\u0433\u043e* = 09:05 is the counting-into
+    construction, and the few-shot arm exists precisely to ask whether showing
+    it three times repairs the reading. Removing it would turn the arm into a
+    test of nothing.
+
+    What makes the arms comparable is a different rule: each language
+    demonstrates the SAME three clock times in that language's ordinary form.
+    Russian's ordinary form counts into the hour because Russian has no other
+    one. German's does not, because German has no productive counting-into
+    form at all. Both are faithful; the languages differ.
+    """
+
+    def test_each_block_uses_that_language_ordinary_rendering(self):
+        for lang, block in FEWSHOT.items():
+            self.assertIn(NATURAL_RENDERING[lang], block.lower(),
+                          f"{lang} demonstrations are not in the ordinary form")
+
+    def test_the_rendering_table_covers_every_language(self):
+        self.assertEqual(set(FEWSHOT) - set(NATURAL_RENDERING), set())
+
+    def test_german_does_not_demonstrate_its_closed_set(self):
+        # Russian may show its construction because the construction is a rule
+        # with unboundedly many instances, so three of them do not give the
+        # answer away. German's is three fixed phrases, and the probe tests
+        # those exact three. Demonstrating halb would hand over a third of the
+        # test, which is why the German block uses nach throughout.
+        lowered = FEWSHOT["de"].lower()
+        for marker in GERMAN_CLOSED_SET:
+            self.assertNotIn(marker, lowered,
+                             f"German few-shot demonstrates {marker!r}, "
+                             f"which the probe tests directly")
+
+    def test_the_german_probe_does_test_that_closed_set(self):
+        # The guard above is only meaningful while this is true.
+        with open("data/tasks_time_de.json", "r", encoding="utf-8") as handle:
+            tasks = json.load(handle)["tasks"]
+        into = [t["instruction"]["de"].lower() for t in tasks
+                if t["de_direction"].startswith("into_hour")]
+        self.assertTrue(into)
+        for wording in into:
+            self.assertTrue(any(m in wording for m in GERMAN_CLOSED_SET))
+
+
+class TestGermanProbe(unittest.TestCase):
+    """German is the falsification test, so its structure has to be right.
+
+    The claim the probe makes is that direction of counting is held constant
+    while productivity varies. That only holds if the into_hour cell really is
+    the closed lexical set and the from_hour cell really is the productive one.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        with open("data/tasks_time_de.json", "r", encoding="utf-8") as handle:
+            cls.data = json.load(handle)
+        cls.tasks = {t["id"]: t for t in cls.data["tasks"]}
+
+    def test_it_mirrors_the_source_probe_item_for_item(self):
+        with open("data/tasks_time_v2.json", "r", encoding="utf-8") as handle:
+            source = {t["id"]: t for t in json.load(handle)["tasks"]}
+        self.assertEqual(set(self.tasks), set(source))
+        for task_id, task in self.tasks.items():
+            self.assertEqual(task["instruction"]["en"],
+                             source[task_id]["instruction"]["en"],
+                             f"{task_id}: English half is not byte-identical")
+            self.assertEqual(task["checks"]["de"], source[task_id]["checks"]["en"],
+                             f"{task_id}: German is checked against another time")
+
+    def test_both_directions_are_present_in_quantity(self):
+        counts = {}
+        for task in self.tasks.values():
+            counts[task["de_direction"]] = counts.get(task["de_direction"], 0) + 1
+        self.assertGreaterEqual(counts.get("into_hour", 0), 5)
+        self.assertGreaterEqual(counts.get("from_hour", 0), 8)
+        self.assertGreaterEqual(counts.get("digital", 0), 4)
+
+    def test_the_into_hour_cell_is_the_closed_lexical_set(self):
+        # If an into_hour item used an arbitrary minute value, German would
+        # have a productive counting-into form and the whole design collapses.
+        for task in self.tasks.values():
+            if task["de_direction"].startswith("into_hour"):
+                words = task["instruction"]["de"].lower()
+                self.assertTrue(
+                    any(w in words for w in ("halb", "viertel", "dreiviertel")),
+                    f"{task['id']}: into_hour without a closed-set word")
+
+    def test_the_from_hour_cell_never_counts_into_the_hour(self):
+        for task in self.tasks.values():
+            if task["de_direction"] == "from_hour":
+                self.assertIn("nach", task["instruction"]["de"].lower(),
+                              f"{task['id']}: from_hour without nach")
+
+    def test_the_minimal_pair_sits_at_the_same_clock_position(self):
+        quarters = [t for t in self.tasks.values()
+                    if t["difficulty"] == "quarter_past"]
+        self.assertTrue(all(t["checks"]["de"][0]["time"].endswith(":15")
+                            for t in quarters))
+        directions = {t["de_direction"] for t in quarters}
+        self.assertEqual(directions, {"from_hour", "into_hour_regional"},
+                         "the minimal pair needs both readings at :15")
+
+    def test_the_regional_items_are_flagged_so_they_cannot_slip_in(self):
+        for task in self.tasks.values():
+            self.assertEqual(task["de_regional"],
+                             task["de_direction"].endswith("_regional"),
+                             f"{task['id']}: flag disagrees with direction")
+        flagged = [t["id"] for t in self.tasks.values() if t["de_regional"]]
+        self.assertEqual(sorted(flagged), ["g07", "g09"])
+
+    def test_the_note_warns_that_nobody_has_checked_the_german(self):
+        self.assertIn("NOT YET CHECKED BY A NATIVE SPEAKER", self.data["meta"]["note"])
 
 
 if __name__ == "__main__":
