@@ -641,8 +641,12 @@ def section_polish_vs_russian(report: Report) -> None:
                   f"  {format_p(p)} [exact {p:.2e}]")
         print()
 
-    print("  Polish is the lower-resource of the two languages and is the one that")
-    print("  succeeds, so this cannot be read as a resource effect.")
+    # Do not say "Polish is the lower-resourced of the two" here. On the one
+    # proxy available (Wikipedia article counts) that is false: ru 2.12M vs
+    # pl 1.71M. The design argument below needs no measurement at all.
+    print("  Corpus share is the same quantity in both halves of this comparison,")
+    print("  so it cannot produce an effect that appears on one clock form and")
+    print("  vanishes on another. The variable is the construction.")
 
 
 def section_frequency(report: Report) -> None:

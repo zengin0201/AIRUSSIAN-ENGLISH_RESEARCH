@@ -34,6 +34,15 @@ from src.metrics import fisher_exact
 from src.stats import P_EQUALS, P_LESS, format_p
 
 
+import importlib.util as _ilu
+
+_spec = _ilu.spec_from_file_location(
+    "build_tex", pathlib.Path(__file__).resolve().parents[1] / "paper" / "build_tex.py")
+_build_tex = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_build_tex)
+inline = _build_tex.inline
+
+
 class TestNormalisation(unittest.TestCase):
     """norm() is applied to every comparison, so it decides every success."""
 
@@ -419,6 +428,50 @@ class TestPValueReporting(unittest.TestCase):
         # At two decimal places .0114 prints as ".01", which reads as if the
         # test landed exactly on the threshold.
         self.assertNotEqual(format_p(0.0114), "p = .01")
+
+
+class TestExampleTypography(unittest.TestCase):
+    """Gorman's conventions, and the TeX that has to carry them.
+
+    Examples are italicised and never quoted; glosses are single-quoted. Both
+    kinds of quote are directional in TeX, and an earlier version of inline()
+    ran the double rule first with a `*` in the single rule, so the single
+    rule matched the '' the double rule had just emitted: a quotation came out
+    with a backtick-apostrophe closing instead of two apostrophes.
+    """
+
+    def test_double_quotes_become_directional(self):
+        self.assertEqual(inline('He said "hello" loudly'),
+                         "He said ``hello'' loudly")
+
+    def test_single_quoted_gloss_becomes_directional(self):
+        self.assertEqual(inline("means 'twenty past seven' here"),
+                         "means `twenty past seven' here")
+
+    def test_a_quotation_is_not_eaten_by_the_gloss_rule(self):
+        out = inline('digital: "It is now 19:29, what time in 26 minutes?"')
+        self.assertIn("minutes?''", out)
+        self.assertNotIn("`'", out)
+
+    def test_apostrophes_inside_words_survive(self):
+        for text in ("don't", "the model's output", "Gorman's conventions"):
+            self.assertEqual(inline(text), text)
+
+    def test_cyrillic_is_wrapped_without_relying_on_guillemets(self):
+        # The examples are bare now, so font selection has to key off the
+        # script itself rather than off the quotes that used to surround them.
+        phrase = "двадцать минут"
+        out = inline("the phrase " + phrase + " is 07:20")
+        self.assertIn("\\ru{" + phrase + "}", out)
+        self.assertIn("is 07:20", out)
+
+    def test_paper_body_has_no_quoted_examples(self):
+        body = (pathlib.Path(__file__).resolve().parents[1]
+                / "paper" / "paper.md").read_text(encoding="utf-8")
+        body = body.partition("## Notes to myself")[0]
+        self.assertNotIn("«", body, "guillemets are back in the paper body")
+        # One double-quoted span is allowed: the sentence quoted from TRD.
+        self.assertEqual(len(re.findall('"[^"]+"', body)), 1)
 
 
 if __name__ == "__main__":

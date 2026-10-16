@@ -84,9 +84,11 @@ two are crossed. On the two large models:
 
 **Where the two Slavic languages share the construction they tie. Where the
 construction differs they separate completely.** gpt-oss-120b reads the whole
-Polish probe at 22/24 against 12/24 in Russian, and Polish is the
-lower-resourced of the two. No account in terms of language identity or
-training-data volume produces that shape.
+Polish probe at 22/24 against 12/24 in Russian. The design controls for
+training-data volume without measuring it: whatever the two languages'
+relative share of the corpus is, it is the same quantity in both halves of
+the comparison, and a constant cannot produce an effect that appears on one
+clock form and vanishes on another.
 
 Polish also corrected us. We had predicted that any language counting into the
 coming hour would show the Russian profile. Polish «wpół do» counts into the
