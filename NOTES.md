@@ -2783,3 +2783,96 @@ claim that four numbers can break, and it is what the file was built to test.
 
 **Still true and still unfixed:** no native speaker has checked the German, and
 the regional forms need a verifier from a region that uses them.
+
+
+### F58 — the powered probe, two hosted models, scored against F57
+
+`results/de2_gptoss120b.jsonl`, `results/de2_qwen38.jsonl`. Both `--repeats 1`,
+temperature 0. Harness audit clean on both: zero truncation, zero looping, in
+both arms.
+
+                        gpt-oss-120b 120B   qwen3.8-27b 27B
+    English                   48/48              46/48
+    digital                     5/5                5/5
+    from_hour  (N nach)       12/12              12/12
+    into_hour  (halb)        15/15               7/15
+    into_hour_regional         8/12               4/12
+    subtractive                 4/4                4/4
+
+**Scoring F57 as written.**
+
+1. gpt-oss `halb` >= 13/15 — **holds**, 15/15.
+2. qwen `halb` 8-13/15 — **missed**, 7/15, one below the lower bound. Recorded
+   as missed rather than rounded into the interval.
+3. `digital` >= 4/5 everywhere — **holds**, 5/5 on both.
+4. `from_hour` >= 10/12 everywhere — **holds**, 12/12 on both.
+5. `into_hour_regional` below `into_hour` within every model — **holds in
+   direction, not in significance.** gpt-oss 8/12 vs 15/15 is p = .028, above
+   our alpha. qwen 4/12 vs 7/15 is p = .7, nothing at all. Pooled p = .095.
+   **The frequency contrast inside the closed set is not established.**
+6. `subtractive` low in both languages — **failed**, 4/4 on both models. The
+   control that fails everywhere fails on the small models and the Russian
+   probe, not on these two. Noted, since it was predicted the other way.
+
+**The result, and it is decisive.** On qwen3.8-27b:
+
+    halb 7/15  vs  N nach 12/12      p < .01   (3.1e-03)
+
+A clean run, a 27B model, high-resource language, `digital` 5/5, English 46/48,
+zero harness noise. German's counting-into form is significantly broken while
+its counting-from form is perfect, **which is exactly the falsification
+condition F50 wrote down in advance.** It is met, with power, without needing
+either local model.
+
+**So F50 is falsified.** German's three fixed counting-into phrases are not
+inherently safe. The prediction was that they would be read correctly because
+three frequent phrases are memorisable where a rule is not; one of the two
+models reads them at 47%.
+
+Writing that plainly. Both pre-registrations this project has made — Polish in
+F31 and German in F50 — lost. The reason to keep writing them down is that this
+is what it looks like when they do.
+
+**qwen's `halb` is 7/15 = 47%. Russian «половина» is 45%.** Same construction,
+same position in the clock, two unrelated languages, and the two numbers land
+on top of each other. That is the single most suggestive number the project has
+produced and it is one comparison between two cells, so it stays in the
+notebook and out of the paper until something tests it.
+
+**The error signature is clean enough to name the mechanism.** All eight of
+qwen's `halb` failures are exactly +60:
+
+    halb zwei nachts     01:30 -> 02:30
+    halb vier morgens    03:30 -> 04:30
+    halb sechs morgens   05:30 -> 06:30
+    halb acht morgens    07:30 -> 08:30      ... 8 of 8, no exceptions
+
+*halb zwei* read as "half past two". The model applies the **English**
+counting-from analysis to a German phrase. That is the paper's mechanism stated
+as directly as it can be.
+
+The regional failures split into two modes, both named in F50 before the run:
+
+    +30, six times:  viertel zwei      01:15 -> 01:45   read as viertel VOR zwei
+                     dreiviertel zwei  01:45 -> 02:15   read as quarter past two
+    +60, twice:      viertel drei      14:15 -> 15:15   hour treated as reached
+
+**The scale effect is significant between these two models alone.**
+
+    halb, gpt-oss 15/15 vs qwen 7/15      p < .01  (2.2e-03)
+
+Both hosted, both clean, both at ceiling in English and on `digital` and
+`from_hour`. The only cell that moves is the counting-into one.
+
+**What the two models together say about frequency against capacity.** At 120B,
+`halb` is at ceiling and the rarer regional forms are at 8/12 — the frequency
+difference inside the closed set shows. At 27B, `halb` is 7/15 and regional is
+4/12, statistically indistinguishable — neither is reliably memorised, so there
+is no frequency difference left to see. That is the shape the account predicts:
+frequency decides which phrase is memorised first, capacity decides whether any
+of them are.
+
+**Still open.** The monotonic ordering across four sizes, which F57 named as the
+real claim, needs the two local models; 15/15 and 7/15 are two points. The
+regional cell goes the predicted way at both scales and reaches significance at
+neither.
