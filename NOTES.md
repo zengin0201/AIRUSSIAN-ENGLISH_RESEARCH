@@ -2411,3 +2411,105 @@ languages say 09:05. Russian counts into it because Russian has no other way.
 `TestFewShotDemonstrations` checks the ordinary-form rule for every language
 and the closed-set rule for German, and the comment in `agent.py` that wrongly
 claimed an existing guard covered this has been corrected.
+
+
+### F52 — German, two hosted models, scored against F50 as written
+
+`results/de_gptoss120b.jsonl`, `results/de_qwen38.jsonl`. Both `--repeats 1
+--max-steps 8 --temperature 0.0 --max-new-tokens 1024`, matching the Polish
+runs so the files are comparable. English arm 48 of 48 across both models.
+
+                            gpt-oss-120b   qwen3.8-27b    pooled   exact 95% CI
+    digital                        4/4           4/4        8/8    [63%, 100%]
+    from_hour  (N nach X)        10/10         10/10      20/20    [83%, 100%]
+    into_hour  (halb)              5/5           3/5       8/10    [44%,  97%]
+    into_hour_regional (viertel N) 0/2           0/2        0/4    [ 0%,  60%]
+    subtractive                    3/3           2/3        5/6    [36%, 100%]
+    German overall                22/24         19/24      43/48
+
+**Scoring the pre-registered predictions honestly.**
+
+1. `digital` ≥ 90% — **holds.** 8/8. The German carrier sentence works, so the
+   rest of the file may be interpreted.
+2. `from_hour` indistinguishable from English — **holds, strongly.** 20/20
+   against English 48/48. This is the cell where Russian scores 0 of 32.
+3. `into_hour` ≥ 80% and clearly above Russian «половина» at 45% — **not
+   established.** Pooled is exactly 8/10 = 80%, but the exact interval is
+   [44%, 97%]. That interval contains 45%. Five items per model cannot tell
+   German *halb* apart from Russian «половина», and on qwen alone it is 3/5
+   with an interval of [15%, 95%], which is no measurement at all.
+4. `subtractive` low in both — **holds** as a control; 5/6 in German, and it
+   fails in English too.
+5. German overall ≈ English — 43/48 against 48/48, p = .056, not significant
+   at our α = .01.
+
+**The falsification test, which was the point of the probe.** German
+`into_hour` against German `from_hour`: 8/10 vs 20/20, **p = .1**. Not
+significant, so **the account is not falsified** — but that is the wrong thing
+to be pleased about. It survives because fourteen items cannot resolve the
+question, not because the evidence is strong.
+
+**What is strong, and is the actual result.** German `halb` against the Russian
+productive form: **8/10 vs 0/32, p < .01 (exact 3.8e-07).** Same direction of
+counting, same probe, same carrier, same clock positions. The difference is
+that German's counting-into inventory is three fixed phrases and Russian's is a
+rule. That is the cleanest statement of the memorisation account the project has
+produced, and it is the one German was run to get.
+
+German is also high-resource in every corpus, so the resource explanation is
+gone without an argument having to be made.
+
+**The error signature, which transfers.** Seven of the nine German failures are
+**exactly +60 minutes**, the Russian error:
+
+    g01  halb drei nachmittags      14:30 -> 15:30   (+60)  qwen
+    g03  halb zehn abends           21:30 -> 22:30   (+60)  qwen
+    g07  viertel neun morgens       08:15 -> 09:15   (+60)  gpt-oss
+    g09  viertel zwei nachmittags   13:15 -> 14:15   (+60)  both
+    g07  viertel neun morgens       08:15 -> 08:45   (+30)  qwen
+    g22  zwanzig vor neun morgens   08:40 -> 07:00  (-100)  qwen
+
+The +30 on g07 is the other diagnostic reading predicted in F50: the model
+falling back on standard *viertel vor neun*. The −100 is the subtractive
+control, which is broken in English too and means nothing. Every failure is one
+step, fluent, with `done` called — the silent-failure signature, now in a third
+language.
+
+**The regional cell goes the predicted way and still is not evidence.** 0/4
+against *halb* 8/10 is p = .015, which is **above our α = .01** and therefore
+not significant by the standard this project reports. F50 said in advance that
+two items going the predicted way is the kind of thing that gets written up as a
+result, and that holds at four. Noting also that it is the more interesting
+contrast than the one pre-registered: *viertel neun* is a fixed phrase from the
+same closed set as *halb*, so what separates them is **frequency and regional
+restriction, not productivity.** If that survives a bigger n it refines the
+account rather than confirming it — the variable inside German is how often the
+phrase is said, not whether it is built by rule.
+
+**The honest conclusion about the probe itself: it is underpowered where it
+matters.** `into_hour` is five items per model and `into_hour_regional` is two.
+The design is right and the wiring is right — oracle 144/144, `digital` 8/8,
+`from_hour` 20/20 — but the cell the falsification test depends on cannot carry
+it. Any expansion has to be pre-registered before the next run, must keep the
+cells exactly as they are, and must report the pooled result as the result,
+with this 24-item run stated separately as what it was. Picking whichever set
+reads better afterwards is the forking path this project already declined once
+over few-shot.
+
+**Still to run:** the two local models, Qwen2.5-3B and Phi-3.5-mini. Without
+them this is two models, both hosted, both large.
+
+### F53 — the analyzer skipped its own decomposition for every non-Russian run
+
+Found while reading the German output. `src/analyze.py` printed the label
+`static fertility ratio RU/EN` over German numbers, which is cosmetic, and then
+gated the CPST decomposition and the bootstrap CI on `"ru" in stats_by_arm`,
+which is not. **Every Polish run ever analysed silently skipped the
+decomposition and the confidence interval**, and German would have too. The
+meta already carries `fertility.language`, so both now read that. Re-running the
+Polish file produces the decomposition that was never printed.
+
+Same shape as the Polish `Report.compare` bug and the `else "ru"` language
+plumbing: a second language was added and one hardcoded `"ru"` stayed behind. It
+is the third time. The difference here is that nothing failed and nothing
+printed wrong — a section simply did not appear, which is why it lasted.

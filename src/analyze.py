@@ -119,18 +119,23 @@ def main() -> None:
 
     print(f"\nmodel: {meta.get('model')}   tasks: {meta.get('n_tasks')}   "
           f"repeats: {meta.get('repeats')}")
+    # The second language is whatever the task file's non-English half was, not
+    # always Russian. A hardcoded "RU" label printed RU over German numbers,
+    # and the decomposition below was skipped outright for every Polish and
+    # German run because it tested for an arm named "ru".
     fert = (meta.get("fertility") or {}).get("fertility_ratio")
-    print(f"static fertility ratio RU/EN: {fert}")
+    l2 = (meta.get("fertility") or {}).get("language") or "l2"
+    print(f"static fertility ratio {l2.upper()}/EN: {fert}")
     print("\n" + table(stats_by_arm) + "\n")
 
     factors = {}
-    if "en" in stats_by_arm and "ru" in stats_by_arm:
-        factors = decompose(stats_by_arm["en"], stats_by_arm["ru"])
-        print("decomposition of the CPST gap (RU / EN):")
+    if "en" in stats_by_arm and l2 in stats_by_arm:
+        factors = decompose(stats_by_arm["en"], stats_by_arm[l2])
+        print(f"decomposition of the CPST gap ({l2.upper()} / EN):")
         for key, value in factors.items():
             print(f"  {key:<24} {value}")
 
-        ci = bootstrap_ci(by_arm["en"], by_arm["ru"])
+        ci = bootstrap_ci(by_arm["en"], by_arm[l2])
         if ci:
             print(f"\nbootstrap 95% CI for CPST ratio: "
                   f"{ci['cpst_ratio_median']} [{ci['ci95_low']}, {ci['ci95_high']}]")
