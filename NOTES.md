@@ -3126,3 +3126,69 @@ counting outcomes in the file. The one-liner is in the session notes:
     python -c "import json,collections;rows=[json.loads(l) for l in
     open(PATH,encoding='utf-8') if l.strip()];print(collections.Counter(
     (r['success'],r.get('error')) for r in rows if r.get('task_id')))"
+
+### F63 — case makes no difference, and the prediction loses again
+
+Three models complete and clean: Qwen2.5-3B, Phi-3.5-mini, gpt-oss-120b.
+qwen3.8-27b is missing — every attempt died on network errors against the
+hosted endpoint, 10 episodes, 10 failures. Reported as absent rather than
+patched in from the earlier partial run on the broken file.
+
+    cell         accusative          genitive            dative
+    literal   ru 15/15 en 15/15   ru 15/15 en 15/15   ru 15/15 en 15/15
+    half_past  ru 4/15 en 14/15    ru 3/15 en 15/15    ru 6/15 en 13/15
+    n_minutes  ru 0/15 en 15/15    ru 0/15 en 11/15    ru 0/15 en 13/15
+
+**The health check is perfect.** `literal` is 15 of 15 in every frame in both
+languages, spread zero. Digits do not inflect and they did not move, so the
+three carrier frames are sound and the cells below them can be read.
+
+**The load-bearing prediction failed.** F60 said Russian `half_past` would fall
+in the oblique frames, because an oblique form of the phrase is rarer than the
+citation form and the German account says rarity is what breaks these readings.
+Accusative 4 of 15, oblique 9 of 30, **p = 1.0**. The dative is *higher* than
+the accusative, 6 of 15 against 4 of 15, which is the opposite of the predicted
+direction.
+
+Per model, so the pooling is not hiding anything:
+
+    model            cell         accusative   genitive    dative
+    Qwen2.5-3B  3B   half_past    ru 0/5       ru 0/5      ru 2/5
+    Phi-3.5   3.8B   half_past    ru 1/5       ru 0/5      ru 0/5
+    gpt-oss   120B   half_past    ru 3/5       ru 3/5      ru 4/5
+
+gpt-oss is the only model with room to move and it is flat: 3, 3, 4. The two
+small models are at floor in every frame, which is uninformative rather than
+confirming.
+
+**The falsification condition registered in F60 is met exactly:** Russian
+`half_past` the same in all three frames, with `literal` flat and English flat.
+**So case adds nothing, and Sproat's worry is answered in the negative.**
+
+**Following through on what F60 committed to.** It said in advance that a null
+goes in the paper and that the temptation would be to bury it and leave the
+Limitations paragraph standing. The paragraph is rewritten today to say the
+thing was tested and no effect was found, which is a stronger paper than one
+carrying an untested caveat.
+
+**The productive cell cannot answer the question and should not be read as if
+it did.** Russian `n_minutes` is 0 of 15 in all three frames. It was 0 before
+and there is no room below zero, so a case effect there is undetectable by
+construction. Only `half_past` could test the hypothesis, and it did.
+
+**One honest wrinkle.** English `n_minutes` drops in the oblique frames, 15/15
+to 11/15 and 13/15, driven mostly by Phi's genitive cell at 2 of 5. So the
+oblique frames are somewhat harder in English too for the productive items.
+That does not touch the conclusion — the conclusion rests on `half_past`, where
+English is flat at 14, 15, 13 — but it means the oblique frames are not free,
+and a larger probe should watch it.
+
+**Both flagged worries turned out not to bite.** The marginal dative wording
+(F60) and the pragmatic oddity of waking someone at half past nine in the
+evening (F61) would both have depressed the dative cell. It scored higher than
+the accusative instead. Recording that the pre-registered concerns were wrong
+in this direction, since they were written down to be checked.
+
+**Three pre-registrations, three losses:** Polish F31, German F50, case F60. The
+German one changed the account. This one removes a caveat. Neither outcome was
+the one written down, and that is now the pattern rather than the exception.
