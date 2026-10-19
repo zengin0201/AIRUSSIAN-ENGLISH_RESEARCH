@@ -3047,5 +3047,82 @@ Polish nor the German probe can say. That does not make it idiomatic by fiat,
 and the marginal cell above is the author flagging his own wording.
 
 **Wiring checked before the run.** `tests/run_all.py` reports 45 tasks,
-"comparing en against ru", structurally parallel, difficulty mix 15/15/15. The
-oracle replays every gold trace, 90 of 90. 71 unit tests green.
+"comparing en against ru", structurally parallel, difficulty mix 15/15/15.
+71 unit tests green.
+
+> **Correction.** This entry originally said the oracle replayed 90 of 90
+> gold traces. It did not: it was 60 of 90, with 30 crashes. See F62. The
+> claim was made from the runner's closing line without opening the file.
+> After the fix in F62 the oracle is genuinely 90 of 90, verified by
+> counting outcomes in the file rather than by reading the last line.
+
+### F61 — a pragmatic wart in the dative frame, noted before the results arrive
+
+Written while the hosted runs are still going, so the record shows the concern
+preceded the data.
+
+The dative frame is «Разбуди меня к X» / "Wake me by X". The case is right and
+the sentence is ordinary — «разбуди меня к половине третьего» is exactly what a
+person says. But five of the ten non-digital items in that frame are evening or
+afternoon times: 21:30, 20:05, 13:25. **Asking to be woken at half past nine in
+the evening is a strange request**, quite apart from any morphology, and a model
+may balk at it or reinterpret it.
+
+So the dative frame carries a pragmatic confound on top of the marginal-wording
+one already flagged for the productive form.
+
+**Two things bound it.** The English half carries the identical weirdness —
+"wake me by nine thirty in the evening" — so the within-item ceiling catches a
+pure pragmatics effect: if English drops in that frame too, the frame is the
+problem and not the case. And the `literal` cell uses the same carrier at the
+same times, so a frame-level effect shows up there as well.
+
+**What it would have been better to use:** «Напомни мне к X» / "Remind me by X",
+which is natural at any hour and keeps the dative. That is the fix if this frame
+has to be re-run.
+
+**Not changing it now.** The run is in flight; regenerating the file mid-run
+would leave results that do not match the data that produced them. If the dative
+frame underperforms, this note is the first alternative explanation to rule out,
+and the honest test is a re-run with the neutral carrier rather than an argument
+about which reading is more natural.
+
+### F62 — the oracle was 60 of 90 and I reported 90, from its closing line
+
+The `from` frame checks a calendar event. `event_exists` requires four fields —
+`date`, `time` and `title_contains` — and I wrote three. Every one of the thirty
+genitive episodes crashed with `KeyError: 'title_contains'` before a model was
+even consulted.
+
+**The verification failure is the finding here, not the missing key.** The
+oracle run printed "Done. Results written to ..." and I read the last two lines
+and wrote "oracle 90 of 90" into F60 and into the commit message. The file said
+60 true, 30 crashed. Nothing in the closing line is wrong; it simply does not
+say what I claimed it said.
+
+This is F56 inverted. There I wrote down that a failing audit line is a trigger
+to open the episodes rather than a verdict, and then two days later took a
+*succeeding* line as a verdict without opening anything. The rule is not about
+failures. **A summary line is never evidence about the contents of a file, in
+either direction.**
+
+It also cost a full hosted run: 180 episodes on two models, a third of them
+crashes, against the key that was in flight while this went unnoticed.
+
+**The fix.** `title_contains: ""` — an empty string is a substring of every
+title, so the check is purely date-and-time, exactly parallel to `alarm_exists`
+checking only the time. Requiring a real title would have made the Russian arm
+also produce the right word for "meeting", which is a second thing to fail at
+and has nothing to do with reading a clock.
+
+**What the broken run still showed, before it is thrown away.** The two frames
+that use `set_alarm` ran correctly, and the `literal` cell is 15/15 in both
+languages in the accusative and the dative — so those frames are sound. Only
+the genitive third was lost.
+
+**Changed in process, not only in code.** Oracle runs are now checked by
+counting outcomes in the file. The one-liner is in the session notes:
+
+    python -c "import json,collections;rows=[json.loads(l) for l in
+    open(PATH,encoding='utf-8') if l.strip()];print(collections.Counter(
+    (r['success'],r.get('error')) for r in rows if r.get('task_id')))"

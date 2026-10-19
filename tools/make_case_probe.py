@@ -222,7 +222,15 @@ def main() -> int:
                 gold_en = {"tool": "set_alarm",
                            "args": {"time": time, "label": LABEL_EN}}
             else:
-                check = {"kind": "event_exists", "date": date, "time": time}
+                # title_contains is required by the verifier. An empty
+                # string matches any title, which makes the check purely
+                # date-and-time — exactly parallel to alarm_exists, which
+                # checks only the time. Asking for a specific title would
+                # make the Russian arm also get the word for "meeting"
+                # right, which is a second thing to fail at and has
+                # nothing to do with reading the clock.
+                check = {"kind": "event_exists", "date": date,
+                         "time": time, "title_contains": ""}
                 gold_ru = {"tool": "add_event",
                            "args": {"date": date, "time": time, "title": TITLE_RU}}
                 gold_en = {"tool": "add_event",

@@ -78,14 +78,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "07:20"
+            "time": "07:20",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "07:20"
+            "time": "07:20",
+            "title_contains": ""
           }
         ]
       },
@@ -247,14 +249,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "10:10"
+            "time": "10:10",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "10:10"
+            "time": "10:10",
+            "title_contains": ""
           }
         ]
       },
@@ -416,14 +420,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "13:25"
+            "time": "13:25",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "13:25"
+            "time": "13:25",
+            "title_contains": ""
           }
         ]
       },
@@ -585,14 +591,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "20:05"
+            "time": "20:05",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "20:05"
+            "time": "20:05",
+            "title_contains": ""
           }
         ]
       },
@@ -754,14 +762,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "06:10"
+            "time": "06:10",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "06:10"
+            "time": "06:10",
+            "title_contains": ""
           }
         ]
       },
@@ -923,14 +933,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "14:30"
+            "time": "14:30",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "14:30"
+            "time": "14:30",
+            "title_contains": ""
           }
         ]
       },
@@ -1092,14 +1104,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "06:30"
+            "time": "06:30",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "06:30"
+            "time": "06:30",
+            "title_contains": ""
           }
         ]
       },
@@ -1261,14 +1275,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "21:30"
+            "time": "21:30",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "21:30"
+            "time": "21:30",
+            "title_contains": ""
           }
         ]
       },
@@ -1430,14 +1446,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "04:30"
+            "time": "04:30",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "04:30"
+            "time": "04:30",
+            "title_contains": ""
           }
         ]
       },
@@ -1599,14 +1617,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "11:30"
+            "time": "11:30",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "11:30"
+            "time": "11:30",
+            "title_contains": ""
           }
         ]
       },
@@ -1768,14 +1788,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "07:45"
+            "time": "07:45",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "07:45"
+            "time": "07:45",
+            "title_contains": ""
           }
         ]
       },
@@ -1937,14 +1959,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "12:15"
+            "time": "12:15",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "12:15"
+            "time": "12:15",
+            "title_contains": ""
           }
         ]
       },
@@ -2106,14 +2130,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "16:40"
+            "time": "16:40",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "16:40"
+            "time": "16:40",
+            "title_contains": ""
           }
         ]
       },
@@ -2275,14 +2301,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "22:05"
+            "time": "22:05",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "22:05"
+            "time": "22:05",
+            "title_contains": ""
           }
         ]
       },
@@ -2444,14 +2472,16 @@
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "03:50"
+            "time": "03:50",
+            "title_contains": ""
           }
         ],
         "ru": [
           {
             "kind": "event_exists",
             "date": "2026-09-07",
-            "time": "03:50"
+            "time": "03:50",
+            "title_contains": ""
           }
         ]
       },

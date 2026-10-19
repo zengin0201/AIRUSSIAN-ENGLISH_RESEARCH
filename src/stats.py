@@ -749,6 +749,103 @@ def section_german(report: Report) -> None:
     print("    German-against-German comparisons above are unaffected.")
 
 
+# Case variation. The main probe sits in one frame, which takes the accusative
+# throughout, so it tests one surface shape of an inflecting paradigm. This
+# probe varies the carrier frame: на + accusative (the existing frame), с +
+# genitive, к + dative. English carries the same three frames and has no case,
+# which is the control for the frame being harder than the morphology.
+TASKS_CASE = "data/tasks_time_case.json"
+CASE_RUNS = [
+    ("Qwen2.5-3B", "results/case_qwen3b.jsonl"),
+    ("Phi-3.5-mini", "results/case_phi.jsonl"),
+    ("qwen3.8-27b", "results/case_qwen38.jsonl"),
+    ("gpt-oss-120b", "results/case_gptoss120b.jsonl"),
+]
+CASE_FRAMES = [("at", "accusative"), ("from", "genitive"), ("by", "dative")]
+
+
+def _case_ids(frame: str, category: str) -> List[str]:
+    with open(TASKS_CASE, "r", encoding="utf-8") as handle:
+        tasks = json.load(handle)["tasks"]
+    return [t["id"] for t in tasks
+            if t["case_frame"] == frame and t["difficulty"] == category]
+
+
+def section_case(report: Report) -> None:
+    """Does the same construction get harder in an oblique case?"""
+    report.head("Case variation — the same construction in three frames")
+
+    available = [(n, p) for n, p in CASE_RUNS if os.path.exists(p)]
+    if not available:
+        print("  runs missing, skipped")
+        return
+    print(f"  models: {', '.join(n for n, _ in available)}")
+    print()
+
+    # The health check first. Digits do not inflect, so this cell must be flat
+    # across the three frames in both languages or the frame itself is broken
+    # and nothing below it can be read.
+    print(f"    {'cell':<24}" + "".join(f"{c:>22}" for _, c in CASE_FRAMES))
+    totals: Dict[str, Dict[str, List[int]]] = {}
+    for category in ("literal", "half_past", "n_minutes"):
+        cells = []
+        totals[category] = {}
+        for frame, case in CASE_FRAMES:
+            ids = _case_ids(frame, category)
+            ru_ok = ru_n = en_ok = en_n = 0
+            for _, path in available:
+                rows = load(path)
+                a, b = tally(rows, "ru", ids=ids)
+                ru_ok += a
+                ru_n += b
+                a, b = tally(rows, "en", ids=ids)
+                en_ok += a
+                en_n += b
+            totals[category][case] = [ru_ok, ru_n, en_ok, en_n]
+            cells.append(f"ru {ru_ok}/{ru_n}  en {en_ok}/{en_n}")
+        print(f"    {category:<24}" + "".join(f"{c:>22}" for c in cells))
+
+    print()
+    lit = totals["literal"]
+    flat = all(lit[c][0] == lit["accusative"][0] for _, c in CASE_FRAMES)
+    print(f"    digital is {'flat' if flat else 'NOT FLAT'} across the frames"
+          f"{'' if flat else ' — the frame is broken, stop here'}")
+
+    # The load-bearing comparison: the frequent fixed phrase is the only cell
+    # with room to move, since the productive form is already at floor.
+    print()
+    for category in ("half_past", "n_minutes"):
+        acc = totals[category]["accusative"]
+        obl = [0, 0]
+        for case in ("genitive", "dative"):
+            obl[0] += totals[category][case][0]
+            obl[1] += totals[category][case][1]
+        p = fisher_exact(acc[0], acc[1] - acc[0], obl[0], obl[1] - obl[0])
+        report.p_values.append(p)
+        print(f"    {category:<12} Russian accusative {acc[0]}/{acc[1]}"
+              f" vs oblique {obl[0]}/{obl[1]}   {format_p(p)} [exact {p:.2e}]")
+
+    # English across the same split, as the control. If English moves too, the
+    # frame is the difficulty and the Russian contrast means nothing.
+    print()
+    for category in ("half_past", "n_minutes"):
+        acc = totals[category]["accusative"]
+        obl = [0, 0]
+        for case in ("genitive", "dative"):
+            obl[0] += totals[category][case][2]
+            obl[1] += totals[category][case][3]
+        p = fisher_exact(acc[2], acc[3] - acc[2], obl[0], obl[1] - obl[0])
+        report.p_values.append(p)
+        print(f"    {category:<12} English accusative-frame {acc[2]}/{acc[3]}"
+              f" vs oblique {obl[0]}/{obl[1]}   {format_p(p)} [exact {p:.2e}]")
+
+    print()
+    print("    The dative productive cell carries marginal_wording in the data:")
+    print("    к двадцати минутам восьмого is grammatical but rare even for a")
+    print("    native speaker. If it scores below the accusative productive")
+    print("    cell, the wording is a live alternative explanation.")
+
+
 def section_frequency(report: Report) -> None:
     report.head("Corpus frequency against accuracy")
     path = "results/frequency.json"
@@ -870,6 +967,7 @@ def main() -> int:
     section_polish(report)
     section_polish_vs_russian(report)
     section_german(report)
+    section_case(report)
     section_frequency(report)
 
     if args.check:
