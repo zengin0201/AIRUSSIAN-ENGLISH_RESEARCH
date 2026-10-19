@@ -1,0 +1,2545 @@
+{
+  "meta": {
+    "today": "2026-09-07",
+    "weekday": "Monday",
+    "version": "time-case-1.0",
+    "note": "Case-variation probe, 45 items, answering Richard Sproat's point that the main probe tests one surface shape of an inflecting paradigm. Three carrier frames put the same construction in three cases: на + accusative (the existing frame, carried over unchanged), с + genitive, к + dative. The prepositional form he named, двадцати минутах восьмого, is grammatical but does not arise in an imperative instruction to an assistant, and that is reported rather than faked with an invented sentence. Case is confounded with frame by construction, and the English half carries the same three frames as a control: English has no case, so if English is flat across the frames and Russian drops in the oblique two, the frame is not the difficulty. The from-frame uses add_event because an alarm does not start at a time; within any one frame both languages call the same tool at the same time. Cells: n_minutes (productive, 0 of 8 in the main probe), half_past (frequent fixed, 45 percent), literal (health check, digits do not inflect and must be flat). PREDICTION REGISTERED IN NOTES F60 BEFORE THE RUN. The dative of the productive form is marginal and flagged per item; see tools/make_case_probe.py."
+  },
+  "tasks": [
+    {
+      "id": "c01",
+      "difficulty": "n_minutes",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "двадцать минут восьмого утра = 07:20",
+      "instruction": {
+        "en": "Set an alarm for twenty past seven in the morning.",
+        "ru": "Поставь будильник на двадцать минут восьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c02",
+      "difficulty": "n_minutes",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "двадцати минут восьмого утра = 07:20",
+      "instruction": {
+        "en": "Add a meeting to the calendar from twenty past seven in the morning.",
+        "ru": "Добавь в календарь встречу с двадцати минут восьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "07:20"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "07:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "07:20",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "07:20",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c03",
+      "difficulty": "n_minutes",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": true,
+      "n_steps": 1,
+      "trap": "двадцати минутам восьмого утра = 07:20",
+      "instruction": {
+        "en": "Wake me by twenty past seven in the morning.",
+        "ru": "Разбуди меня к двадцати минутам восьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:20"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:20",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c04",
+      "difficulty": "n_minutes",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "десять минут одиннадцатого утра = 10:10",
+      "instruction": {
+        "en": "Set an alarm for ten past ten in the morning.",
+        "ru": "Поставь будильник на десять минут одиннадцатого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:10"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:10",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c05",
+      "difficulty": "n_minutes",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "десяти минут одиннадцатого утра = 10:10",
+      "instruction": {
+        "en": "Add a meeting to the calendar from ten past ten in the morning.",
+        "ru": "Добавь в календарь встречу с десяти минут одиннадцатого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "10:10"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "10:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "10:10",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "10:10",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c06",
+      "difficulty": "n_minutes",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": true,
+      "n_steps": 1,
+      "trap": "десяти минутам одиннадцатого утра = 10:10",
+      "instruction": {
+        "en": "Wake me by ten past ten in the morning.",
+        "ru": "Разбуди меня к десяти минутам одиннадцатого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:10"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "10:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "10:10",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c07",
+      "difficulty": "n_minutes",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "двадцать пять минут второго дня = 13:25",
+      "instruction": {
+        "en": "Set an alarm for twenty five past one in the afternoon.",
+        "ru": "Поставь будильник на двадцать пять минут второго дня."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:25"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:25"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:25",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:25",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c08",
+      "difficulty": "n_minutes",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "двадцати пяти минут второго дня = 13:25",
+      "instruction": {
+        "en": "Add a meeting to the calendar from twenty five past one in the afternoon.",
+        "ru": "Добавь в календарь встречу с двадцати пяти минут второго дня."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "13:25"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "13:25"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "13:25",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "13:25",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c09",
+      "difficulty": "n_minutes",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": true,
+      "n_steps": 1,
+      "trap": "двадцати пяти минутам второго дня = 13:25",
+      "instruction": {
+        "en": "Wake me by twenty five past one in the afternoon.",
+        "ru": "Разбуди меня к двадцати пяти минутам второго дня."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:25"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "13:25"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:25",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "13:25",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c10",
+      "difficulty": "n_minutes",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "пять минут девятого вечера = 20:05",
+      "instruction": {
+        "en": "Set an alarm for five past eight in the evening.",
+        "ru": "Поставь будильник на пять минут девятого вечера."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:05"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:05",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c11",
+      "difficulty": "n_minutes",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "пяти минут девятого вечера = 20:05",
+      "instruction": {
+        "en": "Add a meeting to the calendar from five past eight in the evening.",
+        "ru": "Добавь в календарь встречу с пяти минут девятого вечера."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "20:05"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "20:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "20:05",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "20:05",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c12",
+      "difficulty": "n_minutes",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": true,
+      "n_steps": 1,
+      "trap": "пяти минутам девятого вечера = 20:05",
+      "instruction": {
+        "en": "Wake me by five past eight in the evening.",
+        "ru": "Разбуди меня к пяти минутам девятого вечера."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:05"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "20:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "20:05",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c13",
+      "difficulty": "n_minutes",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "десять минут седьмого утра = 06:10",
+      "instruction": {
+        "en": "Set an alarm for ten past six in the morning.",
+        "ru": "Поставь будильник на десять минут седьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:10"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:10",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c14",
+      "difficulty": "n_minutes",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "десяти минут седьмого утра = 06:10",
+      "instruction": {
+        "en": "Add a meeting to the calendar from ten past six in the morning.",
+        "ru": "Добавь в календарь встречу с десяти минут седьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "06:10"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "06:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "06:10",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "06:10",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c15",
+      "difficulty": "n_minutes",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": true,
+      "n_steps": 1,
+      "trap": "десяти минутам седьмого утра = 06:10",
+      "instruction": {
+        "en": "Wake me by ten past six in the morning.",
+        "ru": "Разбуди меня к десяти минутам седьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:10"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:10"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:10",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:10",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c16",
+      "difficulty": "half_past",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половину третьего дня = 14:30",
+      "instruction": {
+        "en": "Set an alarm for half past two in the afternoon.",
+        "ru": "Поставь будильник на половину третьего дня."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c17",
+      "difficulty": "half_past",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половины третьего дня = 14:30",
+      "instruction": {
+        "en": "Add a meeting to the calendar from half past two in the afternoon.",
+        "ru": "Добавь в календарь встречу с половины третьего дня."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "14:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "14:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "14:30",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "14:30",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c18",
+      "difficulty": "half_past",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половине третьего дня = 14:30",
+      "instruction": {
+        "en": "Wake me by half past two in the afternoon.",
+        "ru": "Разбуди меня к половине третьего дня."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "14:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "14:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c19",
+      "difficulty": "half_past",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половину седьмого утра = 06:30",
+      "instruction": {
+        "en": "Set an alarm for half past six in the morning.",
+        "ru": "Поставь будильник на половину седьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c20",
+      "difficulty": "half_past",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половины седьмого утра = 06:30",
+      "instruction": {
+        "en": "Add a meeting to the calendar from half past six in the morning.",
+        "ru": "Добавь в календарь встречу с половины седьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "06:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "06:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "06:30",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "06:30",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c21",
+      "difficulty": "half_past",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половине седьмого утра = 06:30",
+      "instruction": {
+        "en": "Wake me by half past six in the morning.",
+        "ru": "Разбуди меня к половине седьмого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "06:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "06:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c22",
+      "difficulty": "half_past",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половину десятого вечера = 21:30",
+      "instruction": {
+        "en": "Set an alarm for half past nine in the evening.",
+        "ru": "Поставь будильник на половину десятого вечера."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c23",
+      "difficulty": "half_past",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половины десятого вечера = 21:30",
+      "instruction": {
+        "en": "Add a meeting to the calendar from half past nine in the evening.",
+        "ru": "Добавь в календарь встречу с половины десятого вечера."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "21:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "21:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "21:30",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "21:30",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c24",
+      "difficulty": "half_past",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половине десятого вечера = 21:30",
+      "instruction": {
+        "en": "Wake me by half past nine in the evening.",
+        "ru": "Разбуди меня к половине десятого вечера."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "21:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "21:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c25",
+      "difficulty": "half_past",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половину пятого утра = 04:30",
+      "instruction": {
+        "en": "Set an alarm for half past four in the morning.",
+        "ru": "Поставь будильник на половину пятого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c26",
+      "difficulty": "half_past",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половины пятого утра = 04:30",
+      "instruction": {
+        "en": "Add a meeting to the calendar from half past four in the morning.",
+        "ru": "Добавь в календарь встречу с половины пятого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "04:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "04:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "04:30",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "04:30",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c27",
+      "difficulty": "half_past",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половине пятого утра = 04:30",
+      "instruction": {
+        "en": "Wake me by half past four in the morning.",
+        "ru": "Разбуди меня к половине пятого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "04:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "04:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c28",
+      "difficulty": "half_past",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половину двенадцатого утра = 11:30",
+      "instruction": {
+        "en": "Set an alarm for half past eleven in the morning.",
+        "ru": "Поставь будильник на половину двенадцатого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c29",
+      "difficulty": "half_past",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половины двенадцатого утра = 11:30",
+      "instruction": {
+        "en": "Add a meeting to the calendar from half past eleven in the morning.",
+        "ru": "Добавь в календарь встречу с половины двенадцатого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "11:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "11:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "11:30",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "11:30",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c30",
+      "difficulty": "half_past",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "половине двенадцатого утра = 11:30",
+      "instruction": {
+        "en": "Wake me by half past eleven in the morning.",
+        "ru": "Разбуди меня к половине двенадцатого утра."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:30"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "11:30"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:30",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "11:30",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c31",
+      "difficulty": "literal",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "07:45 = 07:45",
+      "instruction": {
+        "en": "Set an alarm for 07:45.",
+        "ru": "Поставь будильник на 07:45."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:45"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:45",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c32",
+      "difficulty": "literal",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "07:45 = 07:45",
+      "instruction": {
+        "en": "Add a meeting to the calendar from 07:45.",
+        "ru": "Добавь в календарь встречу с 07:45."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "07:45"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "07:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "07:45",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "07:45",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c33",
+      "difficulty": "literal",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "07:45 = 07:45",
+      "instruction": {
+        "en": "Wake me by 07:45.",
+        "ru": "Разбуди меня к 07:45."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:45"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "07:45"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:45",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "07:45",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c34",
+      "difficulty": "literal",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "12:15 = 12:15",
+      "instruction": {
+        "en": "Set an alarm for 12:15.",
+        "ru": "Поставь будильник на 12:15."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:15"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:15",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c35",
+      "difficulty": "literal",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "12:15 = 12:15",
+      "instruction": {
+        "en": "Add a meeting to the calendar from 12:15.",
+        "ru": "Добавь в календарь встречу с 12:15."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "12:15"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "12:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "12:15",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "12:15",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c36",
+      "difficulty": "literal",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "12:15 = 12:15",
+      "instruction": {
+        "en": "Wake me by 12:15.",
+        "ru": "Разбуди меня к 12:15."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:15"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "12:15"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:15",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "12:15",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c37",
+      "difficulty": "literal",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "16:40 = 16:40",
+      "instruction": {
+        "en": "Set an alarm for 16:40.",
+        "ru": "Поставь будильник на 16:40."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "16:40"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "16:40"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "16:40",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "16:40",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c38",
+      "difficulty": "literal",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "16:40 = 16:40",
+      "instruction": {
+        "en": "Add a meeting to the calendar from 16:40.",
+        "ru": "Добавь в календарь встречу с 16:40."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "16:40"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "16:40"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "16:40",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "16:40",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c39",
+      "difficulty": "literal",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "16:40 = 16:40",
+      "instruction": {
+        "en": "Wake me by 16:40.",
+        "ru": "Разбуди меня к 16:40."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "16:40"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "16:40"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "16:40",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "16:40",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c40",
+      "difficulty": "literal",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "22:05 = 22:05",
+      "instruction": {
+        "en": "Set an alarm for 22:05.",
+        "ru": "Поставь будильник на 22:05."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:05"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:05",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c41",
+      "difficulty": "literal",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "22:05 = 22:05",
+      "instruction": {
+        "en": "Add a meeting to the calendar from 22:05.",
+        "ru": "Добавь в календарь встречу с 22:05."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "22:05"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "22:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "22:05",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "22:05",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c42",
+      "difficulty": "literal",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "22:05 = 22:05",
+      "instruction": {
+        "en": "Wake me by 22:05.",
+        "ru": "Разбуди меня к 22:05."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:05"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "22:05"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:05",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "22:05",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c43",
+      "difficulty": "literal",
+      "case_frame": "at",
+      "case": "accusative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "03:50 = 03:50",
+      "instruction": {
+        "en": "Set an alarm for 03:50.",
+        "ru": "Поставь будильник на 03:50."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:50"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:50"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:50",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:50",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c44",
+      "difficulty": "literal",
+      "case_frame": "from",
+      "case": "genitive",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "03:50 = 03:50",
+      "instruction": {
+        "en": "Add a meeting to the calendar from 03:50.",
+        "ru": "Добавь в календарь встречу с 03:50."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "03:50"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "event_exists",
+            "date": "2026-09-07",
+            "time": "03:50"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "03:50",
+              "title": "meeting"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "add_event",
+            "args": {
+              "date": "2026-09-07",
+              "time": "03:50",
+              "title": "встреча"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "c45",
+      "difficulty": "literal",
+      "case_frame": "by",
+      "case": "dative",
+      "marginal_wording": false,
+      "n_steps": 1,
+      "trap": "03:50 = 03:50",
+      "instruction": {
+        "en": "Wake me by 03:50.",
+        "ru": "Разбуди меня к 03:50."
+      },
+      "checks": {
+        "en": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:50"
+          }
+        ],
+        "ru": [
+          {
+            "kind": "alarm_exists",
+            "time": "03:50"
+          }
+        ]
+      },
+      "gold": {
+        "en": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:50",
+              "label": "alarm"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ],
+        "ru": [
+          {
+            "tool": "set_alarm",
+            "args": {
+              "time": "03:50",
+              "label": "будильник"
+            }
+          },
+          {
+            "tool": "done",
+            "args": {}
+          }
+        ]
+      }
+    }
+  ]
+}

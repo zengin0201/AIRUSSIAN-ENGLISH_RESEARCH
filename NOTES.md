@@ -2950,3 +2950,102 @@ larger edit than adding a column and should not be done by reflex.
 **Not resolved by any of this:** no native speaker has checked either German
 file; the regional forms still need a verifier from a region that uses them;
 and Sproat's case-variation question is still untouched.
+
+
+## 2026-10-19 — session 17: the case probe, written down before it is run
+
+### F60 — case variation, pre-registered
+
+`data/tasks_time_case.json`, 45 items. Committed before any model sees it.
+This closes the last open item from the October review.
+
+Sproat's point, 14 October:
+
+> "Двадцать минут восьмого will not always show up in that form, if for
+> example the time expression is found in a context that requires a different
+> case form (e.g. двадцати минутах восьмого). This adds further noise to the
+> task."
+
+**He was more right than the paper admitted.** Limitations said the probe asks
+for the alarm "in a frame that takes the nominative throughout". That is false.
+«на половину третьего» is accusative — половину is accusative, половина is the
+citation form. For «двадцать минут» and «четверть» the accusative is syncretic
+with the nominative, which is why nobody noticed. Corrected in the paper today;
+the heading of that paragraph was wrong too and is now "Every item sits in one
+case frame."
+
+**The design.** Three carrier frames, the same construction in three cases:
+
+    frame   preposition  case         Russian                      English
+    at      на           accusative   на двадцать минут восьмого   Set an alarm for X
+    from    с            genitive     с двадцати минут восьмого    Add a meeting from X
+    by      к            dative       к двадцати минутам восьмого  Wake me by X
+
+`at` is the existing frame carried over unchanged, so the new file is anchored
+to the old result rather than floating free.
+
+Cells: `n_minutes` (productive, 0 of 8 in the main probe), `half_past`
+(frequent fixed, 45 percent), `literal` (health check). Five items each, three
+frames, 45 tasks.
+
+**On the prepositional, which is the form he actually named.** «двадцати
+минутах восьмого» is grammatical and does not occur in an imperative
+instruction to an assistant: «в двадцати минутах» reads as a distance, and the
+other prepositional contexts are discursive rather than task-giving. Writing
+one anyway would test a sentence no user would type. Reporting that the
+register does not produce it is part of the answer, not an evasion of it.
+
+**The confound and its control.** Case is varied by changing the preposition,
+so case is confounded with frame. The English half carries the same three
+frames, and English has no case. If English is flat across the three and
+Russian drops in the oblique two, the frame is not the difficulty. Same
+within-item ceiling as everywhere else in the project, on a new axis.
+
+The `from` frame uses `add_event` because an alarm does not start at a time.
+Within any one frame both languages call the same tool at the same time, so the
+comparison that matters never crosses tools.
+
+**Predictions.**
+
+1. `literal` flat across all three frames in both languages, at or near 5/5.
+   Digits do not inflect. If this moves, the frame is broken and nothing else
+   in the file may be read.
+2. English flat across all three frames. If English drops in `from` or `by`,
+   the frame is harder regardless of case and the Russian comparison is
+   uninterpretable for that frame.
+3. **Russian `n_minutes` at or near 0 in all three frames.** It is 0 of 8 in
+   the accusative already; there is no room below.
+4. **Russian `half_past` lower in the oblique frames than in the accusative.**
+   This is the load-bearing prediction, and the only cell with room to move:
+   «половину» scores about 45 percent, so «половины» and «половине» have
+   somewhere to fall. The reason to expect a fall is the account German left
+   us with — the memorised reading has to beat the compositional one, and an
+   oblique form of the phrase is rarer than the citation form, so it is less
+   likely to have been stored.
+
+**What would falsify it:** Russian `half_past` the same in all three frames
+with `literal` and English flat. Then case adds nothing, Sproat's worry is
+answered in the negative, and the main probe's single frame is not a
+limitation worth the paragraph it currently gets.
+
+**Reporting rule fixed in advance.** Both outcomes go in the paper. If case
+makes no difference that is a cleaner story than if it does, because it removes
+a caveat; the temptation will be to bury a null and leave the Limitations
+paragraph standing, and this sentence exists to make that visible if it
+happens.
+
+**The marginal cell, flagged in the data.** «к двадцати минутам восьмого» is
+grammatical but much less ordinary than «к половине восьмого»: the productive
+form in the dative is rare even for a native speaker. Five items carry
+`marginal_wording: true` (c03, c06, c09, c12, c15). They are the dative
+productive cell, which prediction 3 says is at floor anyway, so nothing rests
+on them — but if that cell scores *lower* than the accusative productive cell,
+the wording is a live alternative explanation and must be named.
+
+**This probe's Russian is written by a native speaker**, which neither the
+Polish nor the German probe can say. That does not make it idiomatic by fiat,
+and the marginal cell above is the author flagging his own wording.
+
+**Wiring checked before the run.** `tests/run_all.py` reports 45 tasks,
+"comparing en against ru", structurally parallel, difficulty mix 15/15/15. The
+oracle replays every gold trace, 90 of 90. 71 unit tests green.
