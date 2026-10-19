@@ -190,9 +190,21 @@ def tally(
             continue
         if wanted_ids and row["task_id"] not in wanted_ids:
             continue
+        # An episode that crashed never reached the model, so counting it as a
+        # failure attributes an SSL timeout to the model's grammar. Dropped
+        # from the denominator and surfaced by crashes() instead, which is the
+        # only reason a reader can tell the two apart.
+        if row.get("error"):
+            continue
         total += 1
         ok += bool(row["success"])
     return ok, total
+
+
+def crashes(rows: Iterable[Dict[str, Any]], arm: Optional[str] = None) -> int:
+    """Episodes that never produced an answer. Infrastructure, not behaviour."""
+    return sum(1 for row in rows
+               if row.get("error") and (arm is None or row.get("arm") == arm))
 
 
 def minutes(value: str) -> int:
@@ -807,9 +819,20 @@ def section_case(report: Report) -> None:
 
     print()
     lit = totals["literal"]
-    flat = all(lit[c][0] == lit["accusative"][0] for _, c in CASE_FRAMES)
-    print(f"    digital is {'flat' if flat else 'NOT FLAT'} across the frames"
-          f"{'' if flat else ' — the frame is broken, stop here'}")
+    rates = [lit[c][0] / lit[c][1] if lit[c][1] else 0.0 for _, c in CASE_FRAMES]
+    spread = max(rates) - min(rates)
+    print(f"    digital across the three frames: "
+          + ", ".join(f"{r*100:.0f}%" for r in rates)
+          + f"  (spread {spread*100:.0f} points)")
+    if spread > 0.15:
+        print("    that spread is too large to read anything below it — the frame")
+        print("    itself is doing work. Check the episodes before interpreting.")
+    else:
+        print("    flat enough to read the cells below.")
+    lost = sum(crashes(load(path)) for _, path in available)
+    if lost:
+        print(f"    {lost} episodes crashed and are excluded from every count")
+        print("    above; they are infrastructure failures, not model behaviour.")
 
     # The load-bearing comparison: the frequent fixed phrase is the only cell
     # with room to move, since the productive form is already at floor.
