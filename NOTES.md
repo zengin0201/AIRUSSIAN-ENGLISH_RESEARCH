@@ -3192,3 +3192,71 @@ in this direction, since they were written down to be checked.
 **Three pre-registrations, three losses:** Polish F31, German F50, case F60. The
 German one changed the account. This one removes a caveat. Neither outcome was
 the one written down, and that is now the pattern rather than the exception.
+
+### F64 — the venue rules, checked rather than assumed
+
+The paper has been carrying a word-count problem against a page limit nobody
+verified. Checked it today against the ACL 2026 SRW call, the last one
+published.
+
+    long paper        up to 8 content pages
+    short paper       up to 4 content pages
+    references        unlimited
+    appendix          unlimited
+    accepted papers   one extra page
+    first author      must be a current student
+    advisor           NOT required as a co-author
+    route             direct submission to OpenReview, OR commitment from ARR
+
+**So "four pages" was the short-paper limit, and we had been treating it as
+the only one.** The body is 3736 words, roughly five pages in two columns. As a
+long paper there is room to spare, and **the plan to cut 1170 words is
+cancelled**. That block of work does not exist.
+
+**ARR and direct submission are different things**, and advice that conflates
+them is wrong. The ARR commitment deadline is for papers *already reviewed*
+through ARR; using it means going through an ARR cycle first. Direct submission
+to the workshop is one deadline and no ARR.
+
+**Dates.** ACL 2027 is Kyoto, 17–22 August. ACL 2026 SRW had direct submission
+on 18 March for a 5–7 July conference, three and a half months of lead. The
+same lead from August 2027 puts SRW 2027 at **late April or early May**, which
+is what we had assumed. The time was right; the page limit was not. The 2027
+call is not published yet and should be watched from about December.
+
+**Also checked and not supported:** a suggestion that ARR deadlines fall on the
+15th of every even month. The ACL 2027 main-conference ARR deadline is reported
+as 4 January 2027. Nothing found supports the even-month rule.
+
+**One thing to know rather than act on:** the SRW is aimed at graduate
+students. The rule as written says the first author must be a current student,
+which a secondary-school student satisfies, but it is an unusual case.
+
+### F65 — why the mixed model is not worth it here
+
+The plan said: replace thirty-two Fisher tests with a mixed logistic
+regression, since our observations are not independent — the same items run
+across four models. The criticism is right. The remedy is not.
+
+**Quasi-complete separation.** The Russian productive cell is an absolute zero,
+0 of 32. Maximum-likelihood logistic regression on a zero cell does not
+converge: the coefficient runs to negative infinity and the p-value becomes
+fictitious. The standard fixes are Firth's penalised likelihood or a Bayesian
+model with weakly informative priors.
+
+**The cost of those fixes, measured rather than guessed.** The environment has
+**numpy and nothing else** — no scipy, no pandas, no statsmodels. Every statistic
+in this project is hand-written on `fractions`, which is exactly why the zeros
+have never caused trouble. Firth combined with random effects is close to
+absent in Python; doing it properly means R with `brms` or Stan for one table.
+
+**Fisher is already correct on zero cells.** That is what exact tests are for.
+The zeros were never the problem.
+
+**So the cheap and honest remedy for non-independence is to stop pooling
+heterogeneous models** and report per model, which this project already does
+almost everywhere. No new dependency, and no risk of showing Gorman a model we
+cannot diagnose ourselves.
+
+The GLMM stays a reasonable appendix or second paper. It is not something to
+hang an April submission on.
