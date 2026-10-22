@@ -3260,3 +3260,60 @@ cannot diagnose ourselves.
 
 The GLMM stays a reasonable appendix or second paper. It is not something to
 hang an April submission on.
+
+### F66 — the case result on all four models, and a confound in the genitive frame
+
+qwen3.8-27b completed cleanly once the hosted endpoint recovered. Four models,
+360 episodes, **zero crashes**, verified by counting outcomes in the files
+rather than by reading a closing line.
+
+    cell         accusative          genitive            dative
+    literal   ru 20/20 en 20/20   ru 20/20 en 20/20   ru 20/20 en 20/20
+    half_past  ru 9/20 en 19/20    ru 4/20 en 20/20   ru 11/20 en 18/20
+    n_minutes  ru 0/20 en 20/20    ru 0/20 en 16/20    ru 0/20 en 18/20
+
+**The health check is now perfect at full size:** `literal` 20 of 20 in every
+frame in both languages, spread zero.
+
+**The conclusion from F63 holds and is better powered.** Russian `half_past`
+accusative 9 of 20 against oblique 15 of 40, **p = .59**. Case adds nothing.
+
+**Checked whether pooling hid anything, because the genitive cell looked low.**
+It did not. Accusative against genitive is 9/20 vs 4/20, **p = .18**; against
+dative 9/20 vs 11/20, **p = .75**. Neither approaches the .01 threshold, and
+the dative is still higher than the accusative. Flagging this as post-hoc: F60
+registered the pooled comparison, and these two are a check on it rather than
+a test in their own right.
+
+**Where the genitive dip comes from, and why it is not a case effect.** Per
+model, Russian `half_past`:
+
+    Qwen2.5-3B     0/5   0/5   2/5
+    Phi-3.5        1/5   0/5   0/5
+    qwen3.8-27b    5/5   1/5   5/5
+    gpt-oss-120b   3/5   3/5   4/5
+
+The whole dip is qwen3.8-27b going 5, 1, 5 on five items per cell. One model,
+n = 5, and gpt-oss is flat at 3, 3, 4.
+
+**And there is a confound in that frame that I should have weighted more when
+designing it.** The genitive frame is the only one that uses `add_event`
+instead of `set_alarm` — an alarm does not start at a time, so "a meeting from
+X" needed the calendar. So *genitive* is confounded with *different tool*.
+English supports the frame reading over the morphology one: English
+`n_minutes` is 16 of 20 in the genitive against 20 of 20 in the accusative, and
+English has no case at all.
+
+So even if the genitive dip had reached significance, it could not have been
+attributed to case cleanly. The design documents this, but the write-up treated
+the three frames as if they differed only in morphology, and that was too
+generous to the design.
+
+**What a cleaner version would do:** keep the tool constant across all three
+frames, which means finding a genitive carrier that takes `set_alarm`. The
+author could not find one that stays natural — «с двадцати минут восьмого» asks
+for something that begins at a time, and an alarm does not begin. This is a
+real limit on the probe rather than an oversight, and it belongs in the paper
+if the case paragraph is ever expanded beyond its current size.
+
+**Paper updated** from the three-model numbers to the four-model ones.

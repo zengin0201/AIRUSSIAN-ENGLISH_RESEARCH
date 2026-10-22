@@ -848,6 +848,17 @@ def section_case(report: Report) -> None:
         print(f"    {category:<12} Russian accusative {acc[0]}/{acc[1]}"
               f" vs oblique {obl[0]}/{obl[1]}   {format_p(p)} [exact {p:.2e}]")
 
+    # Each oblique frame against the accusative separately. F60 registered the
+    # pooled comparison; these are a check that pooling hid nothing, and the
+    # paper reports them as such rather than as tests in their own right.
+    for case in ("genitive", "dative"):
+        acc = totals["half_past"]["accusative"]
+        obl = totals["half_past"][case]
+        p = fisher_exact(acc[0], acc[1] - acc[0], obl[0], obl[1] - obl[0])
+        report.p_values.append(p)
+        print(f"    half_past    Russian accusative {acc[0]}/{acc[1]}"
+              f" vs {case} {obl[0]}/{obl[1]}   {format_p(p)} [exact {p:.2e}]")
+
     # English across the same split, as the control. If English moves too, the
     # frame is the difficulty and the Russian contrast means nothing.
     print()
