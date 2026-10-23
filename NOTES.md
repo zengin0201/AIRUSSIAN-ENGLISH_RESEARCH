@@ -3371,3 +3371,53 @@ than asked to find them.
 
 **Still outstanding:** an actual native speaker, for both languages, and for
 German one from the east or south. Nothing above changes that.
+
+### F68 — Gemini on the Polish items, blind, and what it found
+
+Run on `review/polish_blind.md`: the sentences with **no intended times, no
+flags and none of our suspicions**, because a model told what we expect hands
+it back to us. It had to produce its own reading of each sentence.
+
+**The headline: all 24 readings match the gold.** Blind, it read every sentence
+as the time we intended, including the three we knew were compromised. So the
+Polish items are unambiguous in what they denote, whatever else is wrong with
+them. That is the question the probe needs answered, and it is answered.
+
+**It found the structural error independently, and agrees with F67.** g22-g24
+marked **wrong**, with the same diagnosis: «ustawić budzik» governs «na» plus
+the target time, and «Ustaw budzik za ...» parses as setting a timer for a
+duration. Two separate passes, one of them blind, landing on the same defect is
+better evidence than either alone.
+
+**Its stylistic objections are real and have no measurable consequence.**
+
+    ok     g01 g02 g03 g05 g10 g11 g12 g15 g18-g21    pl 33/48   en 47/48
+    odd    g04 g06-g09 g13 g14 g16 g17                pl 22/36   en 33/36
+    wrong  g22 g23 g24                                pl  2/12   en  6/12
+
+`ok` against `odd` in Polish is **p = .49**; in English **p = .31**. The
+objections do not predict failure, so they are notes for a camera-ready rather
+than a threat to the result.
+
+What the objections were:
+
+- **«kwadrans» is dated and bookish** (g06-g09). Modern spoken Polish prefers
+  «piętnaście po piątej». This is the whole `quarter_past` cell.
+- **«dwadzieścia pięć po» is an English calque** (g13, g17). Traditional Polish
+  renders :25 as «za pięć wpół do drugiej» — which counts INTO the hour.
+- **daypart redundancy** (g04 «przed południem» bureaucratic, g09/g13/g14 «po
+  ... po południu» cacophonic, g16 «w południe» after «po dwunastej»
+  pleonastic).
+
+**The :25 note deserves attention and not panic.** If the natural Polish for
+13:25 counts into the hour, then two items in our `from_hour` cell use a form
+that is not the native default, which touches the crossed design. But it is one
+model's stylistic opinion, the readings were still correct, and the cell's
+other six items at :05, :10 and :20 were marked `ok`. A native speaker decides
+this, not Gemini and not us.
+
+**What this is worth, stated plainly.** It is a second model judging a language
+it does not speak, in a project about models mishandling that language. The
+blind design removes the anchoring and the agreement effect; it does not make
+the judge a speaker. The paper will say «rated blind by an LLM, which read all
+24 items as the intended time; not checked by a native speaker».
