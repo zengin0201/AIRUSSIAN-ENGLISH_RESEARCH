@@ -57,6 +57,15 @@ HEADER = """# Review sheet — {language}
 
 {why}
 
+**Two things we already suspect, so you are not asked to find them:**
+
+- German: six items say *morgens* for a time between 02:00 and 05:00
+  (h03, h04, h17, h23, h29, h45). We think *nachts* or *früh* is right there.
+- Polish: the three *za* items (g22-g24) drop the *na* that every other item
+  has, which may push *za dwadzieścia* toward "in twenty minutes".
+
+Please say whether you agree, and flag anything else.
+
 **What to do:** read each sentence and put one mark in the verdict column.
 Add a comment only where it is not `ok`. That is the whole task.
 

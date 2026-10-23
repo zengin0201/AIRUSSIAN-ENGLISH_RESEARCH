@@ -3317,3 +3317,57 @@ real limit on the probe rather than an oversight, and it belongs in the paper
 if the case paragraph is ever expanded beyond its current size.
 
 **Paper updated** from the three-model numbers to the four-model ones.
+
+### F67 — my own pass over the Polish and German items, and what it is worth
+
+Sproat could not supply native speakers and suggested having an LLM rate the
+examples instead, framing precisely what that licenses: "you'd be able to
+report that your examples seem grammatical to LLMs". This entry is that, done
+by the assistant rather than by Gemini, and **it is the same weak class of
+evidence**: a language model judging constructions in languages it does not
+natively speak, in a paper about language models mishandling those
+constructions. It catches gross errors. It does not replace a native speaker
+and the paper will not claim it does.
+
+**German: six items use «morgens» for a time between 02:00 and 05:00.**
+
+    h03  02:30  halb drei morgens
+    h04  03:30  halb vier morgens
+    h17  03:15  viertel vier morgens
+    h23  04:45  dreiviertel fünf morgens
+    h29  03:20  zwanzig nach drei morgens
+    h45  03:40  zwanzig vor vier morgens
+
+A German speaker says «nachts» there, or «früh» in the south. «morgens» starts
+around five or six. This is a naturalness flaw, not an ambiguity: «halb drei»
+is 02:30 whatever daypart word follows it.
+
+**Checked whether it touches the result. It does not.** The six are spread over
+all four construction cells, so they cannot bias one of them, and they do not
+score differently: German 11 of 24 against 78 of 148 elsewhere, **p = .66**;
+English 19 of 24 against 117 of 148, **p = 1.0**. Fix for a camera-ready, not a
+reason to re-run.
+
+**Polish: the three subtractive items drop the preposition the other
+twenty-one carry.**
+
+    g01-g21   Ustaw budzik **na** wpół do trzeciej ...
+    g22-g24   Ustaw budzik **za** dwadzieścia dziewiąta ...
+
+Every other item is «na» plus the time. The subtractive ones put «za» directly
+after the verb phrase, and «za dwadzieścia» on its own means "in twenty
+minutes". The paper already documents that lexical ambiguity and reports that
+both large models took the second reading. **What it does not document is that
+our own carrier makes the second reading easier**, because «za» lands where a
+duration would.
+
+So the Polish subtractive miss is partly ours. It is a control cell that fails
+in English too and both Polish misses fall there, so the main comparison is
+untouched — but the Limitations sentence currently blames the Polish idiom
+alone, and that is not the whole story.
+
+**Added to the review sheets** so a native speaker is pointed at both rather
+than asked to find them.
+
+**Still outstanding:** an actual native speaker, for both languages, and for
+German one from the east or south. Nothing above changes that.
