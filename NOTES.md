@@ -3421,3 +3421,43 @@ it does not speak, in a project about models mishandling that language. The
 blind design removes the anchoring and the agreement effect; it does not make
 the judge a speaker. The paper will say «rated blind by an LLM, which read all
 24 items as the intended time; not checked by a native speaker».
+
+### F69 — the Polish carrier was wrong and was not the cause
+
+Fixed the three subtractive items by restoring the «na» that governs the target
+time in every other item, kept `tasks_time_pl.json` untouched, and re-ran.
+
+**The fix changed nothing.** gpt-oss-120b, the same model before and after:
+
+    g22  gold 08:40   before 09:29   after 09:20
+    g23  gold 05:45   before OK      after OK
+    g24  gold 18:50   before 19:10   after 19:10
+
+Both wrong answers are durations measured from the hour: 09:20 is twenty
+minutes from nine, 19:10 is ten minutes from seven. The model reads «za
+dwadzieścia» as a timer **with the preposition and without it**.
+
+Pooled over the two hosted models the subtractive cell went 2 of 6 to 1 of 6,
+which at that size is nothing. Everything outside the cell is identical, 42 of
+42 in both arms before and after, so the edit was surgical.
+
+**So F67 over-claimed and the paper over-claimed with it.** The missing
+preposition was a real defect — two independent passes found it, one blind —
+but it was not what produced the misreading. The Limitations sentence said «our
+carrier makes that reading easier»; that is now testable, tested, and false. It
+now says the carrier was wrong, that fixing it changed nothing, and that the
+ambiguity sits in the idiom.
+
+**The original claim in the paper was right all along.** Reporting that, because
+the correction I wrote yesterday was more flattering to us than the evidence
+supports: it is nicer to say "our wording caused it, we fixed it" than "the
+idiom is ambiguous and we cannot fix it."
+
+**A fourth prediction, a fourth loss**, if the implicit one counts: fixing the
+carrier was expected to move the cell. Polish F31, German F50, case F60, this.
+
+One episode of `pl2_qwen38` died on a network error (g01, English arm) and is
+excluded from counts.
+
+**Still to run:** Qwen2.5-3B and Phi-3.5-mini on `tasks_time_pl2.json`. The
+hosted result is already unambiguous, so they confirm rather than decide.
