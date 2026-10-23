@@ -130,6 +130,41 @@ def sheet(path: str, lang: str, language: str, why: str) -> str:
     return "\n".join(out)
 
 
+BLIND_HEADER = """# {language} sentences to judge
+
+{n} sentences. For each one, answer three things:
+
+1. **Time** — what clock time does the sentence tell you to set? Give it as
+   HH:MM in 24-hour form. If it is ambiguous, give every reading you see.
+2. **Verdict** — `ok` if a person would say this, `odd` if it is grammatical
+   but nobody talks that way, `wrong` if it is not correct {language},
+   `unsure` if you would not say it but others might.
+3. **Comment** — only where the verdict is not `ok`.
+
+Answer as a table with columns: id, time, verdict, comment.
+
+"""
+
+
+def blind_sheet(path: str, lang: str, language: str) -> str:
+    """A sheet with no intended times, no flags, and no stated suspicions.
+
+    Everything we think we know is withheld on purpose. Given the intended
+    time a model anchors on it and hands back our own answer; given our
+    suspicions it agrees with them. Its reading is only worth something if it
+    has to produce one unaided.
+    """
+    with open(os.path.join(ROOT, path), "r", encoding="utf-8") as handle:
+        data = json.load(handle)
+    rows = [f"| {t['id']} | {t['instruction'][lang]} | | | |"
+            for t in data["tasks"] if t["instruction"].get(lang)]
+    out = [BLIND_HEADER.format(language=language, n=len(rows))]
+    out.append("| id | sentence | time | verdict | comment |")
+    out.append("|---|---|---|---|---|")
+    out += rows
+    return chr(10).join(out)
+
+
 def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")
     os.makedirs(OUT, exist_ok=True)
@@ -141,6 +176,10 @@ def main() -> int:
         with open(target, "w", encoding="utf-8") as handle:
             handle.write(sheet(path, lang, language, why))
         print(f"  wrote review/{name}.md")
+        blind = os.path.join(OUT, f"{name}_blind.md")
+        with open(blind, "w", encoding="utf-8") as handle:
+            handle.write(blind_sheet(path, lang, language))
+        print(f"  wrote review/{name}_blind.md  (for an LLM — no times, no flags)")
     print()
     print("Send one sheet per person. Ask them to fill the last two columns")
     print("and the 'about you' block, then send it back. Paste what comes back")
