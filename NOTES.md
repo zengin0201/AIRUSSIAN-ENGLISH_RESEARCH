@@ -3474,3 +3474,71 @@ after. The two that moved stayed wrong: Phi 21:00 -> 21:30 on g24, gpt-oss
 
 The task files were checked to differ on exactly g22, g23 and g24 and nowhere
 else, so this is a real null and not two runs of the same file.
+
+### F70 — Gemini on the German items, and a false claim it exposed in the paper
+
+Blind sheet, 48 items, no intended times and none of our suspicions.
+
+**All 42 readings I could check match the gold**, including the twelve regional
+ones. So the German items denote what we think they denote.
+
+**It confirmed F67's daypart finding and graded it harder.** h03, h04, h17, h29
+and h45 are marked **wrong**, not odd: «02:30 is deep night (*nachts*), not
+morning (*morgens*)... In German, *morgens* begins around 05:00–06:00». That is
+the same defect I found, reached independently and blind.
+
+Those five score de 9/20 against 59/84 elsewhere, **p = .04** — above our .01
+threshold. Noting that my earlier grouping of the same issue gave p = .66, and
+the number moves with how the groups are drawn, so it is not robust either way.
+
+**New and systematic: the post-positioned daypart is an English calque.** Nearly
+every item is «Stelle den Wecker auf halb acht **morgens**», and Gemini calls
+the word order stilted throughout — a German speaker says «morgen früh um halb
+acht», or just «halb acht», or types the digits. This is our carrier, not the
+clock phrase, and it affects almost the whole file. It did not stop any reading
+being correct.
+
+**New: «vormittags» is reportedly never used to set an alarm** (h08, h09, h19,
+h25, h32, h33).
+
+**New: the regional forms may be actively misread, not merely unused.** h16:
+«*Viertel zwei* (= 01:15) is regional... In Western and Northern Germany this
+expression is not used, widely misunderstood, or **thought to mean 01:45 or
+02:15**». Our Limitations said a northern speaker may not share the reading; it
+is worse than that, and the gold label is contested in a specific, nameable way.
+
+---
+
+**The finding that matters most, and it makes the paper wrong.**
+
+The paper said: *"No German form counts into the eighth hour for 07:20, which
+can only be zwanzig nach sieben."* That is false.
+
+**«Zehn vor halb acht» is 07:20.** It anchors on *halb acht*, the counting-into
+phrase, so the surface number is not the answer and the named hour has not
+arrived — **exactly the profile that breaks in Russian.** Gemini also reports
+that «fünf vor halb acht» is the idiomatic 07:25 across most of the
+German-speaking area and that our «fünfundzwanzig nach sieben» is minority
+usage or English interference.
+
+So German has a compositional counting-into pattern. Our whole German design
+was premised on it not having one.
+
+**What this does and does not damage.** What we measured stands: *halb*
+succeeds at scale, *N nach* succeeds everywhere, the Russian productive form
+never moves. What breaks is the interpretation — we claimed German varies
+productivity against Russian because German's set is closed, and it is not
+closed.
+
+**What it opens is better than what it costs.** A probe of «N vor halb X» puts
+the productivity contrast **inside one language**: same speaker, same hour
+names, same carrier, one anchored on a memorised phrase and one built
+compositionally from it. If «halb acht» is read correctly at 120B and «zehn vor
+halb acht» is not, that is the productivity effect without any cross-language
+comparison at all, and it is a far stronger design than the one in the paper.
+
+**Dependency:** this rests on Gemini plus my own reading, and «fünf vor halb»
+is a well-known German pattern, but a native speaker should confirm the
+idiomaticity claim before the design is built on it.
+
+Paper corrected in two places and the gap written into Limitations.
