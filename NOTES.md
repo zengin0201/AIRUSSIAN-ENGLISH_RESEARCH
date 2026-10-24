@@ -3542,3 +3542,64 @@ is a well-known German pattern, but a native speaker should confirm the
 idiomaticity claim before the design is built on it.
 
 Paper corrected in two places and the gap written into Limitations.
+
+### F71 — the productivity contrast inside German, pre-registered
+
+`data/tasks_time_de_halb.json`, 35 items. Committed before any model sees it.
+
+**Why it exists.** F70: the paper claimed German has no productive
+counting-into form. *Zehn vor halb acht* is 07:20, anchored on the
+counting-into phrase, so the surface number is not the answer and the named
+hour has not arrived. The claim was false and the form was never probed.
+
+**The design.** Three German renderings, one language, one carrier:
+
+    halb acht             07:30   counting INTO, a stored phrase
+    zehn vor halb acht    07:20   counting INTO, assembled from that phrase
+    zwanzig nach sieben   07:20   counting FROM
+
+Cells: `into_fixed` 8, `into_composed` 14, `from_hour` 8, `digital` 5.
+
+**The minimal pair is exact and the generator enforces it.** `from_hour` and
+`into_composed` ask for the **same eight clock times** with **byte-identical
+English**, because English has one way to say 06:20. A difference between those
+two cells cannot be the task, the time, or the English half. It can only be the
+German construction.
+
+**Predictions.**
+
+1. `digital` at or near 5/5 on every model. If it moves, the file is
+   uninterpretable and nothing below it may be read.
+2. English flat across `into_composed` and `from_hour` by construction — the
+   sentences are identical. If it is not flat, something is wrong with the
+   harness, not with German.
+3. `from_hour` high everywhere, matching the 43 of 48 the earlier probe got.
+4. **`into_composed` well below `from_hour` on the same eight times.** This is
+   the load-bearing prediction.
+5. **`into_composed` below `into_fixed` at 120B.** At that size *halb X* was
+   15 of 15. If the assembled form is not, the variable is productivity and not
+   direction of counting, inside one language, with no cross-language
+   comparison anywhere in the argument.
+
+**What falsifies it:** `into_composed` matching `from_hour` on the shared
+times, with `digital` clean. Then German assembles the counting-into form
+without trouble, the Russian failure is not about productivity, and the account
+this project has carried since F56 needs rebuilding rather than extending.
+
+**Also reportable if it happens:** `into_composed` failing *as badly as* the
+Russian productive form, 0 of 14. That would be the strongest single result the
+project has, and it would mean the German section stops being a contrast and
+becomes a replication.
+
+**Reporting rule fixed in advance.** Both outcomes go in the paper. The earlier
+German probe is reported as what it was and is **not** pooled with this one:
+it was built on a premise this file exists because that premise was wrong.
+
+**Dependency, stated plainly.** That *fünf vor halb acht* is the ordinary 07:25
+across most of the German-speaking area comes from a blind LLM review and the
+author's reading, not from a native speaker. If that is wrong, this probe tests
+a form nobody says, and the whole file is void. It is the first thing to put to
+a speaker.
+
+**Wiring checked.** `run_all` reports 35 tasks, en against de, parallel, mix
+5/8/14/8. Oracle replays 70 of 70, verified by counting outcomes.
