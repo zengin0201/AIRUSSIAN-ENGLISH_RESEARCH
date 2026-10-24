@@ -3603,3 +3603,79 @@ a speaker.
 
 **Wiring checked.** `run_all` reports 35 tasks, en against de, parallel, mix
 5/8/14/8. Oracle replays 70 of 70, verified by counting outcomes.
+
+### F72 — F71's predictions lost, and the data says something better
+
+Two hosted models, 70 episodes each, zero crashes.
+
+    cell             gpt-oss-120b        qwen3.8-27b
+    digital          de 5/5   en 5/5     de 5/5   en 5/5
+    from_hour        de 8/8   en 8/8     de 8/8   en 8/8
+    into_composed    de 14/14 en 14/14   de 7/14  en 14/14
+    into_fixed       de 8/8   en 8/8     de 4/8   en 8/8
+
+**Prediction 5, the sharp one, failed decisively.** At 120B the assembled form
+is 14 of 14, the same ceiling as the stored one. There is no productivity
+effect at that scale because there is no effect of any kind: gpt-oss reads
+every German form in this file correctly.
+
+**Prediction 4 is not met at our threshold.** qwen3.8-27b gives composed 7 of
+14 against from_hour 8 of 8, p = .022, above .01.
+
+**So the productivity account of German is not supported.** Assembled and
+stored counting-into forms do not separate: on qwen3.8-27b `into_fixed` is 4 of
+8 and `into_composed` is 7 of 14, both one in two.
+
+---
+
+**What the data says instead, and it is sharper than what was asked.**
+Splitting the composed cell by which numeral it composes:
+
+    qwen3.8-27b            gpt-oss-120b
+      fünf vor halb   3/3      3/3
+      fünf nach halb  3/3      3/3
+      zehn vor halb   0/5      5/5
+      zehn nach halb  1/3      3/3
+
+    fünf-forms 6/6 against zehn-forms 1/8   p < .01  (4.7e-03)
+    zehn-forms 1/8 against from_hour 8/8    p < .01  (1.4e-03)
+
+**The same construction, assembled the same way, and only the numeral differs.**
+«fünf vor halb acht» is the ordinary German 07:25. «zehn vor halb acht» for
+07:20 competes with «zwanzig nach sieben» and is much the rarer string. The
+frequent composition is read perfectly; the rare one is not read at all.
+
+**This is post-hoc.** F71 registered fixed against composed; it did not
+register fünf against zehn. Recording it as a pattern to test, not as a result.
+
+**The error is mechanical and nameable.** Four of the five `zehn vor halb`
+failures drop «halb» and compute ten-to-the-hour:
+
+    zehn vor halb sieben   06:20 -> 06:50
+    zehn vor halb drei     14:20 -> 14:50
+    zehn vor halb sieben   18:20 -> 18:50
+    zehn vor halb zehn     21:20 -> 21:50
+
+The fifth drops the other operator instead: «zehn vor halb neun» 08:20 ->
+08:30, which is *halb neun* with «zehn vor» ignored. On the `nach` side,
+«zehn nach halb sechs» 17:40 -> 17:30 drops the modifier, and «zehn nach halb
+neun» 20:40 -> 20:35 substitutes *fünf* for *zehn*.
+
+**The model applies one operator and drops the other.** It never attempts the
+composition and gets it wrong; it declines to compose.
+
+---
+
+**What this does to the account.** It is not productivity. The composed forms
+are all equally productive and they do not behave alike. It is the frequency of
+the exact string, which is what F56 settled on after German and what the
+Russian gradient showed from the start — половина 45%, четверть 6%, N минут 0%.
+This probe reproduces that gradient inside one construction in one language,
+with the compositional structure held constant.
+
+**Four pre-registrations, four losses.** Polish F31, German F50, case F60,
+this. Each one moved the account; none confirmed it.
+
+**Still to run:** the two local models. gpt-oss is at ceiling throughout and
+contributes nothing to the contrast, so everything above rests on one model.
+That is thin and is the first thing the two small models will fix or break.
