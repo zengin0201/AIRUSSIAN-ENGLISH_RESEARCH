@@ -3461,3 +3461,16 @@ excluded from counts.
 
 **Still to run:** Qwen2.5-3B and Phi-3.5-mini on `tasks_time_pl2.json`. The
 hosted result is already unambiguous, so they confirm rather than decide.
+
+**F69, confirmed on all four models.** Qwen2.5-3B and Phi-3.5-mini ran clean,
+48 episodes each, zero crashes. Every cell is unchanged:
+
+    subtractive      Qwen3B 0/3 -> 0/3   Phi 0/3 -> 0/3   gpt-oss 1/3 -> 1/3
+    everything else  Qwen3B 8/21 -> 8/21  Phi 5/21 -> 5/21  gpt-oss 21/21 -> 21/21
+
+Seven of the nine answers on the changed items are byte-identical before and
+after. The two that moved stayed wrong: Phi 21:00 -> 21:30 on g24, gpt-oss
+09:29 -> 09:20 on g22, both still durations rather than clock times.
+
+The task files were checked to differ on exactly g22, g23 and g24 and nowhere
+else, so this is a real null and not two runs of the same file.
