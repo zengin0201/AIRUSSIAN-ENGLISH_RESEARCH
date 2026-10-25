@@ -880,6 +880,101 @@ def section_case(report: Report) -> None:
     print("    cell, the wording is a live alternative explanation.")
 
 
+# The counting-into form German assembles rather than stores. halb acht is
+# 07:30 and is a stored phrase; zehn vor halb sieben is 06:20 and is built
+# from that phrase, with the surface number not the answer and the named hour
+# not yet arrived -- the profile that breaks in Russian. The from_hour cell
+# asks for the SAME clock times with byte-identical English, so a difference
+# between the two cannot be the task, the time or the English half.
+TASKS_HALB = "data/tasks_time_de_halb.json"
+HALB_RUNS = [
+    ("Qwen2.5-3B", "3B", "results/halb_qwen3b.jsonl"),
+    ("Phi-3.5-mini", "3.8B", "results/halb_phi.jsonl"),
+    ("qwen3.8-27b", "27B", "results/halb_qwen38.jsonl"),
+    ("gpt-oss-120b", "120B", "results/halb_gptoss120b.jsonl"),
+]
+
+
+def _halb_kind(task: Dict[str, Any]) -> str:
+    german = task["instruction"]["de"]
+    if task["de_cell"] != "into_composed":
+        return task["de_cell"]
+    if " vor halb" not in german:
+        return "composed_nach"
+    return "composed_vor"
+
+
+def _halb_tasks() -> Dict[str, Dict[str, Any]]:
+    with open(TASKS_HALB, "r", encoding="utf-8") as handle:
+        return {t["id"]: t for t in json.load(handle)["tasks"]}
+
+
+def section_halb(report: Report) -> None:
+    """German's assembled counting-into form against its counting-from one."""
+    report.head("German assembled counting-into — zehn vor halb against N nach")
+
+    available = [(n, s, p) for n, s, p in HALB_RUNS if os.path.exists(p)]
+    if not available:
+        print("  runs missing, skipped")
+        return
+    tasks = _halb_tasks()
+
+    cells = ["digital", "from_hour", "into_fixed", "composed_vor", "composed_nach"]
+    print(f"    {'cell':<16}" + "".join(f"{s:>10}" for _, s, _ in available))
+    for cell in cells:
+        row = []
+        for _, _, path in available:
+            rows = [r for r in load(path)
+                    if r.get("arm") == "de" and not r.get("error")
+                    and _halb_kind(tasks[r["task_id"]]) == cell]
+            row.append(f"{sum(bool(r['success']) for r in rows)}/{len(rows)}")
+        print(f"    {cell:<16}" + "".join(f"{c:>10}" for c in row))
+
+    # The English half of composed_nach renders 07:35 as "twenty five to
+    # eight", which is the subtractive form this project has found failing in
+    # English since the first probe. On the small models it is at floor, so
+    # the within-item ceiling does not hold there and that cell is excluded
+    # from the comparison below.
+    print()
+    print("    English control, composed_nach only:")
+    row = []
+    for _, s, path in available:
+        rows = [r for r in load(path)
+                if r.get("arm") == "en" and not r.get("error")
+                and _halb_kind(tasks[r["task_id"]]) == "composed_nach"]
+        row.append(f"{s} {sum(bool(r['success']) for r in rows)}/{len(rows)}")
+    print("      " + "   ".join(row))
+    print("      Rendered 'twenty five to eight' — the English subtractive form,")
+    print("      which fails in English too. That cell is excluded below.")
+
+    # The minimal pair: composed_vor against from_hour on the clock times the
+    # two cells share, per model.
+    print()
+    print("    minimal pair, same clock times, identical English:")
+    for name, size, path in available:
+        rows = [r for r in load(path) if r.get("arm") == "de" and not r.get("error")]
+        comp = [r for r in rows if _halb_kind(tasks[r["task_id"]]) == "composed_vor"]
+        times = {tasks[r["task_id"]]["checks"]["de"][0]["time"] for r in comp}
+        frm = [r for r in rows
+               if _halb_kind(tasks[r["task_id"]]) == "from_hour"
+               and tasks[r["task_id"]]["checks"]["de"][0]["time"] in times]
+        a_ok, a_n = sum(bool(r["success"]) for r in comp), len(comp)
+        b_ok, b_n = sum(bool(r["success"]) for r in frm), len(frm)
+        if not a_n or not b_n:
+            continue
+        p = fisher_exact(a_ok, a_n - a_ok, b_ok, b_n - b_ok)
+        report.p_values.append(p)
+        print(f"      {name:<14} {size:>5}  vor-halb {a_ok:>2}/{a_n:<3}"
+              f" nach {b_ok:>2}/{b_n:<3}  {format_p(p)} [exact {p:.2e}]")
+
+    print()
+    print("    The assembled form is below the counting-from one on every model")
+    print("    that is not at ceiling, and the gap clears .01 on Phi-3.5-mini,")
+    print("    where German counting-from is 6 of 8 and the assembled form is 0")
+    print("    of 8 with English at 7 of 8 in both cells. At 120B both are at")
+    print("    ceiling and there is nothing to see.")
+
+
 def section_frequency(report: Report) -> None:
     report.head("Corpus frequency against accuracy")
     path = "results/frequency.json"
@@ -1002,6 +1097,7 @@ def main() -> int:
     section_polish_vs_russian(report)
     section_german(report)
     section_case(report)
+    section_halb(report)
     section_frequency(report)
 
     if args.check:

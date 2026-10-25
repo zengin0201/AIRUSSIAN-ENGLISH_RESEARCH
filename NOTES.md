@@ -3679,3 +3679,45 @@ this. Each one moved the account; none confirmed it.
 **Still to run:** the two local models. gpt-oss is at ceiling throughout and
 contributes nothing to the contrast, so everything above rests on one model.
 That is thin and is the first thing the two small models will fix or break.
+
+**F72, corrected and completed on all four models.** 70 episodes each, zero
+crashes.
+
+    cell             3B     3.8B    27B    120B
+    digital         5/5     5/5     5/5     5/5
+    from_hour       4/8     6/8     8/8     8/8
+    into_fixed      0/8     1/8     4/8     8/8
+    composed_vor    0/8     0/8     3/8     8/8
+    composed_nach   0/6     0/6     4/6     6/6
+
+**The minimal pair, same clock times, byte-identical English:**
+
+    Qwen2.5-3B   3B    vor-halb 0/8  nach 4/8   p = .077
+    Phi-3.5    3.8B    vor-halb 0/8  nach 6/8   p < .01  (7.0e-03)
+    qwen3.8     27B    vor-halb 3/8  nach 8/8   p = .026
+    gpt-oss    120B    vor-halb 8/8  nach 8/8   p = 1.0
+
+**Two corrections to what I reported yesterday.**
+
+*The numeral split was overstated.* On the clean `vor`-only subset qwen3.8
+gives fünf 3/3 against zehn 0/5, **p = .018** — above .01. Yesterday's p < .01
+came from pooling in the `nach halb` items, and those carry a broken English
+control: their English rendering is «twenty five to eight», the subtractive
+form this project has found failing in English since the first probe, and it
+is 0 of 6 on both small models. My own design put six items in the one English
+cell that does not work.
+
+*I said the contrast was visible on one model and that below 27B both cells sit
+at floor. Wrong.* Phi-3.5-mini has German counting-from at 6 of 8 while the
+assembled counting-into form is 0 of 8, with English at 7 of 8 in both — that
+is the cleanest instance in the file and it clears the threshold. The
+assembled form is below the counting-from one on **every model not at
+ceiling**.
+
+**So the result is stronger than yesterday's write-up and rests on a different
+cell than I claimed.** The headline is the minimal pair, not the numeral.
+
+Limitations now reports it, and says plainly that it belongs in §4.4 and is
+sitting in Limitations only because it was run after that section was written.
+`section_halb` in `stats.py` computes all four p-values so `--check` covers
+them.
