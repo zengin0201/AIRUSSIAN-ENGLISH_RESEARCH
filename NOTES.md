@@ -3721,3 +3721,38 @@ Limitations now reports it, and says plainly that it belongs in §4.4 and is
 sitting in Limitations only because it was run after that section was written.
 `section_halb` in `stats.py` computes all four p-values so `--check` covers
 them.
+
+### F73 — the abstract, the contributions and the conclusion described a different paper
+
+Checked the frame sections against the body after a fortnight of surgical
+edits. German appears ten times in Results, three in Method, four in
+Limitations — and **zero times in the Abstract, the Introduction and the
+Conclusion.**
+
+A reader of the abstract would have met a paper about Russian, English and
+Polish. A third of the results section is German, and German is what changed
+the account twice.
+
+Worse, contribution 2 still read "does not close with scale". German's *halb
+X* closes with scale outright: 1 of 15 at 3.8B and 15 of 15 at 120B. The
+paper's own headline claim contradicted its own results section.
+
+**This is the cost of editing surgically.** Every individual change was
+correct and checked; none of them looked at whether the paper still described
+itself. Fourteen days, roughly thirty targeted edits, and the three sections a
+reviewer reads first and last were never among them.
+
+**Changed.** Abstract rewritten to carry German and the scale distinction;
+contributions 2 and 3 rewritten, 2 because it was false and 3 to say that the
+German probe reproduces the frequency split inside one language; Conclusion
+gains the German sentence.
+
+**The rule this produces, for the freeze in December:** after the last content
+change, read the paper top to bottom once as a document rather than diffing
+it. Nothing in the test suite or in `--check` can catch a paper that no longer
+describes itself — they check numbers, not whether the numbers are mentioned
+where they matter.
+
+The abstract is 286 words against the 150-200 that is usual. Left long for now
+because every sentence carries a number; a cut belongs with the XeLaTeX build,
+where the real page count will say how much room there is.
