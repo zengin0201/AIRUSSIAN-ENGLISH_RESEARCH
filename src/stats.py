@@ -975,6 +975,71 @@ def section_halb(report: Report) -> None:
     print("    ceiling and there is nothing to see.")
 
 
+# The bare condition. Every probe in this project is an agent task: a system
+# prompt listing ten tools, an instruction, a JSON tool call. Resolving the
+# clock phrase is one step buried inside that, so the agent runs cannot say
+# whether the construction is unresolvable or unresolvable under load. The
+# bare runs put the same sentences to the same models with none of the
+# machinery and ask only for the time.
+BARE_PAIRS = [
+    ("gpt-oss-120b", "results/bare_gptoss120b.jsonl", "results/v2_gptoss120b.jsonl"),
+    ("qwen3.8-27b", "results/bare_qwen38.jsonl", "results/v2_qwen38.jsonl"),
+]
+BARE_TASKS = "data/tasks_time_v2.json"
+
+
+def section_bare(report: Report) -> None:
+    """Does the failure need the agent frame at all?"""
+    report.head("The bare condition — same sentences, no tools, no JSON")
+
+    with open(BARE_TASKS, "r", encoding="utf-8") as handle:
+        tasks = {t["id"]: t for t in json.load(handle)["tasks"]}
+
+    available = [(n, b, a) for n, b, a in BARE_PAIRS
+                 if os.path.exists(b) and os.path.exists(a)]
+    if not available:
+        print("  runs missing, skipped")
+        return
+
+    for name, bare_path, agent_path in available:
+        with open(bare_path, "r", encoding="utf-8") as handle:
+            bare = [json.loads(line) for line in handle if line.strip()]
+        bare = [r for r in bare if r.get("record_type") == "bare"
+                and not r.get("error")]
+        agent = [r for r in load(agent_path) if not r.get("error")]
+
+        print(f"  {name}")
+        print(f"    {'cell':<14}{'bare ru':>9}{'agent ru':>10}"
+              f"{'bare en':>9}{'agent en':>10}")
+        for cat in ("literal", "half_past", "quarter_past",
+                    "n_minutes", "subtractive"):
+            row = []
+            for arm in ("ru", "en"):
+                b = [r for r in bare
+                     if r["arm"] == arm and r["difficulty"] == cat]
+                a = [r for r in agent
+                     if r.get("arm") == arm
+                     and tasks[r["task_id"]]["difficulty"] == cat]
+                row.append(f"{sum(bool(r['success']) for r in b)}/{len(b)}")
+                row.append(f"{sum(bool(r['success']) for r in a)}/{len(a)}")
+            print(f"    {cat:<14}{row[0]:>9}{row[1]:>10}{row[2]:>9}{row[3]:>10}")
+
+        for arm in ("ru", "en"):
+            b = [r for r in bare if r["arm"] == arm]
+            a = [r for r in agent if r.get("arm") == arm]
+            b_ok, a_ok = (sum(bool(r["success"]) for r in b),
+                          sum(bool(r["success"]) for r in a))
+            p = fisher_exact(b_ok, len(b) - b_ok, a_ok, len(a) - a_ok)
+            report.p_values.append(p)
+            print(f"      {arm}: bare {b_ok}/{len(b)} vs agent {a_ok}/{len(a)}"
+                  f"   {format_p(p)} [exact {p:.2e}]")
+        print()
+
+    print("    Removing the agent machinery does not repair the construction.")
+    print("    The failure is in resolving the phrase; the agent frame is what")
+    print("    makes the wrong value invisible once it is resolved.")
+
+
 def section_frequency(report: Report) -> None:
     report.head("Corpus frequency against accuracy")
     path = "results/frequency.json"
@@ -1098,6 +1163,7 @@ def main() -> int:
     section_german(report)
     section_case(report)
     section_halb(report)
+    section_bare(report)
     section_frequency(report)
 
     if args.check:

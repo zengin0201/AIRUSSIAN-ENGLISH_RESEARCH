@@ -3756,3 +3756,53 @@ where they matter.
 The abstract is 286 words against the 150-200 that is usual. Left long for now
 because every sentence carries a number; a cut belongs with the XeLaTeX build,
 where the real page count will say how much room there is.
+
+### F74 — the bare condition, and an eighth harness artifact caught in time
+
+Prompted by a question I could not answer: if the models fail, why do Gemini
+and the assistant answer these phrases correctly when simply asked? Three
+possible reasons — different models, priming from two weeks of this
+conversation, and the one that mattered: **every probe in this project is an
+agent task and we had never asked the same models the same sentences without
+the machinery.**
+
+The paper assumed the construction is unresolvable. It had never checked
+whether it is unresolvable *under the load of the task*, which is a different
+claim and lands on the paper's own framing.
+
+**The artifact first, because it nearly became a finding.** The first run came
+back **0 of 48** with every answer unparsed. Opening the raw responses:
+`finish_reason: length`, `content: ''`, and all 32 completion tokens spent in
+the `reasoning` field. gpt-oss is a reasoning model and the trace ate the
+budget before any content was emitted. Reported as a result that would have
+read "the models cannot do this at all, even bare". Raised to 512 tokens and
+made empty content an explicit error rather than a missing answer. **Eighth
+time this class of thing has fired.**
+
+**The result, gpt-oss-120b, same sentences, no tools, no JSON:**
+
+    cell            bare ru   agent ru   bare en   agent en
+    literal            4/4       4/4       4/4       4/4
+    half_past          4/5       4/5       5/5       5/5
+    quarter_past       3/4       1/4       4/4       4/4
+    n_minutes          1/8       0/8       8/8       8/8
+    subtractive        3/3       3/3       3/3       3/3
+    total             15/24     12/24     24/24     24/24   p = .56
+
+**The wrong answers are largely the same wrong answers.** «двадцать минут
+восьмого» is 08:20 in both conditions, «десять минут одиннадцатого» 11:10 in
+both, «двадцать пять минут второго дня» 00:25 in both, «пять минут первого
+дня» 00:05 in both.
+
+**So the failure is in resolving the construction, not in the agentic load**,
+and my own hypothesis that the frame might be doing the work is not supported.
+
+This strengthens the paper rather than changing it. The agentic setting was
+never claimed to cause the error; it is what makes the wrong value invisible
+once produced — the tool call succeeds and nothing surfaces the reading. That
+claim is now tested instead of assumed, and it closes a hole a reviewer could
+have opened in one sentence.
+
+Added to §4.4 as the eighth thing. `section_bare` in `stats.py` computes the
+comparisons. A second model, qwen3.8-27b, is running in both conditions so the
+claim does not rest on one.
