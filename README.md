@@ -270,6 +270,14 @@ up to nine orders of magnitude. See `NOTES.md`, F32.
 - **Qwen2.5-3B often does not call `done`** and is stopped by our loop detector in 50-100% of episodes. This inflates its token counts. It does not affect the accuracy result — the model never wrote the correct time in any of those repeated attempts — but cost figures from that model should be read with care.
 - **The API backend's `count_tokens` is a crude fallback**, so the static fertility ratio printed for hosted runs is meaningless. Real token counts come from the API usage field and are fine.
 
+## AI assistance
+
+The probe harness, the analysis scripts and drafts of the paper were written
+with the help of an AI coding assistant. The study design, every experimental
+run, the verification of its output and the interpretation are the author's
+own, and every number reported comes from `python -m src.stats` reading the
+logs in `results/`.
+
 ## License
 
 MIT for the code. The task files are released under CC-BY-4.0.
