@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import statistics
@@ -22,13 +20,6 @@ def money(prompt_tokens: int, completion_tokens: int, price_key: str) -> float:
 
 
 def second_language(tasks: List[Dict[str, Any]]) -> str:
-    """
-    The non-English language of a task file, read from the file itself.
-
-    Task files hold English plus exactly one other language. Which one is not
-    hardcoded anywhere, so a Polish file reports Polish numbers under a Polish
-    heading instead of borrowing Russian's.
-    """
     codes = set()
     for task in tasks:
         codes |= set(task.get("instruction", {}))
@@ -37,12 +28,6 @@ def second_language(tasks: List[Dict[str, Any]]) -> str:
 
 
 def fertility(tasks: List[Dict[str, Any]], count_tokens) -> Dict[str, float]:
-    """
-    Tokens needed for the same request in the second language and in English.
-
-    `count_tokens` is a callable, normally backend.count_tokens, so the number
-    is measured with the exact tokenizer used in the experiment.
-    """
     lang = second_language(tasks)
     en_tokens, ru_tokens = [], []
     for task in tasks:
@@ -59,16 +44,6 @@ def fertility(tasks: List[Dict[str, Any]], count_tokens) -> Dict[str, float]:
 
 
 def scaffold_share(tasks: List[Dict[str, Any]], count_tokens, system_text: str) -> Dict[str, float]:
-    """
-    How much of the first prompt is the shared English scaffold?
-
-    This is the number that explains why `density_factor` comes out near 1.0
-    while the tokenizer fertility ratio is 1.4. The system prompt and the tool
-    schema are identical English text in every arm. Only the user request
-    changes language, and it is a small slice of the context. The tokenizer
-    tax is real but it is diluted, and the dilution factor is measurable, so
-    we measure it instead of hand-waving.
-    """
     lang = second_language(tasks)
     scaffold = count_tokens(system_text)
     en = _safe_mean(count_tokens(t["instruction"]["en"]) for t in tasks)
@@ -85,17 +60,12 @@ def scaffold_share(tasks: List[Dict[str, Any]], count_tokens, system_text: str) 
     }
 
 
-# --------------------------------------------------------------------------
-# aggregation
-# --------------------------------------------------------------------------
-
 def _safe_mean(values: Iterable[float]) -> float:
     values = list(values)
     return statistics.mean(values) if values else 0.0
 
 
 def aggregate_arm(records: List[Dict[str, Any]], price_key: str = "gpt-4o-mini") -> Dict[str, Any]:
-    """Aggregate all episodes of one arm."""
     if not records:
         return {}
 
@@ -164,7 +134,6 @@ def aggregate_arm(records: List[Dict[str, Any]], price_key: str = "gpt-4o-mini")
 def decompose(
     stats_en: Dict[str, Any], stats_ru: Dict[str, Any]
 ) -> Dict[str, Optional[float]]:
-    """Split the CPST gap into three multiplicative factors."""
     if not stats_en or not stats_ru:
         return {}
 
@@ -206,12 +175,6 @@ def bootstrap_ci(
     n_boot: int = 2000,
     seed: int = 0,
 ) -> Dict[str, float]:
-    """
-    95% confidence interval for the CPST ratio, by resampling episodes.
-
-    Reviewers will ask for this. It costs nothing to compute and it is the
-    difference between "a number" and "a result".
-    """
     import random
 
     rng = random.Random(seed)
@@ -243,27 +206,6 @@ def bootstrap_ci(
 
 
 def fisher_exact(a: int, b: int, c: int, d: int) -> float:
-    """
-    Two-tailed Fisher exact test on the 2x2 table
-
-        [[a, b],
-         [c, d]]
-
-    typically a = English successes, b = English failures, c = Russian
-    successes, d = Russian failures.
-
-    Exact rational arithmetic: no approximation, no floating point in the
-    summation, so the answer is the same at any table size. The two-tailed
-    p-value is the total probability of every table, at these margins, that is
-    no more likely than the observed one.
-
-    This function exists because the p-values in every draft up to 2026-08-21
-    were not computed by anything in this repository. Two of them were shared
-    verbatim between two different contingency tables, which is impossible.
-    They were conservative rather than flattering, but they were wrong by up to
-    nine orders of magnitude. Every statistic in the paper now comes from
-    `python -m src.stats`, which reads the logs. See NOTES.md, F32.
-    """
     from fractions import Fraction
     from math import comb
 
@@ -285,3 +227,17 @@ def fisher_exact(a: int, b: int, c: int, d: int) -> float:
     observed = prob(a)
     lo, hi = max(0, col1 - row2), min(row1, col1)
     return float(sum(prob(x) for x in range(lo, hi + 1) if prob(x) <= observed))
+
+
+def wilson_ci(successes: int, total: int, z: float = 2.5758) -> tuple:
+    if total <= 0:
+        raise ValueError("no observations")
+    if not 0 <= successes <= total:
+        raise ValueError("successes out of range")
+    phat = successes / total
+    denominator = 1 + z * z / total
+    centre = (phat + z * z / (2 * total)) / denominator
+    half = (z / denominator) * (
+        (phat * (1 - phat) / total + z * z / (4 * total * total)) ** 0.5)
+    return (round(100 * max(0.0, centre - half), 1),
+            round(100 * min(1.0, centre + half), 1))

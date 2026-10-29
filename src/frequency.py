@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import argparse
@@ -52,7 +50,6 @@ CORPUS = {"ru": "ru-2019", "en": "en-2019"}
 
 
 def lookup(phrase: str, lang: str, pause: float = 1.5) -> Optional[float]:
-    """Mean relative frequency of one phrase over 1980-2019, or None."""
     try:
         response = requests.get(
             NGRAM_URL,
@@ -66,15 +63,15 @@ def lookup(phrase: str, lang: str, pause: float = 1.5) -> Optional[float]:
             headers={"User-Agent": "Mozilla/5.0"},
             timeout=45,
         )
-        time.sleep(pause)  
+        time.sleep(pause)
         if response.status_code != 200:
             return None
         payload = response.json()
         if not payload:
-            return 0.0  
+            return 0.0
         series = payload[0].get("timeseries") or []
         return statistics.mean(series) if series else 0.0
-    except Exception: 
+    except Exception:
         return None
 
 

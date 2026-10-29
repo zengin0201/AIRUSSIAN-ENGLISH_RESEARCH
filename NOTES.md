@@ -3841,3 +3841,214 @@ and german.
 (fontspec, so pdfLaTeX cannot render the Cyrillic), and what to send back. The
 page count is the one number blocking the short/long decision and therefore any
 submission.
+
+### F76 — the tables ran off the column, and a false sentence in the figure caption
+
+The first Overleaf build came back at ten pages with all three tables
+overflowing the column and printing over the text beside them. Two separate
+problems.
+
+**Layout.** `latex_table()` emitted `\begin{table}[t]` for every table. In the
+two-column ACL format that is a 7.5cm box. Table 1 has six columns and Table 3
+has rows like "German counting-into, two largest against two smallest": neither
+fits, and LaTeX does not wrap or shrink, it just runs off the edge. Tables with
+more than four columns or any long cell now go in `table*`, which spans both
+columns, at `\footnotesize`; the narrow one keeps `table` and `\small`.
+
+The captions were `\caption{Table 1.}`, which is what a placeholder looks like
+when nobody has read the output. Written captions now, passed through
+`inline()` so Cyrillic reaches `\ru{}` and `%` is escaped.
+
+**The real finding, which the caption work turned up.** Figure 1's caption said
+*English is flat across every category.* That is false and the figure itself
+shows it: in the Qwen2.5-3B and Phi-3.5-mini panels the `subtractive` column
+has no English bar at all. From the logs, not the table:
+
+| | en literal | half_past | quarter_past | n_minutes | subtractive |
+|---|---|---|---|---|---|
+| Qwen2.5-3B | 4/4 | 4/5 | 4/4 | 6/8 | **0/3** |
+| Phi-3.5-mini | 4/4 | 5/5 | 3/4 | 8/8 | **0/3** |
+| qwen3.6-27b | 4/4 | 5/5 | 4/4 | 8/8 | 3/3 |
+| gpt-oss-120b | 4/4 | 5/5 | 4/4 | 8/8 | 3/3 |
+
+Pooled English `subtractive` is 6/12, not 94 percent. English is flat across
+the three counting-into categories and the digital control. It is not flat
+across `subtractive`, and it was never supposed to be: `subtractive` is in the
+probe as a control precisely because *twenty to nine* subtracts in both
+languages, so both should behave alike — and they do, 6/12 against 6/12.
+
+**The body of the paper was right the whole time.** §4.1 says "English sits at
+94 to 95 percent across all three categories" and reports "`subtractive` 6/12
+against 6/12, neither separating the languages". Only the caption
+over-generalised "all three" into "every". So this is a caption error, not a
+result error, and nothing in the argument moves.
+
+**But it was in three files**, which is the trap from F67 and F69 again:
+
+- `src/figure_main.py` — the suptitle, baked into `figures/main.pdf` and `.png`
+- `paper/build_pdf.py` — the local reportlab caption
+- `paper/build_tex.py` — the LaTeX caption
+
+All three fixed and the figure regenerated. The figure's own two-run caption
+variant had the honest version all along: "digital times are equal, subtractive
+forms fail in both languages". The four-run branch is the one that overstated.
+
+**Worth saying plainly:** a reviewer who looked at Figure 1 for ten seconds
+would have seen a caption contradicted by its own plot. That is the cheapest
+possible way to lose a reader's trust, and it survived every check we have,
+because our guards verify p-values and task files and never ask whether a
+sentence matches the picture above it. Same blind spot as F73 and F75.
+
+**Checked while in there:** every Cyrillic span in `paper.tex` is inside
+`\ru{}` — 53 wrapped, 0 loose. A loose one would hit Latin Modern under
+XeLaTeX and come out as missing glyphs. This nearly happened: the first draft
+of the Table 1 caption had `без N` in backticks, and code spans are stashed
+before `wrap_cyrillic` runs, so it would have gone into `\texttt{}` with no
+Cyrillic font behind it.
+
+**Heredoc backslash-eating, sixth time.** The checker that found zero wrapped
+spans was itself broken: `"\\ru{"` written through a bash heredoc arrives as
+`"\ru{"`, which Python reads as carriage return plus `u{`. I nearly reported
+the file as broken on the strength of it. Scripts with backslashes go through
+the Write tool, or build the backslash with `chr(92)`.
+
+### F77 — the submission named its author, and BibTeX was being told the style twice
+
+Three things came out of reading the third Overleaf build rather than the
+error list beside it.
+
+**The repository link broke anonymity.** The Conclusion ended with
+
+> Code, tasks, logs and figures: https://github.com/zengin0201/AIRUSSIAN-ENGLISH_RESEARCH
+
+in a paper compiled `\usepackage[review]{acl}`, whose title block prints
+*Anonymous ACL submission*. The username is the author. A reviewer reads that
+line on page 9 and the double-blind is over; at ACL venues that is grounds for
+desk rejection before anyone judges the work. Removed from the body. The
+availability statement now sits in Limitations, which is outside the page
+limit, and says the material is withheld because the link names the author and
+is supplied on request.
+
+Checked at the same time, since the question is "what else identifies him":
+the PDF metadata carries only `/Creator LaTeX with hyperref` and
+`/Producer xdvipdfmx` — no author field — and the title block is anonymous.
+`\author{Aleksey Borodin ...}` is in the `.tex`, which is correct: `[review]`
+suppresses it, `[final]` prints it, and we submit the PDF.
+
+**BibTeX: "Illegal, another \bibstyle command".** Our POSTAMBLE issued
+`\bibliographystyle{acl_natbib}`, and `acl.sty` issues one itself — confirmed
+by fetching the file from `acl-org/acl-style-files`, not from memory. Ours
+removed. The error was not fatal, BibTeX ignored the second and carried on,
+and all seven references did typeset correctly.
+
+**The page count, which is the number this was all for.** Eleven pages total,
+but References, Limitations and appendices are outside the ACL limit. The body
+ran to page 8 and then three lines onto page 9 — and those three lines were
+the repository URL. So removing it for the anonymity reason also fixes the
+overflow, which is the rare case of one edit paying twice.
+
+Three lines of margin is none, so the figure gave some back. Figure 1 was
+drawn 11.2 by 8.6 inches, 1.30 wide-to-tall, which at `\textwidth` in two
+columns is 4.8 inches of a 9-inch text block: over half a page for one float.
+It also carried a three-line title inside the image repeating, word for word,
+the `\caption` printed directly beneath it — duplication a reviewer sees
+immediately. Both paper builders caption their figures, and the README does
+not embed the PNG, so the in-image title had no consumer. Dropped for the
+four-model figure, kept for the two-model exploratory one, which is read
+standalone. With the height at 3.7 per row the float is 4.16 inches, freeing
+about 0.7 inches of full-width space, call it eight or nine lines of column
+text.
+
+**Still to be confirmed by a build.** All of the above is reasoning over the
+compiled PDF and the sources; the page count after these edits has not been
+measured. Nothing here is settled until Overleaf says Limitations starts at
+the top of page 9.
+
+### F78 — a frontier model solves the productive form 8 of 8, and the paper was claiming more than it had
+
+The eight Russian productive-form sentences, put to Gemini 3.5 Flash by hand
+in the web chat, came back **8 of 8**: 07:20, 20:05, 10:10, 13:25, 14:20,
+06:10, 12:05, 21:25, every one correct. In the identical bare condition
+gpt-oss-120b answers 1 of 8 and qwen3.8-27b 2 of 8, and in the agent condition
+every model in the paper is 0 of 8.
+
+Recorded as `results/manual_gemini_nmin.jsonl`, with the provenance in the
+meta record and not only in this note, because a file in `results/` that looks
+like harness output and is not is the worst thing to leave lying around.
+
+**What it is not.** Hand-run, once, unblinded, transcribed off a screenshot
+rather than captured by code, with the chat's Thoughts panel visible so
+reasoning was on, and all eight items in one message so each could prime the
+next. Also bare: the agent frame was never put to this model, and the agent
+frame is the paper's actual setting. The API would have done it properly and
+refused three times — 48 of 48 crashed, then 28 of 48 with every productive
+item among the losses, then 12 of 12 — all HTTP 429.
+
+**The part that matters is not the run.** The abstract said *"Scale supplies
+memorised units and never the rule"* and §4.3 said *"More parameters bring
+more memorised units, not the rule"*, both unqualified. Our ladder is four
+open-weight models from 3B to 120B. That evidence never licensed a claim about
+scale in general, with or without this run — it licensed a claim about this
+ladder. The Gemini answers did not create the gap, they made it visible.
+
+This is the F73 shape again: a sentence in the abstract claiming more than the
+section under it. There it was the paper describing a different experiment;
+here it is the right experiment with its boundary left off.
+
+**Changed.** Abstract: "Across this ladder scale supplies memorised units and
+never the rule". §4.3: "Scale fits that picture, over the range we can test",
+"More parameters, across this ladder", and a pointer forward. A new Limitations
+paragraph states the ceiling, gives the 8 of 8 against 1 of 8 and 2 of 8, lists
+every caveat above, and says plainly that this shows the failure has a ceiling
+and not where the ceiling is, nor whether the model clearing it has the rule or
+has memorised more.
+
+**Why this is not bad news.** The dissociation is untouched: Russian accuracy
+tracks phrase frequency, English does not, the error is plus sixty minutes, and
+the tool call succeeds either way. None of that depends on where the ceiling
+sits. And a reviewer will paste one of these sentences into a frontier chat
+within a minute of reading the abstract — an unbounded claim would not have
+survived that, and now there is nothing there to catch.
+
+**Open, and worth doing properly:** the agent condition on a frontier model,
+through the harness, blind, with repeats. That is the comparison the paper
+would actually want, and the free-tier quota is what is standing in the way.
+
+**Asked and confirmed: the chat was fresh.** The same sentences had gone
+through Gemini chats repeatedly that week, and carried-over context would have
+cost the 8 of 8 most of its value. It did not happen. Recorded as
+`fresh_session: true` in the meta record. The within-message caveat stands —
+all eight went in one message — but no prior session primed them.
+
+### F79 — two figure bugs that were in the compiled PDF, found by reading it rather than the error log
+
+**Figure 2 in the submitted build is the wrong data.** It prints "pooled over
+1 models", n = 17, bars 11 / 1 / 5, while §4.2 three inches away says 68 items,
+10 correct and 33 at plus sixty. Our local `figures/error.pdf` is right — n =
+68, 10 / 33 / 3 / 22, pooled over 4 — so this is a stale upload: `error.pdf`
+is regenerated every time `src.figure_main` runs, and it never went back to
+Overleaf, because each time I told him which files to re-upload I listed only
+the ones I had deliberately changed and forgot the one that changes as a side
+effect. A reviewer comparing the figure with the text would not read that as
+an upload slip.
+
+**Figures 4 and 5 are swapped.** The prose calls the Polish plot Figure 4 and
+the German plot Figure 5, in that order; the built PDF has German at 4 and
+Polish at 5. Cause: both attach to the same §4.4 heading, and the order they
+are declared in `FIGURE_BEFORE` is their number. German was declared first.
+
+This is the third time the plain-text figure numbers have gone stale — Figures
+2 and 3 once before, now 4 and 5, and the local reportlab builder had error
+and frequency the wrong way round as well, which nobody had noticed at all.
+The comment in `build_tex.py` predicting exactly this has been sitting there
+since the first time.
+
+**Changed.** Polish declared before German. `FIGURE_ORDER` pins the sequence
+the prose assumes and the build now stops if the emitted order differs, naming
+both orders; a second check catches a "Figure N" citing a number that does not
+exist. `build_pdf.py` order corrected to match.
+
+**The pattern worth naming.** Every one of F75, F76, F77 and this is the same
+thing: our guards verify numbers against logs, and nothing verifies that the
+document says what the document contains. `--check` would pass a paper whose
+every figure pointed at the wrong plot.

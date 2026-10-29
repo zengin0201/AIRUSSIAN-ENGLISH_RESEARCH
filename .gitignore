@@ -28,6 +28,9 @@ interview_qa.pdf
 # tools/make_review_sheets.py and need not be tracked either.
 review/
 
+# Build notes written for me, in Russian. Nothing to do with the research.
+OVERLEAF.md
+
 # ---------------------------------------------------------------
 # The paper stays out until it is submitted.
 # ---------------------------------------------------------------
@@ -59,13 +62,35 @@ secrets.json
 # ---------------------------------------------------------------
 # Junk
 # ---------------------------------------------------------------
-data/.zip
+*.zip
 *.tmp
 *.log
+*.bak
+*.orig
+*.rej
+*~
+*.swp
+
+# This repo lives inside a OneDrive folder, so Windows and Office drop
+# their own files into it.
 Thumbs.db
+desktop.ini
+~$*
 .DS_Store
+
 .idea/
 .vscode/
+.claude/
+
+# LaTeX leaves these beside any .tex it compiles. paper/ is ignored
+# already, but a stray build elsewhere should not land in the repo.
+*.aux
+*.bbl
+*.blg
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 
 # ---------------------------------------------------------------
 # Result files that are superseded or were produced by a broken harness.

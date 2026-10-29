@@ -1,14 +1,3 @@
-"""
-Look at what actually went wrong.
-
-    python -m src.inspect --results results/smoke.jsonl
-    python -m src.inspect --results results/smoke.jsonl --arm ru --task t01
-    python -m src.inspect --results results/smoke.jsonl --all
-
-Numbers tell you how big the gap is. Traces tell you why it exists.
-Read traces before you write a single sentence of the paper.
-"""
-
 from __future__ import annotations
 
 import argparse

@@ -1,55 +1,3 @@
-"""
-Generate data/tasks_time_pl.json from data/tasks_time_v2.json.
-
-    python tools/make_polish_probe.py
-
-Why Polish, and why it is not just "a third language".
-
-Russian bundles three constructions that all count into the coming hour:
-«половина восьмого» 07:30, «четверть восьмого» 07:15, «двадцать минут
-восьмого» 07:20. All three name the hour being entered. All three fail.
-
-Polish splits that bundle down the middle:
-
-    07:30  wpół do ósmej          half TO the eighth   -> counts INTO the hour
-    07:15  kwadrans po siódmej    quarter past seven   -> counts FROM the hour
-    07:20  dwadzieścia po siódmej twenty past seven    -> counts FROM the hour
-
-So Polish carries the Russian construction and the English construction at the
-same time, in the same language, from the same speaker, in the same probe.
-
-That turns a replication into a crossed design, and the two live explanations
-of our Russian result make opposite predictions on it:
-
-  (a) "models are worse at Slavic, or at lower-resource languages"
-      -> all of Polish fails, including «dwadzieścia po siódmej»
-
-  (b) "models memorise instances of the counting-into construction and never
-      learn the rule"  (our reading)
-      -> only «wpół do» fails; «po» is answered like English
-
-Nothing else we could run separates those two as cheaply.
-
-It also makes the probe partly self-checking, which matters because neither
-author is a native speaker. If our Polish is simply bad, the models fail across
-the board and we learn nothing — but we know we learned nothing, because the
-`literal` control drops too. A bad translation cannot produce a clean split
-between two constructions inside the same language.
-
-**The wording still needs a native speaker before publication.** These sentences
-were written from reference grammar, not by a Pole. The forms used are the
-textbook ones — `wpół do` + genitive, `kwadrans po` / `N po` + locative, `za N`
-+ nominative — but "textbook correct" and "what a person would say" are not the
-same claim, and only the second one is the claim this probe needs.
-
-One known wart, recorded rather than hidden: «za dwadzieścia dziewiąta» is the
-ordinary way to say 08:40, but «za dwadzieścia» on its own can also mean "in
-twenty minutes". The nominative «dziewiąta» is what forces the clock reading.
-Russian «без двадцати девять» has no such ambiguity. `subtractive` is a control
-category in both languages, so this does not touch the main comparison, but a
-Polish `subtractive` score below the Russian one should be read with it in mind.
-"""
-
 from __future__ import annotations
 
 import json
@@ -62,28 +10,18 @@ ROOT = os.path.dirname(HERE)
 SOURCE = os.path.join(ROOT, "data", "tasks_time_v2.json")
 TARGET = os.path.join(ROOT, "data", "tasks_time_pl.json")
 
-# The Polish wording, written out per task instead of derived by substitution,
-# so that a Polish speaker can check the whole probe by reading one table.
-#
-# `direction` is the thing the experiment turns on: whether the Polish phrase
-# names the hour being counted INTO (as Russian does throughout) or the hour
-# already COMPLETED (as English does throughout).
 POLISH = {
-    # half_past — Polish counts INTO the coming hour, exactly as Russian does.
     "g01": ("Ustaw budzik na wpół do trzeciej po południu.", "into_hour"),
     "g02": ("Ustaw budzik na wpół do siódmej rano.", "into_hour"),
     "g03": ("Ustaw budzik na wpół do dziesiątej wieczorem.", "into_hour"),
     "g04": ("Ustaw budzik na wpół do dwunastej przed południem.", "into_hour"),
     "g05": ("Ustaw budzik na wpół do piątej rano.", "into_hour"),
 
-    # quarter_past — Polish counts FROM the completed hour, as English does.
     "g06": ("Ustaw budzik na kwadrans po piątej rano.", "from_hour"),
     "g07": ("Ustaw budzik na kwadrans po ósmej rano.", "from_hour"),
     "g08": ("Ustaw budzik na kwadrans po dziesiątej wieczorem.", "from_hour"),
     "g09": ("Ustaw budzik na kwadrans po pierwszej po południu.", "from_hour"),
 
-    # n_minutes — also FROM the completed hour. This is the cell where Russian
-    # is 0 out of 32. If Polish scores here, language is not the variable.
     "g10": ("Ustaw budzik na dwadzieścia po siódmej rano.", "from_hour"),
     "g11": ("Ustaw budzik na pięć po ósmej wieczorem.", "from_hour"),
     "g12": ("Ustaw budzik na dziesięć po dziesiątej rano.", "from_hour"),
@@ -93,14 +31,11 @@ POLISH = {
     "g16": ("Ustaw budzik na pięć po dwunastej w południe.", "from_hour"),
     "g17": ("Ustaw budzik na dwadzieścia pięć po dziewiątej wieczorem.", "from_hour"),
 
-    # literal — the probe's health check. Must be near perfect or the Polish
-    # carrier sentence is broken and nothing else in the file means anything.
     "g18": ("Ustaw budzik na 07:20.", "digital"),
     "g19": ("Ustaw budzik na 14:30.", "digital"),
     "g20": ("Ustaw budzik na 21:15.", "digital"),
     "g21": ("Ustaw budzik na 05:45.", "digital"),
 
-    # subtractive — subtractive in all three languages. See the wart above.
     "g22": ("Ustaw budzik za dwadzieścia dziewiąta rano.", "subtractive"),
     "g23": ("Ustaw budzik za kwadrans szósta rano.", "subtractive"),
     "g24": ("Ustaw budzik za dziesięć siódma wieczorem.", "subtractive"),

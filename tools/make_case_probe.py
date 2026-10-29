@@ -1,70 +1,3 @@
-"""
-Generate data/tasks_time_case.json — the case-variation probe.
-
-    python tools/make_case_probe.py
-
-Richard Sproat, in correspondence, 14 October 2026:
-
-    "Двадцать минут восьмого will not always show up in that form, if for
-    example the time expression is found in a context that requires a
-    different case form (e.g. двадцати минутах восьмого). This adds further
-    noise to the task."
-
-He is right that the existing probe tests one surface shape. It asks for every
-alarm with «на ...», which takes the accusative throughout — «на половину
-третьего», where половину is accusative and половина is the citation form. For
-«двадцать минут» and «четверть» the accusative is syncretic with the
-nominative, so the whole probe effectively sits in one slot of a paradigm a
-speaker produces in several.
-
-This file varies the carrier frame so the same construction appears in three
-cases.
-
-    frame          preposition  case          Russian                   English
-    F1 at          на           accusative    на двадцать минут восьмого   for ...
-    F2 from        с            genitive      с двадцати минут восьмого    from ...
-    F3 by          к            dative        к двадцати минутам восьмого  by ...
-
-F1 is the existing frame, carried over unchanged so the new file is anchored to
-the old result rather than floating free.
-
-**On the prepositional, which is the form Sproat actually named.** «двадцати
-минутах восьмого» is grammatical, but it does not arise in an imperative
-instruction to an assistant: «в двадцати минутах» reads as a distance, not a
-clock time, and the other prepositional contexts are discursive rather than
-task-giving. Writing one anyway would test a sentence no user would type. The
-three frames here are the oblique forms this register actually produces, and
-reporting that the prepositional does not occur in it is part of the answer to
-his question rather than an evasion of it.
-
-**The confound, and the control for it.** Case is varied by changing the
-preposition, so case is confounded with the frame: "block the calendar from X"
-is a different sentence from "set an alarm for X" quite apart from morphology.
-The English half carries the same three frames — for / from / by — and English
-has no case. If English is flat across the three and Russian drops in the
-oblique two, the frame is not the difficulty. That is the same within-item
-ceiling the rest of the project uses, applied to a new axis.
-
-**What each frame checks.** F1 and F3 are a single alarm. F2 is a calendar
-event, because "from X" asks for something that starts at a time and an alarm
-does not start. The time checked is identical in all three, and the English
-half of each item asks for the same tool at the same time, so the comparison
-that matters — Russian against English inside one frame — never crosses tools.
-
-**Prediction, written before the run** (also in NOTES, F60):
-the oblique frames are worse than F1 for the productive form, because the
-oblique forms are rarer still, and the account the German probe left us with is
-that rarity plus insufficient capacity is what breaks these readings. If F2 and
-F3 match F1, case adds nothing and Sproat's worry is answered in the negative,
-which is equally reportable.
-
-**Wording not checked by a native speaker of Russian other than the author.**
-The author is a native speaker, which the Polish and German probes could not
-say. «к двадцати минутам восьмого» is the marginal one: «к половине восьмого»
-is entirely ordinary, the productive form in the dative much less so. It is
-flagged per item.
-"""
-
 from __future__ import annotations
 
 import json
@@ -82,20 +15,13 @@ LABEL_EN = "alarm"
 TITLE_RU = "встреча"
 TITLE_EN = "meeting"
 
-# (frame, case, tool) -> how the sentence is built in each language.
 FRAMES = {
     "at":   ("accusative", "set_alarm"),
     "from": ("genitive", "add_event"),
     "by":   ("dative", "set_alarm"),
 }
 
-# Each entry is (time, category, Russian forms by frame, English form).
-# The Russian is written out per frame rather than inflected by code, so that
-# the whole probe can be audited by reading one table.
-#
-#   accusative   на X          genitive     с X          dative   к X
 ITEMS = [
-    # ---- productive: N минут X-ого. The cell that is 0 of 8 everywhere. ----
     ("07:20", "n_minutes",
      "двадцать минут восьмого утра",
      "двадцати минут восьмого утра",
@@ -122,7 +48,6 @@ ITEMS = [
      "десяти минутам седьмого утра",
      "ten past six in the morning"),
 
-    # ---- половина X: the frequent fixed phrase, 45% in the main probe. ----
     ("14:30", "half_past",
      "половину третьего дня",
      "половины третьего дня",
@@ -149,9 +74,6 @@ ITEMS = [
      "половине двенадцатого утра",
      "half past eleven in the morning"),
 
-    # ---- literal: the health check. Digits do not inflect, so this cell
-    #      must be flat across all three frames in both languages. If it is
-    #      not, the frame itself is broken and nothing else can be read. ----
     ("07:45", "literal", "07:45", "07:45", "07:45", "07:45"),
     ("12:15", "literal", "12:15", "12:15", "12:15", "12:15"),
     ("16:40", "literal", "16:40", "16:40", "16:40", "16:40"),
@@ -159,8 +81,6 @@ ITEMS = [
     ("03:50", "literal", "03:50", "03:50", "03:50", "03:50"),
 ]
 
-# «к двадцати минутам восьмого» is grammatical but much less ordinary than
-# «к половине восьмого». Flagged so a reader is not asked to take it on trust.
 MARGINAL = {("by", "n_minutes")}
 
 CARRIER = {
@@ -168,10 +88,6 @@ CARRIER = {
     ("at", "en"): "Set an alarm for {}.",
     ("from", "ru"): "Добавь в календарь встречу с {}.",
     ("from", "en"): "Add a meeting to the calendar from {}.",
-    # "Set an alarm for by X" is not English. «Разбуди меня к половине
-    # восьмого» is entirely ordinary Russian and "wake me by X" is ordinary
-    # English, so the carrier is natural in both and whatever marginality
-    # remains sits on the time expression, which is where we want it.
     ("by", "ru"): "Разбуди меня к {}.",
     ("by", "en"): "Wake me by {}.",
 }
@@ -222,13 +138,6 @@ def main() -> int:
                 gold_en = {"tool": "set_alarm",
                            "args": {"time": time, "label": LABEL_EN}}
             else:
-                # title_contains is required by the verifier. An empty
-                # string matches any title, which makes the check purely
-                # date-and-time — exactly parallel to alarm_exists, which
-                # checks only the time. Asking for a specific title would
-                # make the Russian arm also get the word for "meeting"
-                # right, which is a second thing to fail at and has
-                # nothing to do with reading the clock.
                 check = {"kind": "event_exists", "date": date,
                          "time": time, "title_contains": ""}
                 gold_ru = {"tool": "add_event",

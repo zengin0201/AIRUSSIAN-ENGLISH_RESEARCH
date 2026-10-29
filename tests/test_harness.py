@@ -1,18 +1,3 @@
-"""
-Regression tests for the parts of the harness that decide who wins.
-
-Run with the standard library only, no pytest, no GPU:
-
-    python -m tests.run_all
-
-Why these exist. Every number in this project is produced by three pieces of
-code: the parser that turns model text into actions, the environment that
-executes them, and the verifier that decides success. A bug in any of them
-looks exactly like a language effect. The oracle run catches gross breakage;
-these tests catch the quiet kind, especially anything that could behave
-differently for Cyrillic text than for Latin text.
-"""
-
 from __future__ import annotations
 
 import json
@@ -44,17 +29,14 @@ inline = _build_tex.inline
 
 
 class TestNormalisation(unittest.TestCase):
-    """norm() is applied to every comparison, so it decides every success."""
 
     def test_case_and_space_are_ignored(self):
         self.assertEqual(norm("  Lunch  Box "), norm("lunch box"))
 
     def test_yo_is_folded(self):
-        # «щётка» and «щетка» are the same word to a user and must be to us.
         self.assertEqual(norm("зубная щётка"), norm("зубная щетка"))
 
     def test_punctuation_does_not_break_a_match(self):
-        # the translate_safe arm leaves junk like «лекарства$$» glued on
         self.assertIn(norm("лекарства"), norm("лекарства$$."))
 
     def test_time_and_date_survive(self):
@@ -66,7 +48,6 @@ class TestNormalisation(unittest.TestCase):
 
 
 class TestParser(unittest.TestCase):
-    """extract_actions turns model text into actions and labels the failure."""
 
     def test_single_object(self):
         actions, status = extract_actions('{"tool": "stop_music", "args": {}}')
@@ -92,9 +73,6 @@ class TestParser(unittest.TestCase):
         self.assertEqual(actions[0]["args"]["text"], "взять тетрадь")
 
     def test_cut_off_batch_yields_nothing(self):
-        # This is the exact shape that destroyed the v2 run: a valid plan
-        # sliced by the output budget. It must yield ZERO actions, and it
-        # must be labelled as a broken structure, not as prose.
         text = ('[{"tool": "add_to_list", "args": {"list_name": "packing", '
                 '"item": "паспорт"}}, {"tool": "add_to_list", "args": '
                 '{"list_name": "packing", "item": "заря')
@@ -118,7 +96,6 @@ class TestParser(unittest.TestCase):
         self.assertEqual(actions[0]["args"]["artist"], "Сплин")
 
     def test_parser_is_language_blind(self):
-        """The same structure must get the same status in both languages."""
         en = '{"tool": "create_note", "args": {"text": "take notebook"}}'
         ru = '{"tool": "create_note", "args": {"text": "взять тетрадь"}}'
         self.assertEqual(extract_actions(en)[1], extract_actions(ru)[1])
@@ -136,7 +113,6 @@ class TestTruncationFlag(unittest.TestCase):
 
 
 class TestPlaceholderProtection(unittest.TestCase):
-    """The ru_translate_safe arm stands or falls on these two functions."""
 
     def test_roundtrip_restores_every_value(self):
         text = 'Поставь будильник и назови его «автобус», добавь «билет».'
@@ -154,8 +130,6 @@ class TestPlaceholderProtection(unittest.TestCase):
         self.assertEqual(lost, 1)
 
     def test_damaged_placeholder_is_counted_not_hidden(self):
-        # The translator glues junk onto the marker. We must notice, and we
-        # must NOT quietly clean it up, because the damage is the finding.
         _, mapping = protect_values('добавь «лекарства»')
         restored, lost, mangled = restore_values("Add __V1__$$ to the list", mapping)
         self.assertEqual(lost, 0)
@@ -219,7 +193,6 @@ class TestEnvironment(unittest.TestCase):
 
 
 class TestVerifier(unittest.TestCase):
-    """The verifier decides success. It must never favour one language."""
 
     def test_empty_and_wrong_value_are_distinguished(self):
         checks = [{"kind": "alarm_exists", "time": "05:45", "label_contains": "bus"}]
@@ -245,8 +218,6 @@ class TestVerifier(unittest.TestCase):
         self.assertEqual((result["passed"], result["total"]), (1, 2))
 
     def test_duplicate_actions_do_not_break_a_contains_check(self):
-        # models often re-emit a whole batch; that wastes tokens but the
-        # state is still correct, and the verifier must agree
         state = {"alarms": [], "calendar": [], "lists": {"packing": ["носки", "носки"]},
                  "music": {"playing": None}, "notes": []}
         result = verify(state, [{"kind": "list_contains", "list_name": "packing",
@@ -264,7 +235,6 @@ class TestVerifier(unittest.TestCase):
         self.assertTrue(result["success"])
 
     def test_the_two_languages_are_scored_by_the_same_rule(self):
-        """Same shape, same words in either language, same verdict."""
         en_state = {"alarms": [{"time": "07:20", "label": "school"}], "calendar": [],
                     "lists": {}, "music": {"playing": None}, "notes": []}
         ru_state = {"alarms": [{"time": "07:20", "label": "школа"}], "calendar": [],
@@ -305,25 +275,14 @@ class TestCompaction(unittest.TestCase):
 
 
 class TestFisherExact(unittest.TestCase):
-    """
-    Every significance claim in the paper comes from this function.
-
-    The p-values in earlier drafts were not produced by any code in this
-    repository and were wrong by up to nine orders of magnitude (F32). These
-    tests pin the function to published worked examples so the same thing
-    cannot happen silently again.
-    """
 
     def test_fishers_tea_tasting(self):
-        # Fisher's own example. The textbook answer is 0.4857.
         self.assertAlmostEqual(fisher_exact(3, 1, 1, 3), 0.4857, places=4)
 
     def test_a_significant_table(self):
-        # Worked example reproduced by R's fisher.test: p = 0.002759.
         self.assertAlmostEqual(fisher_exact(1, 9, 11, 3), 0.002759, places=6)
 
     def test_it_is_symmetric_under_swapping_the_groups(self):
-        # Which language is the first row must not change the p-value.
         self.assertAlmostEqual(fisher_exact(30, 2, 0, 32),
                                fisher_exact(0, 32, 30, 2), places=20)
 
@@ -331,12 +290,9 @@ class TestFisherExact(unittest.TestCase):
         self.assertAlmostEqual(fisher_exact(5, 5, 5, 5), 1.0, places=10)
 
     def test_an_empty_margin_is_not_significant(self):
-        # Nobody succeeded anywhere: there is no evidence of anything.
         self.assertEqual(fisher_exact(0, 8, 0, 8), 1.0)
 
     def test_a_large_table_does_not_lose_precision(self):
-        # The main result: English 64/68 against Russian 10/68. This is the
-        # value the earlier drafts reported as 2.6e-13.
         p = fisher_exact(64, 4, 10, 58)
         self.assertLess(p, 1e-21)
         self.assertGreater(p, 1e-23)
@@ -347,15 +303,6 @@ class TestFisherExact(unittest.TestCase):
 
 
 class TestFewShotBlocks(unittest.TestCase):
-    """
-    The few-shot demonstrations live in the prompt, not in a task file, so
-    `validate_tasks.py` cannot see them. Nothing else checks that the English
-    arm and the Russian arm are shown the same thing.
-
-    An English block with easier or more numerous demonstrations would
-    reproduce the paper's entire effect without any model behaving oddly, and
-    no existing guard would notice. These tests are that guard.
-    """
 
     def _times_in(self, text):
         return re.findall(r'"time": "(\d\d:\d\d)"', text)
@@ -372,8 +319,6 @@ class TestFewShotBlocks(unittest.TestCase):
             self.assertEqual(block.count("User:"), block.count("You:"), lang)
 
     def test_no_demonstrated_time_appears_in_any_probe(self):
-        # A demonstration the model is later tested on would measure recall of
-        # three items, not acquisition of a rule.
         used = set()
         for path in sorted(pathlib.Path("data").glob("tasks_*.json")):
             with open(path, "r", encoding="utf-8") as handle:
@@ -385,8 +330,6 @@ class TestFewShotBlocks(unittest.TestCase):
         self.assertFalse(overlap, f"demonstrated time also in a probe: {overlap}")
 
     def test_the_block_survives_prompt_formatting(self):
-        # SYSTEM_EN goes through str.format, so a single brace in the examples
-        # would raise instead of rendering the JSON.
         from src.agent import SYSTEM_EN
         rendered = (SYSTEM_EN + FEWSHOT["ru"]).format(
             today="2026-09-07", weekday="Monday", tools="(tools)")
@@ -395,15 +338,6 @@ class TestFewShotBlocks(unittest.TestCase):
 
 
 class TestPValueReporting(unittest.TestCase):
-    """
-    Gorman's convention, and the regex that polices it.
-
-    The first version of that regex matched ".024." at the end of a sentence
-    and crashed on float(), so `--check` stopped checking the moment the paper
-    adopted the convention the checker exists to enforce. It failed silently:
-    the header printed, nothing followed, and the exit code looked like
-    ordinary violations.
-    """
 
     def test_a_trailing_sentence_period_is_not_part_of_the_number(self):
         self.assertEqual(P_EQUALS.findall("the result (p = .024)."), [".024"])
@@ -425,20 +359,10 @@ class TestPValueReporting(unittest.TestCase):
         self.assertEqual(format_p(1.0), "p = 1.0")
 
     def test_a_value_just_above_alpha_is_not_printed_as_alpha(self):
-        # At two decimal places .0114 prints as ".01", which reads as if the
-        # test landed exactly on the threshold.
         self.assertNotEqual(format_p(0.0114), "p = .01")
 
 
 class TestExampleTypography(unittest.TestCase):
-    """Gorman's conventions, and the TeX that has to carry them.
-
-    Examples are italicised and never quoted; glosses are single-quoted. Both
-    kinds of quote are directional in TeX, and an earlier version of inline()
-    ran the double rule first with a `*` in the single rule, so the single
-    rule matched the '' the double rule had just emitted: a quotation came out
-    with a backtick-apostrophe closing instead of two apostrophes.
-    """
 
     def test_double_quotes_become_directional(self):
         self.assertEqual(inline('He said "hello" loudly'),
@@ -458,8 +382,6 @@ class TestExampleTypography(unittest.TestCase):
             self.assertEqual(inline(text), text)
 
     def test_cyrillic_is_wrapped_without_relying_on_guillemets(self):
-        # The examples are bare now, so font selection has to key off the
-        # script itself rather than off the quotes that used to surround them.
         phrase = "двадцать минут"
         out = inline("the phrase " + phrase + " is 07:20")
         self.assertIn("\\ru{" + phrase + "}", out)
@@ -470,14 +392,9 @@ class TestExampleTypography(unittest.TestCase):
                 / "paper" / "paper.md").read_text(encoding="utf-8")
         body = body.partition("## Notes to myself")[0]
         self.assertNotIn("«", body, "guillemets are back in the paper body")
-        # One double-quoted span is allowed: the sentence quoted from TRD.
         self.assertEqual(len(re.findall('"[^"]+"', body)), 1)
 
 
-# The ordinary way to say 09:05, 19:10 and 08:25 in each language. English,
-# Polish and German count from the completed hour; Russian has no such form and
-# counts into the coming one. That is not a flaw in the demonstrations, it is
-# the asymmetry the whole project is about.
 NATURAL_RENDERING = {
     "en": "past",
     "ru": "\u043c\u0438\u043d\u0443\u0442",
@@ -485,27 +402,10 @@ NATURAL_RENDERING = {
     "de": "nach",
 }
 
-# German's counting-into inventory is closed and has three members. Showing one
-# of them in a demonstration is showing a third of what the probe tests.
 GERMAN_CLOSED_SET = ("halb", "viertel", "dreiviertel")
 
 
 class TestFewShotDemonstrations(unittest.TestCase):
-    """What the demonstrations may and may not contain.
-
-    An earlier version of this class asserted that no block demonstrates the
-    construction under test. That is wrong, and worth recording so nobody
-    "fixes" the Russian block later: *\u043f\u044f\u0442\u044c \u043c\u0438\u043d\u0443\u0442 \u0434\u0435\u0441\u044f\u0442\u043e\u0433\u043e* = 09:05 is the counting-into
-    construction, and the few-shot arm exists precisely to ask whether showing
-    it three times repairs the reading. Removing it would turn the arm into a
-    test of nothing.
-
-    What makes the arms comparable is a different rule: each language
-    demonstrates the SAME three clock times in that language's ordinary form.
-    Russian's ordinary form counts into the hour because Russian has no other
-    one. German's does not, because German has no productive counting-into
-    form at all. Both are faithful; the languages differ.
-    """
 
     def test_each_block_uses_that_language_ordinary_rendering(self):
         for lang, block in FEWSHOT.items():
@@ -516,11 +416,6 @@ class TestFewShotDemonstrations(unittest.TestCase):
         self.assertEqual(set(FEWSHOT) - set(NATURAL_RENDERING), set())
 
     def test_german_does_not_demonstrate_its_closed_set(self):
-        # Russian may show its construction because the construction is a rule
-        # with unboundedly many instances, so three of them do not give the
-        # answer away. German's is three fixed phrases, and the probe tests
-        # those exact three. Demonstrating halb would hand over a third of the
-        # test, which is why the German block uses nach throughout.
         lowered = FEWSHOT["de"].lower()
         for marker in GERMAN_CLOSED_SET:
             self.assertNotIn(marker, lowered,
@@ -528,7 +423,6 @@ class TestFewShotDemonstrations(unittest.TestCase):
                              f"which the probe tests directly")
 
     def test_the_german_probe_does_test_that_closed_set(self):
-        # The guard above is only meaningful while this is true.
         with open("data/tasks_time_de.json", "r", encoding="utf-8") as handle:
             tasks = json.load(handle)["tasks"]
         into = [t["instruction"]["de"].lower() for t in tasks
@@ -539,12 +433,6 @@ class TestFewShotDemonstrations(unittest.TestCase):
 
 
 class TestGermanProbe(unittest.TestCase):
-    """German is the falsification test, so its structure has to be right.
-
-    The claim the probe makes is that direction of counting is held constant
-    while productivity varies. That only holds if the into_hour cell really is
-    the closed lexical set and the from_hour cell really is the productive one.
-    """
 
     @classmethod
     def setUpClass(cls):
@@ -572,8 +460,6 @@ class TestGermanProbe(unittest.TestCase):
         self.assertGreaterEqual(counts.get("digital", 0), 4)
 
     def test_the_into_hour_cell_is_the_closed_lexical_set(self):
-        # If an into_hour item used an arbitrary minute value, German would
-        # have a productive counting-into form and the whole design collapses.
         for task in self.tasks.values():
             if task["de_direction"].startswith("into_hour"):
                 words = task["instruction"]["de"].lower()

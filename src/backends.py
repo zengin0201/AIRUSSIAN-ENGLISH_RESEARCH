@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import json
@@ -19,15 +17,6 @@ class Generation:
 
     @property
     def truncated(self) -> bool:
-        """True when generation stopped because it ran out of output budget.
-
-        This matters more than it looks. A batched plan that is cut in the
-        middle produces unparsable JSON and therefore ZERO actions, not a
-        partial plan. Russian content needs roughly 1.4x more output tokens
-        for the same plan, so the Russian arm reaches this cliff earlier.
-        If we do not log it separately we would report it as "the model
-        cannot write JSON", which is false and would be the wrong finding.
-        """
         return self.finish_reason == "length"
 
 
@@ -41,17 +30,7 @@ class BaseBackend:
         raise NotImplementedError
 
 
-# --------------------------------------------------------------------------
-# oracle backend: replays the gold trace. Used to test the harness itself.
-# --------------------------------------------------------------------------
-
 class OracleBackend(BaseBackend):
-    """
-    Not a model. It replays a known-correct action sequence.
-
-    Purpose: if the oracle does not reach 100% success on every task, then the
-    environment or the checks are broken, not the model. Always run this first.
-    """
 
     name = "oracle"
 
@@ -76,20 +55,7 @@ class OracleBackend(BaseBackend):
         return len(text.split())
 
 
-# --------------------------------------------------------------------------
-# local backend (transformers + bitsandbytes 4-bit)
-# --------------------------------------------------------------------------
-
 class LocalHFBackend(BaseBackend):
-    """
-    Runs an instruct model locally in 4-bit.
-
-    Tested target: RTX 2060 6 GB. Models that fit comfortably:
-        Qwen/Qwen2.5-3B-Instruct
-        meta-llama/Llama-3.2-3B-Instruct
-    Models that fit only with a short context:
-        Qwen/Qwen2.5-7B-Instruct
-    """
 
     def __init__(
         self,
@@ -154,9 +120,6 @@ class LocalHFBackend(BaseBackend):
         new_ids = output[0][prompt_tokens:]
         text = self.tokenizer.decode(new_ids, skip_special_tokens=True)
 
-        # Did generation end on its own, or did it run out of budget?
-        # `generate` appends the stop token when it stops naturally, so the
-        # presence of any stop id in the tail is the reliable signal.
         stop_ids = {self.tokenizer.eos_token_id}
         extra = getattr(self.model.generation_config, "eos_token_id", None)
         if isinstance(extra, int):
@@ -178,18 +141,7 @@ class LocalHFBackend(BaseBackend):
         )
 
 
-# --------------------------------------------------------------------------
-# OpenAI-compatible backend (Groq / OpenRouter free tiers, local vLLM, etc.)
-# --------------------------------------------------------------------------
-
 class OpenAICompatBackend(BaseBackend):
-    """
-    Works with any endpoint that speaks the OpenAI chat-completions format.
-
-    Set two environment variables before running:
-        ALT_API_BASE  e.g. https://api.groq.com/openai/v1
-        ALT_API_KEY   your key
-    """
 
     def __init__(
         self,
@@ -200,7 +152,7 @@ class OpenAICompatBackend(BaseBackend):
         api_key: Optional[str] = None,
         request_pause_s: float = 2.0,
     ):
-        import requests  # noqa: F401  (checked early so the error is clear)
+        import requests
 
         self.requests = __import__("requests")
         self.name = model_id
@@ -215,7 +167,6 @@ class OpenAICompatBackend(BaseBackend):
             raise RuntimeError("Set ALT_API_BASE and ALT_API_KEY first.")
 
     def count_tokens(self, text: str) -> int:
-        # Rough fallback only. Real counts come from the API `usage` field.
         return max(1, len(text) // 4)
 
     def generate(self, messages: List[Dict[str, str]]) -> Generation:
@@ -255,15 +206,11 @@ class OpenAICompatBackend(BaseBackend):
                     latency_s=time.time() - start,
                     finish_reason=str(choice.get("finish_reason") or "stop"),
                 )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 last_error = exc
                 time.sleep(3 * (attempt + 1))
         raise RuntimeError(f"API request failed after retries: {last_error}")
 
-
-# --------------------------------------------------------------------------
-# factory
-# --------------------------------------------------------------------------
 
 def build_backend(kind: str, model_id: str, **kwargs) -> BaseBackend:
     if kind == "local":

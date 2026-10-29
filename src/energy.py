@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import threading
@@ -11,7 +9,7 @@ class EnergyMeter:
     def __init__(self, device_index: int = 0, sample_hz: float = 10.0):
         self.device_index = device_index
         self.interval = 1.0 / sample_hz
-        self.samples: List[float] = []   # watts
+        self.samples: List[float] = []
         self.timestamps: List[float] = []
         self._thread: Optional[threading.Thread] = None
         self._stop = threading.Event()
@@ -25,7 +23,7 @@ class EnergyMeter:
             self.pynvml.nvmlInit()
             self._handle = self.pynvml.nvmlDeviceGetHandleByIndex(device_index)
             self.available = True
-        except Exception:  # noqa: BLE001
+        except Exception:
             self.pynvml = None
 
     def _watts(self) -> float:
@@ -36,12 +34,11 @@ class EnergyMeter:
             try:
                 self.samples.append(self._watts())
                 self.timestamps.append(time.time())
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass
             time.sleep(self.interval)
 
     def idle_baseline(self, seconds: float = 5.0) -> Optional[float]:
-        """Mean idle watts. Run this once before the experiment, GPU untouched."""
         if not self.available:
             return None
         readings = []
@@ -60,7 +57,6 @@ class EnergyMeter:
         self._thread.start()
 
     def stop(self) -> dict:
-        """Stop sampling and return energy in joules plus mean power."""
         if not self.available or self._thread is None:
             return {"available": False}
         self._stop.set()
@@ -69,7 +65,6 @@ class EnergyMeter:
         if len(self.samples) < 2:
             return {"available": True, "joules": 0.0, "samples": len(self.samples)}
 
-        # trapezoid integration of watts over seconds
         joules = 0.0
         for i in range(1, len(self.samples)):
             dt = self.timestamps[i] - self.timestamps[i - 1]
@@ -89,5 +84,5 @@ class EnergyMeter:
         if self.available and self.pynvml is not None:
             try:
                 self.pynvml.nvmlShutdown()
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass

@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import json
@@ -11,22 +9,19 @@ ROOT = os.path.dirname(HERE)
 TODAY = "2026-09-07"
 TITLE = "meeting"
 
-# How the Russian time phrase attaches to "событие ... под названием".
-# Key: category. Value: (preposition, accusative -> prepositional fixes).
 RU_FRAME = {
     "half_past": ("в ", {"половину": "половине"}),
     "quarter_past": ("в ", {}),
     "n_minutes": ("в ", {}),
     "literal": ("в ", {}),
-    "subtractive": ("", {}),          # «без двадцати девять» takes no preposition
+    "subtractive": ("", {}),
 }
 
 
 def ru_phrase(instruction: str, category: str) -> str:
-    """Pull the time phrase out of the alarm sentence and re-case it."""
     text = instruction.strip().rstrip(".")
     text = re.sub(r"^Поставь будильник\s*", "", text)
-    text = re.sub(r"^на\s+", "", text)          # «на половину третьего» -> «половину третьего»
+    text = re.sub(r"^на\s+", "", text)
     preposition, fixes = RU_FRAME[category]
     for accusative, prepositional in fixes.items():
         text = text.replace(accusative, prepositional)

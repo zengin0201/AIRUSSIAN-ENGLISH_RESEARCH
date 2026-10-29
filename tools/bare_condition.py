@@ -1,28 +1,3 @@
-"""
-Ask the models to resolve the clock phrase with no agent machinery at all.
-
-    python tools/bare_condition.py --model openai/gpt-oss-120b \
-        --tasks data/tasks_time_v2.json --out results/bare_gptoss120b.jsonl
-
-**Why.** Every probe in this project is an agent task: a system prompt listing
-ten tools, an instruction, a JSON tool call with arguments. Resolving the clock
-phrase is one step buried inside that. We have never asked the same models the
-same sentences without any of it, so we do not know whether the construction is
-unresolvable for them or unresolvable *under the load of the task*.
-
-Those are different claims. The paper currently assumes the first and has never
-checked.
-
-- **Correct bare, wrong in the agent frame** -> the agentic setting is what
-  breaks it, which is a sharper result than the paper claims and lands exactly
-  on its framing.
-- **Wrong both ways** -> the construction simply is not resolved, and the agent
-  frame is incidental.
-
-The sentence is passed through unchanged, carrier and all, so the linguistic
-material is identical to the agent condition. Only the machinery is removed.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -50,10 +25,6 @@ def ask(model: str, base: str, key: str, sentence: str, retries: int = 4) -> tup
     payload = json.dumps({
         "model": model,
         "messages": [{"role": "user", "content": PROMPT.format(sentence=sentence)}],
-        # Reasoning models spend completion tokens on a reasoning trace
-        # before emitting content. At 32 the trace ate the budget,
-        # finish_reason came back "length", content was empty, and the
-        # whole run read as 0 of 48 -- a harness artifact, not a result.
         "max_tokens": 512,
         "temperature": 0.0,
     }).encode()
@@ -72,7 +43,7 @@ def ask(model: str, base: str, key: str, sentence: str, retries: int = 4) -> tup
             if not content.strip():
                 return None, f"empty content, finish={choice.get('finish_reason')}"
             return content, None
-        except Exception as exc:  # noqa: BLE001 - reported, not swallowed
+        except Exception as exc:
             last = f"{type(exc).__name__}: {exc}"
             time.sleep(5 * (attempt + 1))
     return None, last
@@ -85,8 +56,6 @@ def main() -> int:
     parser.add_argument("--tasks", required=True)
     parser.add_argument("--arms", nargs="+", required=True)
     parser.add_argument("--out", required=True)
-    # Free-tier endpoints rate-limit hard enough to lose half a run.
-    # A pause between items costs minutes and saves the data.
     parser.add_argument("--pause", type=float, default=0.0)
     args = parser.parse_args()
 

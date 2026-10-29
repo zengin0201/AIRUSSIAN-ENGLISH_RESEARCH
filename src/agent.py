@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import json
@@ -54,34 +52,6 @@ Rules:
 - When the whole request is complete, call done."""
 
 
-# Few-shot demonstrations, asked for by both reviewers of the August draft.
-#
-#   Richard Sproat, 2026-10-14: "Does few-shot prompting help? Not that this
-#   is necessarily a desirable approach as a general solution, but it would be
-#   interesting to know."
-#
-# Three design decisions, each of which could silently produce a fake result.
-#
-# **The demonstrated clock times are not in any probe.** 09:05, 19:10 and 08:25
-# appear in no task file. If a demonstration used a probe time the model could
-# score by recalling the answer it was shown, and we would be measuring recall
-# of three items rather than acquisition of a rule.
-#
-# **The three languages demonstrate the same three clock times.** Only the
-# wording differs. `validate_tasks.py` guards the task files, but nothing
-# guards the prompt, and an English arm given easier demonstrations than the
-# Russian one would reproduce the whole effect out of thin air. The test
-# `test_fewshot_blocks_are_parallel` pins this.
-#
-# **No reasoning in the examples.** Input to output, nothing between. Chain of
-# thought is a separate arm and mixing the two would make it impossible to say
-# which one did the work.
-#
-# The demonstrations use the productive counting-into form in Russian, because
-# that is the cell that fails. If three worked examples repair it, the model
-# can apply the rule when handed it and simply does not have it. If they do
-# not, the failure is deeper than a missing instruction, and the paper's claim
-# gets stronger.
 FEWSHOT_TIMES = ("09:05", "19:10", "08:25")
 
 FEWSHOT = {
@@ -115,18 +85,6 @@ You: {{"tool": "set_alarm", "args": {{"time": "19:10", "label": "budzik"}}}}
 User: Ustaw budzik na dwadzieścia pięć po ósmej rano.
 You: {{"tool": "set_alarm", "args": {{"time": "08:25", "label": "budzik"}}}}""",
 
-    # German demonstrates the counting-from form, which is the ordinary way to
-    # say these three times in German — the language has no productive
-    # counting-into form at all.
-    #
-    # Note the asymmetry with the Russian block above, which does demonstrate
-    # the construction its probe tests. That is deliberate in both cases.
-    # Russian's construction is a rule with unboundedly many instances, so
-    # three of them do not give the answer away, and the few-shot arm exists to
-    # ask whether showing the rule repairs the reading. German's counting-into
-    # inventory is three fixed phrases and the probe tests those exact three,
-    # so a demonstration of halb would hand over a third of the test.
-    # TestFewShotDemonstrations guards both halves of this.
     "de": """
 
 Examples:
@@ -214,12 +172,8 @@ no comment, no markers and no repeated header.
 REQUEST>>>"""
 
 
-# spans that hold user content: Russian quotes first, then straight quotes
 QUOTED_RE = re.compile(r"«([^»]+)»|\"([^\"]+)\"|'([^']+)'")
 
-# The translator sometimes copies our scaffolding back. That is our prompt
-# leaking into the measurement, not a property of the language, so we remove
-# it. We never touch the words themselves.
 _ECHO_RE = re.compile(
     r"^\s*(?:<<<REQUEST|REQUEST>>>|Request:|Translation:|English:|"
     r"Translated request:)\s*", re.IGNORECASE
@@ -227,7 +181,6 @@ _ECHO_RE = re.compile(
 
 
 def strip_translation_echo(text: str) -> str:
-    """Drop repeated prompt headers and stray markers from a translation."""
     cleaned = text.strip()
     for _ in range(4):
         new = _ECHO_RE.sub("", cleaned).strip()
@@ -239,13 +192,6 @@ def strip_translation_echo(text: str) -> str:
 
 
 def protect_values(text: str) -> Tuple[str, Dict[str, str]]:
-    """
-    Replace quoted user content with placeholders before translation.
-
-    The naive policy asks the model politely to keep the user's words. Small
-    models do not obey. This does not ask: the content simply is not present
-    in the text the translator sees, so it cannot be damaged.
-    """
     mapping: Dict[str, str] = {}
     counter = [0]
 
@@ -259,23 +205,10 @@ def protect_values(text: str) -> Tuple[str, Dict[str, str]]:
     return QUOTED_RE.sub(_swap, text), mapping
 
 
-# a placeholder that came back with characters glued to it
 _MANGLED_RE = re.compile(r"[^\s«»\"']?__V(\d+)__[^\s«»\"'.,;:!?]+")
 
 
 def restore_values(text: str, mapping: Dict[str, str]) -> Tuple[str, int, int]:
-    """
-    Put the original content back.
-
-    Returns (text, lost, mangled).
-
-    `lost`    the placeholder never came back at all.
-    `mangled` the placeholder came back with junk glued to it, e.g. `__V6__$$`.
-
-    We count the damage but we do NOT clean it. Cleaning would hide a real
-    failure of the placeholder policy, which is one of the things this arm
-    exists to measure.
-    """
     mangled = len(set(_MANGLED_RE.findall(text)))
     lost = 0
     for key, value in mapping.items():
@@ -286,10 +219,6 @@ def restore_values(text: str, mapping: Dict[str, str]) -> Tuple[str, int, int]:
     return text, lost, mangled
 
 
-# --------------------------------------------------------------------------
-# parsing
-# --------------------------------------------------------------------------
-
 FENCE_RE = re.compile(r"```(?:json)?\s*(.*?)```", re.DOTALL)
 
 THINK_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
@@ -297,7 +226,6 @@ THINK_OPEN_RE = re.compile(r"^.*?</think>", re.DOTALL | re.IGNORECASE)
 
 
 def split_reasoning(text: str) -> Tuple[str, str]:
-    """Return (reasoning, remainder) for a chain-of-thought answer."""
     match = THINK_RE.search(text)
     if match:
         return match.group(1).strip(), THINK_OPEN_RE.sub("", text, count=1).strip()
@@ -308,7 +236,6 @@ def split_reasoning(text: str) -> Tuple[str, str]:
 
 
 def _as_action(obj: Any) -> Optional[Dict[str, Any]]:
-    """Turn one parsed JSON value into an action, or None if it is not one."""
     if not isinstance(obj, dict):
         return None
     tool = obj.get("tool") or obj.get("name") or obj.get("tool_name")
@@ -326,7 +253,6 @@ def _as_action(obj: Any) -> Optional[Dict[str, Any]]:
 
 
 def _flatten(value: Any) -> List[Dict[str, Any]]:
-    """A parsed JSON value may be one action or a list of actions."""
     if isinstance(value, list):
         actions = []
         for item in value:
@@ -339,15 +265,6 @@ def _flatten(value: Any) -> List[Dict[str, Any]]:
 
 
 def _scan_json_blocks(text: str) -> Tuple[List[Any], bool]:
-    """
-    Find every balanced {...} or [...] block and parse the valid ones.
-
-    Returns (parsed_blocks, saw_brackets). `saw_brackets` is True when the
-    model clearly tried to produce a structure, even if the syntax was broken.
-    We deliberately do NOT repair broken syntax: repair heuristics cannot be
-    falsified and can silently favour one language over the other. We only
-    count how often it happens.
-    """
     blocks: List[Any] = []
     saw_brackets = False
     depth = 0
@@ -376,25 +293,8 @@ def _scan_json_blocks(text: str) -> Tuple[List[Any], bool]:
 
 
 def extract_actions(text: str) -> Tuple[List[Dict[str, Any]], str]:
-    """
-    Pull every action out of the model output.
-
-    Returns (actions, parse_status) where parse_status is one of:
-      "clean"          the whole output was valid JSON and gave an action
-      "recovered"      actions were found inside fences or prose
-      "bad_schema"     valid JSON, but no usable "tool" field anywhere
-      "malformed_json" the model tried to produce a structure and broke the
-                       syntax on its own, with output budget to spare.
-      "no_json"        the model answered with plain text and never tried
-
-    The caller upgrades "malformed_json" to "truncated" when the generation
-    ran out of output budget. Keeping the two apart is essential: one is the
-    model failing to write JSON, the other is us not giving it room to
-    finish, and only the second one is our fault.
-    """
     raw = text.strip()
 
-    # 1. the whole output is JSON
     try:
         parsed = json.loads(raw)
         actions = _flatten(parsed)
@@ -406,7 +306,6 @@ def extract_actions(text: str) -> Tuple[List[Dict[str, Any]], str]:
     parsed_something = False
     saw_brackets = False
 
-    # 2. code fences
     for fence in FENCE_RE.findall(raw):
         values, brackets = _scan_json_blocks(fence)
         saw_brackets = saw_brackets or brackets
@@ -416,7 +315,6 @@ def extract_actions(text: str) -> Tuple[List[Dict[str, Any]], str]:
     if collected:
         return collected, "recovered"
 
-    # 3. anywhere in the text
     values, brackets = _scan_json_blocks(raw)
     saw_brackets = saw_brackets or brackets
     for value in values:
@@ -430,16 +328,11 @@ def extract_actions(text: str) -> Tuple[List[Dict[str, Any]], str]:
     return [], ("malformed_json" if saw_brackets else "no_json")
 
 
-# --------------------------------------------------------------------------
-# context budget
-# --------------------------------------------------------------------------
-
 def compact(
     messages: List[Dict[str, str]],
     backend: BaseBackend,
     budget: Optional[int],
 ) -> Tuple[List[Dict[str, str]], int]:
-    """Drop the oldest turns if the conversation is over the token budget."""
     if budget is None or len(messages) <= 3:
         return messages, 0
 
@@ -453,10 +346,6 @@ def compact(
     return messages, dropped
 
 
-# --------------------------------------------------------------------------
-# main loop
-# --------------------------------------------------------------------------
-
 def run_episode(
     backend: BaseBackend,
     task: Dict[str, Any],
@@ -469,23 +358,6 @@ def run_episode(
     repeat_limit: int = 2,
     truncation_hint: bool = True,
 ) -> Dict[str, Any]:
-    """
-    Run one task under one arm and return a full record.
-
-    `stall_limit` stops an episode when the environment state has not changed
-    for that many turns in a row. Small models often finish the work and then
-    forget to call `done`, which burns the whole step budget and pushes every
-    episode to the ceiling. That would destroy the step measurement, because
-    both languages would saturate at the same number. The rule is identical
-    for every arm, and the reason is logged in `stopped_reason`.
-
-    `truncation_hint` tells the agent when its answer was cut off by the
-    output budget, so it can send a shorter batch. Without it a model that
-    plans nine actions at once emits the same too-long batch forever and the
-    episode dies without a single action. That is a property of our budget,
-    not of the language. The hint is the same English sentence in every arm,
-    and it can be switched off to measure how much it is worth.
-    """
 
     if arm not in ARMS:
         raise ValueError(f"unknown arm: {arm}")
@@ -575,8 +447,6 @@ def run_episode(
         reasoning, answer_text = split_reasoning(gen.text)
         actions, parse_status = extract_actions(answer_text)
 
-        # An answer cut off by the output budget is not a model that cannot
-        # write JSON. Relabel it so the two never get mixed in the numbers.
         if gen.truncated:
             truncated_turns += 1
             if not actions:
@@ -655,7 +525,6 @@ def run_episode(
             stopped_reason = "done"
             break
 
-        # loop detection 1: the turn contained only actions we already ran
         if executed:
             keys = [
                 json.dumps([a["tool"], a["args"]], sort_keys=True, ensure_ascii=False)
@@ -671,7 +540,6 @@ def run_episode(
                 stopped_reason = "looping"
                 break
 
-        # loop detection 2: the world stopped changing
         signature = json.dumps(env.state, sort_keys=True, ensure_ascii=False)
         if signature == last_signature:
             stalled_turns += 1

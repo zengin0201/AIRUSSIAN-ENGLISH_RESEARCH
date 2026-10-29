@@ -1,52 +1,3 @@
-"""
-Generate data/tasks_time_de_halb.json — the productivity contrast inside German.
-
-    python tools/make_german_halb_probe.py
-
-**Why this exists.** The paper claimed German's counting-into inventory is a
-closed set of three items and that no German form counts into the eighth hour
-for 07:20. That is false, and a blind LLM review of the earlier probe exposed
-it (F70). *Zehn vor halb acht* is 07:20: it anchors on *halb acht*, the
-counting-into phrase, so the surface number is not the answer and the named
-hour has not arrived — **exactly the profile that breaks in Russian**. German
-extends the set compositionally and we never probed it.
-
-**The design this makes possible is better than the one it replaces.** The
-earlier German probe varied productivity *across* two languages. This one
-varies it *inside* one:
-
-    halb acht              07:30   counting INTO, a stored phrase
-    zehn vor halb acht     07:20   counting INTO, assembled from that phrase
-    zwanzig nach sieben    07:20   counting FROM
-
-Same language, same speaker, same carrier, same hour names. The only thing that
-moves is whether the exact string is likely to have been memorised.
-
-**And the minimal pair is exact.** Cells `from_hour` and `into_composed` ask
-for the **same eight clock times** in the two German renderings, with
-**byte-identical English**, because English has only one way to say 06:20. So
-if German fails on one rendering and not the other while English is the same
-sentence in both, nothing is left to blame but the construction.
-
-**Daypart words were chosen to avoid the defect F67 and F70 both found.**
-Nothing between 02:00 and 05:00 is called *morgens* here, because *morgens*
-starts around five or six; in fact nothing in this probe falls in that window
-at all. *vormittags* is avoided entirely — the same review reports it is never
-used to set an alarm.
-
-**What is still not fixed.** The post-positioned daypart («auf halb acht
-morgens») is an English calque throughout, per the same review; a German
-speaker says «morgen früh um halb acht» or just «halb acht». It is kept because
-every earlier German probe uses it and changing the carrier now would make this
-file incomparable with those. It is a camera-ready problem for all of them at
-once, and it never stopped a reading being correct.
-
-**Wording not checked by a native speaker.** Same status as every German file
-here. The idiomaticity claim that motivated this probe — that *fünf vor halb
-acht* is the ordinary 07:25 across most of the German-speaking area — comes
-from a blind LLM review and from the author's reading, and should be confirmed.
-"""
-
 from __future__ import annotations
 
 import json
@@ -63,15 +14,7 @@ LABEL_DE = "Wecker"
 LABEL_EN = "alarm"
 FEWSHOT_TIMES = ("09:05", "19:10", "08:25")
 
-# (time, cell, German, English)
-#
-# into_fixed     halb X            a stored phrase
-# into_composed  N vor/nach halb X assembled from that phrase
-# from_hour      N nach X          German's other option, same clock times
-#                                  as into_composed, identical English
-# digital        the health check
 ITEMS = [
-    # ---- into_fixed: halb X. Eight items, the memorised anchor. ----------
     ("06:30", "into_fixed", "halb sieben morgens", "half past six in the morning"),
     ("08:30", "into_fixed", "halb neun morgens", "half past eight in the morning"),
     ("10:30", "into_fixed", "halb elf morgens", "half past ten in the morning"),
@@ -81,7 +24,6 @@ ITEMS = [
     ("20:30", "into_fixed", "halb neun abends", "half past eight in the evening"),
     ("21:30", "into_fixed", "halb zehn abends", "half past nine in the evening"),
 
-    # ---- into_composed: N vor halb X. Same eight times as from_hour. -----
     ("06:20", "into_composed", "zehn vor halb sieben morgens",
      "twenty past six in the morning"),
     ("08:20", "into_composed", "zehn vor halb neun morgens",
@@ -99,7 +41,6 @@ ITEMS = [
     ("21:20", "into_composed", "zehn vor halb zehn abends",
      "twenty past nine in the evening"),
 
-    # ---- into_composed: N nach halb X. The other side of the anchor. -----
     ("07:35", "into_composed", "fünf nach halb acht morgens",
      "twenty five to eight in the morning"),
     ("09:40", "into_composed", "zehn nach halb zehn morgens",
@@ -113,8 +54,6 @@ ITEMS = [
     ("20:40", "into_composed", "zehn nach halb neun abends",
      "twenty to nine in the evening"),
 
-    # ---- from_hour: N nach X, the SAME eight times as the vor-halb cell,
-    #      with byte-identical English. This is the minimal pair. ----------
     ("06:20", "from_hour", "zwanzig nach sechs morgens",
      "twenty past six in the morning"),
     ("08:20", "from_hour", "zwanzig nach acht morgens",
@@ -132,7 +71,6 @@ ITEMS = [
     ("21:20", "from_hour", "zwanzig nach neun abends",
      "twenty past nine in the evening"),
 
-    # ---- digital: the health check. --------------------------------------
     ("07:12", "digital", "07:12", "07:12"),
     ("11:48", "digital", "11:48", "11:48"),
     ("15:03", "digital", "15:03", "15:03"),
@@ -174,7 +112,6 @@ def main() -> int:
     if leaked:
         raise SystemExit(f"clock time is also a few-shot demonstration: {leaked}")
 
-    # The minimal pair only works if the two cells line up exactly.
     composed = sorted(t for t, c, *_ in ITEMS if c == "into_composed")
     from_hour = sorted(t for t, c, *_ in ITEMS if c == "from_hour")
     overlap = sorted(set(composed) & set(from_hour))

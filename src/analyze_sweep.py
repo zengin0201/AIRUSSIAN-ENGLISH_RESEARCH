@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import argparse
@@ -128,7 +126,6 @@ def main() -> None:
             cellsline.append(f"{ok}/{len(rows)}  cut {cut}/{len(rows)}")
         print(f"{budget:>8}" + "".join(f"{c:>22}" for c in cellsline))
 
-    # the number the figure exists to produce
     print("\nsmallest budget at which each arm reaches its own best success rate:")
     for arm in arms:
         best = 0.0

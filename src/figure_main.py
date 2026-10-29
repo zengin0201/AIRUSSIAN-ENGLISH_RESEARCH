@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import argparse
@@ -55,13 +53,6 @@ def minutes(value: str) -> int:
 
 
 def save(fig, out_path: str) -> None:
-    """
-    Write the figure twice: PNG to look at, PDF to typeset.
-
-    A raster figure dropped into a two-column paper looks soft the moment a
-    reviewer zooms in, and these are all line and bar plots, so there is no
-    reason to rasterise them. LaTeX takes the PDF; GitHub renders the PNG.
-    """
     fig.savefig(out_path, dpi=160)
     pdf_path = os.path.splitext(out_path)[0] + ".pdf"
     fig.savefig(pdf_path)
@@ -82,7 +73,7 @@ def figure_success(runs, out_path: str) -> None:
     else:
         rows = 2
         cols = (n + 1) // 2
-        figsize = (5.6 * cols, 4.3 * rows)
+        figsize = (5.6 * cols, 3.4 * rows)
 
     fig, axes = plt.subplots(rows, cols, figsize=figsize, sharey=True)
     axes = [axes] if n == 1 else list(axes.flat)
@@ -127,20 +118,12 @@ def figure_success(runs, out_path: str) -> None:
         if index % cols == 0:
             ax.set_ylabel("tasks solved, %")
     axes[0].legend(loc="lower left", fontsize=9)
-    if len(runs) >= 3:
-        caption = (
-            "English is flat across every category. Russian is not, and the "
-            "Russian bars fall with how fixed the phrase is:\n«половина» is "
-            "recovered by the large models, «четверть» barely, and «N минут "
-            "X-ого» — the fully productive form — is never solved at any scale."
-        )
-    else:
-        caption = (
+    if len(runs) < 3:
+        fig.suptitle(
             "Success by time expression. The controls carry the argument: "
-            "digital times are equal, subtractive forms fail in both languages."
-        )
-    fig.suptitle(caption, fontsize=10)
-    fig.tight_layout(rect=(0, 0, 1, 0.90 if len(runs) >= 3 else 0.94))
+            "digital times are equal, subtractive forms fail in both "
+            "languages.", fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 1.0 if len(runs) >= 3 else 0.94))
     save(fig, out_path)
 
 
@@ -179,7 +162,7 @@ def figure_error(runs, tasks: Dict[str, Any], out_path: str) -> None:
     values = [buckets.get(k, 0) for k in order]
     colors = ["#55a868", "#c44e52", "#dd8452", "#999999"]
 
-    fig, ax = plt.subplots(figsize=(6.4, 4.2))
+    fig, ax = plt.subplots(figsize=(6.4, 3.2))
     bars = ax.bar(labels, values, color=colors)
     for bar, value in zip(bars, values):
         if value:
@@ -199,13 +182,6 @@ def figure_error(runs, tasks: Dict[str, Any], out_path: str) -> None:
 
 
 def figure_frequency(runs, freq_path: str, out_path: str) -> None:
-    """
-    Accuracy against corpus frequency, one line per language.
-
-    This is the figure that kills the easy reading. Both languages get rarer
-    from left to right, and English falls further, yet only the Russian line
-    drops. If rarity were the explanation, the two lines would be parallel.
-    """
     import matplotlib
 
     matplotlib.use("Agg")
@@ -228,7 +204,7 @@ def figure_frequency(runs, freq_path: str, out_path: str) -> None:
                         hits += bool(row["success"])
             accuracy[arm].append(100 * hits / total if total else 0.0)
 
-    fig, (left, right) = plt.subplots(1, 2, figsize=(10.5, 4.2))
+    fig, (left, right) = plt.subplots(1, 2, figsize=(10.5, 3.5))
     xs = range(len(order))
 
     left.plot(xs, [freq[c]["en"] for c in order], marker="o",
@@ -253,35 +229,14 @@ def figure_frequency(runs, freq_path: str, out_path: str) -> None:
     right.grid(alpha=0.3)
     right.legend()
 
-    fig.suptitle(
-        "Rarity alone does not explain the failure. English frequency falls by "
-        "20x across these three categories and English accuracy does not move.",
-        fontsize=10,
-    )
-    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    fig.tight_layout()
     save(fig, out_path)
-
 
 
 LF = chr(10)
 
 
 def figure_polish(pl_runs, ru_runs, out_path: str, large_only: bool = True) -> None:
-    """
-    The crossed design, which had no picture until now.
-
-    Polish and Russian ask for the same clock times. At :30 both count into the
-    coming hour. At :15 and :20 Polish counts from the completed hour, as
-    English does, and Russian still counts into it. So the language is held
-    roughly fixed — two Slavic languages — and the construction varies.
-
-    Every bar is annotated with which way its language counts, because that is
-    the whole argument and a reader should not have to take it on trust.
-
-    This exists because `figure_main.py` was hardcoded to ("en", "ru") in three
-    places and knew nothing about Polish, so the strongest result in the
-    project had tables and no figure.
-    """
     import matplotlib
 
     matplotlib.use("Agg")
@@ -291,7 +246,6 @@ def figure_polish(pl_runs, ru_runs, out_path: str, large_only: bool = True) -> N
     labels = ["«половина» / «wpół do»" + LF + "07:30",
               "«четверть» / «kwadrans po»" + LF + "07:15",
               "«N минут» / «N po»" + LF + "07:20"]
-    # how each language counts, per clock form
     counts = {
         "English": ["from", "from", "from"],
         "Polish": ["INTO", "from", "from"],
@@ -314,7 +268,7 @@ def figure_polish(pl_runs, ru_runs, out_path: str, large_only: bool = True) -> N
         "Russian": [rate(ru_runs, "ru", c) for c in order],
     }
 
-    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    fig, ax = plt.subplots(figsize=(7.2, 3.5))
     xs = list(range(len(order)))
     width = 0.26
     offsets = {"English": -width, "Polish": 0.0, "Russian": width}
@@ -327,8 +281,6 @@ def figure_polish(pl_runs, ru_runs, out_path: str, large_only: bool = True) -> N
             centre = bar.get_x() + bar.get_width() / 2
             ax.text(centre, bar.get_height() + 2, f"{hits}/{total}",
                     ha="center", va="bottom", fontsize=8)
-            # A zero bar has no inside, so the construction label goes above the
-            # count instead of on top of it.
             inside = pct > 20
             ax.text(centre, 3 if inside else bar.get_height() + 11, how,
                     ha="center", va="bottom", fontsize=7, rotation=90,
@@ -347,32 +299,11 @@ def figure_polish(pl_runs, ru_runs, out_path: str, large_only: bool = True) -> N
         f"Same clock times, two Slavic languages, {scope}." + LF
         + "The label on each bar is how that language counts.",
         fontsize=10, pad=26)
-    ax.text(0.5, -0.22,
-            "Where Polish and Russian share the construction (07:30) they tie."
-            + LF +
-            "Where it differs, Polish tracks English and Russian collapses.",
-            transform=ax.transAxes, ha="center", va="top", fontsize=9)
-    fig.tight_layout(rect=(0, 0.10, 1, 1))
+    fig.tight_layout()
     save(fig, out_path)
 
 
 def figure_german(de_runs, ru_runs, out_path: str) -> None:
-    """
-    The scale axis, which is what German added.
-
-    German counts into the coming hour as Russian does, but with a closed set
-    of three phrases and no productive form. So the picture is three lines:
-
-      German counting-from   flat at ceiling, every size
-      German counting-into   climbs from floor to ceiling with scale
-      Russian productive     flat on the floor, every size
-
-    The gap between the second and third lines is the paper's claim in one
-    image: scale supplies the missing units and never the missing rule.
-
-    `de_runs` and `ru_runs` are lists of (label, episodes) ordered smallest
-    model first. Russian may be empty, in which case its line is omitted.
-    """
     import matplotlib
 
     matplotlib.use("Agg")
@@ -381,8 +312,6 @@ def figure_german(de_runs, ru_runs, out_path: str) -> None:
     def rate(rows, arm, difficulty):
         ok = n = 0
         for row in rows:
-            # The first line of a result file is the run header, which has
-            # no arm. Other figures reach it through helpers that strip it.
             if row.get("arm") != arm or row.get("difficulty") != difficulty:
                 continue
             n += 1
@@ -403,14 +332,11 @@ def figure_german(de_runs, ru_runs, out_path: str) -> None:
             series.append(("Russian productive" + LF + "N минут X-ого",
                            ru, "#c44e52", "^", "--"))
 
-    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    fig, ax = plt.subplots(figsize=(7.2, 3.6))
     for rank, (name, values, colour, marker, style) in enumerate(series):
         ys = [v[0] for v in values]
         ax.plot(x, ys, marker=marker, color=colour, linestyle=style,
                 linewidth=2, markersize=8, label=name)
-        # The Russian line is flat at the floor and its per-point labels
-        # collided with the German counting-into ones, which sit just above it
-        # at the small sizes. It is constant, so one label says everything.
         points = list(zip(x, values))
         if style == "--":
             points = points[-1:]

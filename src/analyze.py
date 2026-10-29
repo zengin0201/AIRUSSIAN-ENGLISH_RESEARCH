@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import argparse
@@ -119,10 +118,6 @@ def main() -> None:
 
     print(f"\nmodel: {meta.get('model')}   tasks: {meta.get('n_tasks')}   "
           f"repeats: {meta.get('repeats')}")
-    # The second language is whatever the task file's non-English half was, not
-    # always Russian. A hardcoded "RU" label printed RU over German numbers,
-    # and the decomposition below was skipped outright for every Polish and
-    # German run because it tested for an arm named "ru".
     fert = (meta.get("fertility") or {}).get("fertility_ratio")
     l2 = (meta.get("fertility") or {}).get("language") or "l2"
     print(f"static fertility ratio {l2.upper()}/EN: {fert}")

@@ -1,16 +1,3 @@
-"""
-Simulated personal-assistant environment.
-
-The environment holds a small state (alarms, calendar, lists, music, notes).
-The agent changes this state by calling tools. Success is decided by
-comparing the final state against a list of checks. No LLM judge is used,
-so the same task is scored the same way in every language.
-
-All tool names and argument names are in English on purpose. This is how
-real APIs work, and the mismatch between an English schema and a non-English
-user request is one of the things we want to measure.
-"""
-
 from __future__ import annotations
 
 import copy
@@ -19,12 +6,9 @@ import unicodedata
 from typing import Any, Dict, List, Tuple
 
 
-
-
 def norm(value: Any) -> str:
-    """Normalise a string for comparison (case, unicode form, spaces)."""
     text = unicodedata.normalize("NFKC", str(value)).strip().lower()
-    text = text.replace("\u0451", "\u0435")  # Russian ё -> е
+    text = text.replace("\u0451", "\u0435")
     text = re.sub(r"[^\w\s:.-]", " ", text, flags=re.UNICODE)
     text = re.sub(r"\s+", " ", text)
     return text.strip()
@@ -34,23 +18,15 @@ TIME_RE = re.compile(r"^([01]?\d|2[0-3]):([0-5]\d)$")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
-# --------------------------------------------------------------------------
-# state
-# --------------------------------------------------------------------------
-
 def initial_state() -> Dict[str, Any]:
     return {
-        "alarms": [],       # [{"time": "07:30", "label": "..."}]
-        "calendar": [],     # [{"date": "2026-09-01", "time": "10:00", "title": "..."}]
-        "lists": {},        # {"shopping": ["milk", ...]}
+        "alarms": [],
+        "calendar": [],
+        "lists": {},
         "music": {"playing": None},
-        "notes": [],        # ["..."]
+        "notes": [],
     }
 
-
-# --------------------------------------------------------------------------
-# tool specifications (rendered into the system prompt)
-# --------------------------------------------------------------------------
 
 TOOL_SPECS: List[Dict[str, Any]] = [
     {
@@ -123,22 +99,16 @@ def render_tools() -> str:
     return "\n".join(lines)
 
 
-# --------------------------------------------------------------------------
-# environment
-# --------------------------------------------------------------------------
-
 class ToolError(Exception):
     pass
 
 
 class Environment:
-    """Holds state and executes tool calls."""
 
     def __init__(self, state: Dict[str, Any] | None = None):
         self.state = copy.deepcopy(state) if state else initial_state()
         self.history: List[Dict[str, Any]] = []
 
-    # -- individual tools ---------------------------------------------------
 
     def _set_alarm(self, time: str = "", label: str = "", **_) -> str:
         if not TIME_RE.match(str(time)):
@@ -217,15 +187,8 @@ class Environment:
     def _done(self, **_) -> str:
         return "Task marked as finished."
 
-    # -- dispatch -----------------------------------------------------------
 
     def call(self, tool: str, args: Dict[str, Any]) -> Tuple[str, str]:
-        """
-        Execute a tool call.
-
-        Returns (observation, status) where status is one of:
-        "ok", "unknown_tool", "bad_args".
-        """
         handler = getattr(self, f"_{tool}", None)
         if tool not in TOOL_NAMES or handler is None:
             obs = (
@@ -251,10 +214,6 @@ class Environment:
         self.history.append({"tool": tool, "args": args, "status": "ok"})
         return obs, "ok"
 
-
-# --------------------------------------------------------------------------
-# verification
-# --------------------------------------------------------------------------
 
 def _check_one(state: Dict[str, Any], check: Dict[str, Any]) -> Tuple[bool, str]:
     kind = check["kind"]
@@ -321,16 +280,6 @@ def _check_one(state: Dict[str, Any], check: Dict[str, Any]) -> Tuple[bool, str]
 
 
 def verify(state: Dict[str, Any], checks: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """
-    Run all checks against the final state.
-
-    Returns a dict with:
-      success        : True only if every check passed
-      passed         : number of checks passed
-      total          : number of checks
-      failure_kind   : "none" | "empty" (agent did nothing in that slot)
-                       | "wrong_value" (agent acted but wrote the wrong value)
-    """
     passed = 0
     reasons = []
     for check in checks:

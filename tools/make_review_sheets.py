@@ -1,35 +1,3 @@
-"""
-Generate review sheets for native speakers, one per language.
-
-    python tools/make_review_sheets.py
-
-Why this exists. The Polish and German probes were written from reference
-grammars by an author who speaks neither. That is the single outstanding risk
-to the paper: a reviewer who speaks one of those languages and objects to a
-wording can sink a result, and no amount of care in the code answers it.
-
-The sheets are plain Markdown so they can be sent as a file, pasted into a
-message, or printed. One row per item, two things to fill in: a verdict and a
-comment. Nothing else is asked, because a sheet that takes an hour comes back
-empty.
-
-**What the paper is allowed to claim depends on what comes back**, and these
-are different claims carrying different weight:
-
-    "checked by an acquaintance who speaks Polish"
-    "checked by a native speaker"
-    "checked by a native speaker with linguistic training"
-    "checked by <name>" — in Acknowledgements, with their permission
-
-Record which one is true. Upgrading it later because it sounds better is the
-same class of act as backdating a notebook.
-
-**The German regional items need a speaker from the right region.** viertel
-neun and dreiviertel neun are used in the east and south; a speaker from
-Hamburg may not use them at all, and "a German speaker said it was odd" is not
-evidence against them. Ask where the person is from and write it down.
-"""
-
 from __future__ import annotations
 
 import json
@@ -147,13 +115,6 @@ Answer as a table with columns: id, time, verdict, comment.
 
 
 def blind_sheet(path: str, lang: str, language: str) -> str:
-    """A sheet with no intended times, no flags, and no stated suspicions.
-
-    Everything we think we know is withheld on purpose. Given the intended
-    time a model anchors on it and hands back our own answer; given our
-    suspicions it agrees with them. Its reading is only worth something if it
-    has to produce one unaided.
-    """
     with open(os.path.join(ROOT, path), "r", encoding="utf-8") as handle:
         data = json.load(handle)
     rows = [f"| {t['id']} | {t['instruction'][lang]} | | | |"

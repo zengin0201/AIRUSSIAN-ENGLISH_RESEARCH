@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import argparse
@@ -46,13 +44,6 @@ def main(argv: List[str] | None = None) -> int:
     parser.add_argument("--out", required=True)
     args = parser.parse_args(argv)
 
-    # Checked before anything is loaded, because the point is to fail before
-    # the GPU is spent. Repeats at temperature 0 are exact duplicates: F55
-    # measured 48 of 48 item-arm cells identical across all three repeats in
-    # two local runs, zero disagreement. The default of 3 exists for the
-    # stability runs, which use temperature 0.7. Left on by accident at
-    # temperature 0 it triples the run time, adds nothing, and inflates every
-    # interval threefold if the episodes are later counted as n.
     if args.repeats > 1 and args.temperature == 0.0 and args.backend != "oracle":
         raise SystemExit(
             f"--repeats {args.repeats} at --temperature 0.0 runs every task "
@@ -69,7 +60,6 @@ def main(argv: List[str] | None = None) -> int:
 
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 
-    # backend
     if args.backend == "oracle":
         backend = OracleBackend([])
     elif args.backend == "local":
@@ -127,9 +117,6 @@ def main(argv: List[str] | None = None) -> int:
             for task in tasks:
                 for arm in args.arms:
                     if isinstance(backend, OracleBackend):
-                        # The oracle replays the gold trace of whatever
-                        # language the arm actually reads, so it stays a valid
-                        # environment check for a Polish file too.
                         backend.reset(task["gold"][ARM_LANGUAGE[arm]])
 
                     if meter and meter.available:
@@ -149,7 +136,7 @@ def main(argv: List[str] | None = None) -> int:
                             truncation_hint=not args.no_truncation_hint,
                         )
                         record["step_budget"] = step_budget
-                    except Exception as exc:  
+                    except Exception as exc:
                         record = {
                             "task_id": task["id"],
                             "arm": arm,

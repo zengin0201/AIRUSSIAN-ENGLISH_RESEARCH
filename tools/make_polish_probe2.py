@@ -1,43 +1,3 @@
-"""
-Generate data/tasks_time_pl2.json — the Polish probe with the subtractive
-carrier corrected.
-
-    python tools/make_polish_probe2.py
-
-**What changed and why.** Two independent passes found the same defect in the
-three `subtractive` items, one of them blind:
-
-- F67, the assistant reading the items: every other Polish item is «Ustaw
-  budzik **na** [time]», while g22-g24 put «za» directly after the verb phrase,
-  where a duration would sit.
-- F68, Gemini on `review/polish_blind.md` with no intended times and none of
-  our suspicions: marked all three **wrong**, with the diagnosis that «ustawić
-  budzik» governs «na» plus the target time, so «Ustaw budzik za ...» parses as
-  setting a timer for a duration.
-
-That is the ambiguity the paper already reported — «za dwadzieścia» alone means
-"in twenty minutes" — except that the paper blamed the Polish idiom alone. Part
-of it was our carrier.
-
-    g22  Ustaw budzik za dwadzieścia dziewiąta rano.
-      -> Ustaw budzik na za dwadzieścia dziewiąta rano.
-
-«na za» is doubly prepositional and Gemini called it colloquial rather than
-elegant, but it is what restores the clock reading, and it is the only
-native-adjacent guidance available until a speaker looks.
-
-**What deliberately did not change.** Gemini also called «kwadrans» dated and
-bookish, and «dwadzieścia pięć po» an English calque for :25. Both are register
-judgements, neither predicted failure (ok against odd was p = .49 in Polish and
-p = .31 in English), and changing the construction because one model dislikes
-the style would be a design change rather than a correction. A native speaker
-rules on those.
-
-**Why a new file rather than an edit.** `data/tasks_time_pl.json` is what the
-existing `pl_*.jsonl` results were produced against. Overwriting it would leave
-those results describing wording that no longer exists. The paper reports both.
-"""
-
 from __future__ import annotations
 
 import json
@@ -50,8 +10,6 @@ ROOT = os.path.dirname(HERE)
 SOURCE = os.path.join(ROOT, "data", "tasks_time_pl.json")
 TARGET = os.path.join(ROOT, "data", "tasks_time_pl2.json")
 
-# id -> (old wording, new wording). Written out in full so the change is
-# auditable without diffing two JSON files.
 FIXES = {
     "g22": ("Ustaw budzik za dwadzieścia dziewiąta rano.",
             "Ustaw budzik na za dwadzieścia dziewiąta rano."),

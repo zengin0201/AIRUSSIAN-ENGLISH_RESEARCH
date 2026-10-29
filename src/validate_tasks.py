@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import argparse
@@ -10,7 +8,6 @@ from typing import Any, Dict, List, Tuple
 
 from .environment import DATE_RE, TIME_RE, TOOL_NAMES
 
-# check kinds the environment can actually evaluate
 CHECK_KINDS = {
     "alarm_exists",
     "alarm_absent",
@@ -23,11 +20,8 @@ CHECK_KINDS = {
     "note_contains",
 }
 
-# Fields that carry machine values. These MUST be identical across languages:
-# a clock does not change when the request changes language.
 STRUCTURAL_FIELDS = ("kind", "time", "date", "list_name", "size")
 
-# Fields that carry human content. These are EXPECTED to differ.
 CONTENT_FIELDS = ("label_contains", "title_contains", "item", "text", "artist")
 
 
@@ -36,16 +30,6 @@ def _structural_signature(check: Dict[str, Any]) -> Tuple:
 
 
 def second_language(tasks: List[Dict[str, Any]]) -> str:
-    """
-    Which language is being compared against English in this file.
-
-    A task file holds exactly two wordings of the same task. One of them is
-    always English, because English is the within-item ceiling the whole design
-    depends on. The other is read from the file rather than hardcoded, so that
-    adding Polish does not mean writing Polish into a slot labelled Russian.
-    That kind of mislabelling is how a measurement quietly stops meaning what
-    its column heading says.
-    """
     codes = set()
     for task in tasks:
         codes |= set(task.get("instruction", {}))
@@ -59,7 +43,6 @@ def second_language(tasks: List[Dict[str, Any]]) -> str:
 
 
 def check_task(task: Dict[str, Any], l2: str = "ru") -> Tuple[List[str], List[str]]:
-    """Return (errors, warnings) for one task. `l2` is the non-English half."""
     errors: List[str] = []
     warnings: List[str] = []
     tid = task.get("id", "<no id>")
@@ -115,7 +98,6 @@ def check_task(task: Dict[str, Any], l2: str = "ru") -> Tuple[List[str], List[st
                     f"{tid}: {lang} check {i} date '{check['date']}' is not YYYY-MM-DD"
                 )
 
-    # ---- gold traces: same plan, different words -------------------------
     tools_en = [a.get("tool") for a in gold_en]
     tools_ru = [a.get("tool") for a in gold_ru]
     if tools_en != tools_ru:
@@ -146,7 +128,6 @@ def check_task(task: Dict[str, Any], l2: str = "ru") -> Tuple[List[str], List[st
             f"real actions"
         )
 
-    # ---- things only a human can settle ----------------------------------
     text_en = task["instruction"]["en"]
     text_ru = task["instruction"][l2]
     words_en = len(text_en.split())

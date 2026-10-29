@@ -1,25 +1,3 @@
-"""
-Every statistic the paper reports, regenerated from the logs.
-
-    python -m src.stats
-    python -m src.stats --check paper/paper.md README.md
-
-Why this file exists.
-
-Until 2026-08-21 the counts in the paper came from the logs but the p-values
-came from nowhere. Nothing in this repository computed them. Five of them were
-wrong by between three and nine orders of magnitude, and one value, 2.0e-12,
-was printed for two different contingency tables, which cannot happen. They
-were all conservative, so the reported effect was understated rather than
-overstated, but a reviewer with R and thirty seconds would have found it.
-
-The rule this file enforces: a number appears in the paper only if this script
-prints it. `--check` reads a document and complains about any p-value in it
-that is not one of the values computed here.
-
-See NOTES.md, F32.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -31,48 +9,18 @@ import sys
 from collections import Counter, defaultdict
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-from .metrics import fisher_exact
+from .metrics import fisher_exact, wilson_ci
 
-# Alpha level for null hypothesis testing, and how a p-value gets reported.
-#
-# Kyle Gorman (CUNY), 2026-10-13, reviewing this draft:
-#
-#   "If you are using Fisher for null hypothesis testing, you shouldn't report
-#    miniscule p-values. Rather you should set an alpha-level (.05, or .01 are
-#    normal) and then report p < .01 [...] it doesn't matter HOW MUCH SMALLER
-#    THAN THE ALPHA-LEVEL a p-value is, it just matters WHETHER it's smaller."
-#
-# He is right, and the draft he read printed things like p = 1.4e-22 on 68
-# items. Under frequentist NHST that number carries no information the
-# threshold does not, and quoting it to two significant figures invites a
-# reviewer to check it — which is how a tiny arithmetic difference turns into
-# a question about whether the author understands their own test.
-#
-# The exact value is still computed and still printed by this script, because
-# the lab notebook wants it and because `--check` needs it to verify that a
-# "p < .01" claim in a document is actually true. It just does not go in the
-# paper.
 ALPHA = 0.01
 
 
 def format_p(p: float, alpha: float = ALPHA) -> str:
-    """
-    The reportable form. Linguistics drops the leading zero: `p < .01`.
-
-    Above the threshold the value itself is the information, so it is printed
-    to two digits. Below it, only the threshold is.
-    """
     if p < alpha:
         return f"p < {('%.2f' % alpha).lstrip('0')}"
     if p >= 1:
         return "p = 1.0"
-    # Two significant digits, not two decimal places: at two decimals a p of
-    # .0114 prints as ".01", which is the alpha level itself and reads as if
-    # the test were exactly on the threshold.
     return f"p = {('%.2g' % p).lstrip('0')}"
 
-# The Russian forms that count into the coming hour. `into_hour` is the
-# undivided category from the first probe; the other three are its split.
 FAMILY = ("half_past", "quarter_past", "n_minutes")
 FAMILY_ALL = FAMILY + ("into_hour",)
 
@@ -86,30 +34,22 @@ CATEGORY_LABEL = {
     "arithmetic": "arithmetic",
 }
 
-# The main probe, one run per model, greedy.
 MAIN_RUNS = [
     ("Qwen2.5-3B", "results/v2_qwen3b.jsonl"),
     ("Phi-3.5-mini", "results/v2_phi.jsonl"),
     ("qwen3.6-27b", "results/v2_qwen27b.jsonl"),
     ("gpt-oss-120b", "results/v2_gptoss120b.jsonl"),
 ]
-# Chain of thought, paired with the plain run of the same model.
 COT_RUNS = [
     ("Qwen2.5-3B", "results/v2_qwen3b.jsonl", "results/cot_qwen3b.jsonl"),
     ("Phi-3.5-mini", "results/v2_phi.jsonl", "results/cot_phi.jsonl"),
     ("gpt-oss-120b", "results/v2_gptoss120b.jsonl", "results/cot_gptoss120b.jsonl"),
 ]
-# The second domain: the same 24 expressions asked as calendar events.
 EVENT_RUNS = [
     ("Qwen2.5-3B", "results/v2_qwen3b.jsonl", "results/event_qwen3b.jsonl"),
     ("Phi-3.5-mini", "results/v2_phi.jsonl", "results/event_phi.jsonl"),
     ("gpt-oss-120b", "results/v2_gptoss120b.jsonl", "results/event_gptoss120b.jsonl"),
 ]
-# Few-shot, paired with the plain run of the same model. Asked for by both
-# reviewers of the August draft; see NOTES.md, session 15.
-# qwen3.6-27b left the Groq catalogue before few-shot could be run on it
-# (F41), so qwen3.8-27b stands in — run on all four arms in one pass, which is
-# why its baseline and few-shot paths are the same file.
 FEWSHOT_RUNS = [
     ("Qwen2.5-3B", "results/v2_qwen3b.jsonl", "results/fs_qwen3b.jsonl"),
     ("Phi-3.5-mini", "results/v2_phi.jsonl", "results/fs_phi.jsonl"),
@@ -124,8 +64,6 @@ STABILITY_RUNS = [
 
 TASKS_MAIN = "data/tasks_time_v2.json"
 
-# The first, 18-item probe. Superseded by the expanded one above, but the lab
-# notebook quotes its p-values, so they have to be checkable too.
 FIRST_PROBE_RUNS = [
     ("Qwen2.5-3B", "results/time_probe.jsonl"),
     ("Phi-3.5-mini", "results/time_phi.jsonl"),
@@ -134,9 +72,6 @@ FIRST_PROBE_RUNS = [
 ]
 RUSSIAN_ARMS = ("ru", "ru_sys_ru", "ru_translate_safe")
 
-# The Polish crossed design. Polish counts into the coming hour for «wpół do»
-# and from the completed hour for «po», so it carries both constructions at
-# once and splits them inside a single language.
 TASKS_PL = "data/tasks_time_pl.json"
 POLISH_RUNS = [
     ("Qwen2.5-3B", "results/pl_qwen3b.jsonl"),
@@ -146,12 +81,7 @@ POLISH_RUNS = [
 ]
 
 
-# --------------------------------------------------------------------------
-# loading
-# --------------------------------------------------------------------------
-
 def load(path: str) -> List[Dict[str, Any]]:
-    """Episodes only. A missing file is not fatal — say so and carry on."""
     if not os.path.exists(path):
         print(f"  !! {path} not found, skipped")
         return []
@@ -190,10 +120,6 @@ def tally(
             continue
         if wanted_ids and row["task_id"] not in wanted_ids:
             continue
-        # An episode that crashed never reached the model, so counting it as a
-        # failure attributes an SSL timeout to the model's grammar. Dropped
-        # from the denominator and surfaced by crashes() instead, which is the
-        # only reason a reader can tell the two apart.
         if row.get("error"):
             continue
         total += 1
@@ -202,7 +128,6 @@ def tally(
 
 
 def crashes(rows: Iterable[Dict[str, Any]], arm: Optional[str] = None) -> int:
-    """Episodes that never produced an answer. Infrastructure, not behaviour."""
     return sum(1 for row in rows
                if row.get("error") and (arm is None or row.get("arm") == arm))
 
@@ -212,15 +137,11 @@ def minutes(value: str) -> int:
     return int(hours) * 60 + int(mins)
 
 
-# --------------------------------------------------------------------------
-# reporting
-# --------------------------------------------------------------------------
-
 class Report:
-    """Collects every p-value printed, so `--check` can look for strays."""
 
     def __init__(self) -> None:
         self.p_values: List[float] = []
+        self.bounds: List[float] = []
 
     def head(self, title: str) -> None:
         print()
@@ -230,25 +151,20 @@ class Report:
 
     def compare(self, label: str, en: Tuple[int, int], other: Tuple[int, int],
                 lang: str = "ru") -> float:
-        """
-        Compare English against the other language and print both rates.
-
-        `lang` is printed rather than assumed. The first version of this method
-        hardcoded "ru" in the format string, so the Polish rows came out
-        labelled Russian — the exact substitution that `ARM_LANGUAGE` was added
-        to prevent, reintroduced two hours later in the reporting layer.
-        """
         en_ok, en_n = en
         other_ok, other_n = other
         p = fisher_exact(en_ok, en_n - en_ok, other_ok, other_n - other_ok)
         self.p_values.append(p)
         en_pct = 100 * en_ok / en_n if en_n else 0.0
         other_pct = 100 * other_ok / other_n if other_n else 0.0
-        # Reportable form first, because that is what goes in the paper. The
-        # exact value follows in brackets for the notebook only.
         print(f"  {label:<26} en {en_ok:>3}/{en_n:<3} ({en_pct:5.1f}%)   "
               f"{lang} {other_ok:>3}/{other_n:<3} ({other_pct:5.1f}%)   "
               f"{format_p(p):<9} [exact {p:.2e}]")
+        en_ci = wilson_ci(en_ok, en_n) if en_n else (0.0, 0.0)
+        other_ci = wilson_ci(other_ok, other_n) if other_n else (0.0, 0.0)
+        self.bounds += [*en_ci, *other_ci]
+        print(f"  {'':<26} 99% CI    en [{en_ci[0]:.1f}, {en_ci[1]:.1f}]"
+              f"{'':<6}{lang} [{other_ci[0]:.1f}, {other_ci[1]:.1f}]")
         return p
 
 
@@ -367,14 +283,6 @@ def section_cot(report: Report) -> None:
 
 
 def section_fewshot(report: Report) -> None:
-    """
-    Does handing the model three worked examples repair the productive form?
-
-    The demonstrations are at clock times that appear in no probe, so a score
-    here cannot come from recalling what was shown. English gets the same three
-    times, so an improvement in Russian alone is attributable to the
-    demonstrations and not to the examples teaching the output format.
-    """
     report.head("Few-shot — three worked examples, none at a probe time")
     print(f"  {'model':<16}{'ru «N минут» base':>20}{'+ few-shot':>13}"
           f"{'ru all base':>14}{'+ few-shot':>13}{'en all base':>14}{'+ few-shot':>13}")
@@ -450,8 +358,6 @@ def section_stability(report: Report) -> None:
         for (arm, _), (ok, n) in sorted(counts.items()):
             by_arm[arm].append(100 * ok / n)
         for arm, values in sorted(by_arm.items()):
-            # Sample standard deviation, n-1. Three repeats is a sample, not a
-            # population, and the paper reports it that way.
             spread = statistics.stdev(values) if len(values) > 1 else 0.0
             shown = ", ".join(f"{v:.0f}%" for v in values)
             print(f"  {name:<14} {arm:<3} {shown:<22} sd = {spread:.1f} points")
@@ -459,7 +365,6 @@ def section_stability(report: Report) -> None:
 
 
 def section_first_probe(report: Report) -> None:
-    """The 18-item probe of sessions 5 to 7. Kept so NOTES.md stays checkable."""
     report.head("The first probe (18 items) — the numbers the notebook quotes")
     per_model = []
     for name, path in FIRST_PROBE_RUNS:
@@ -490,22 +395,6 @@ def section_first_probe(report: Report) -> None:
 
 
 def section_polish(report: Report) -> None:
-    """
-    Polish holds the language fixed and varies the construction.
-
-    Russian counts into the coming hour for all three of «половина»,
-    «четверть» and «N минут». Polish counts into the hour for «wpół do» and
-    from the completed hour for «kwadrans po» and «N po». So the same speaker,
-    the same probe and the same clock times carry both constructions, and the
-    two surviving explanations of the Russian result disagree about what
-    happens:
-
-      the construction reading -> «wpół do» fails, «po» is answered
-      the "bad at Slavic" reading -> both fail
-
-    `literal` is the health check. If Polish digital times are not near
-    perfect, our Polish wording is broken and nothing below means anything.
-    """
     report.head("Polish — the same language carrying both constructions")
     if not os.path.exists(TASKS_PL):
         print(f"  !! {TASKS_PL} not found — run tools/make_polish_probe.py")
@@ -589,18 +478,6 @@ def section_polish(report: Report) -> None:
               f" result about the construction.")
 
 
-# Polish and Russian ask for the same clock times, but they do not always use
-# the same construction to do it. That mismatch is the experiment.
-#
-#   :30  wpół do ósmej   INTO the hour   половина восьмого   INTO the hour
-#   :15  kwadrans po siódmej  FROM        четверть восьмого  INTO
-#   :20  dwadzieścia po siódmej  FROM     двадцать минут восьмого  INTO
-#
-# So the half form is a matched pair — two Slavic languages, same construction —
-# and the other two are crossed. A language-level explanation ("models are worse
-# at Slavic", "Polish is lower-resource") predicts one language below the other
-# everywhere. A construction-level explanation predicts a tie on the matched
-# form and a split on the crossed ones.
 MATCHED_FORMS = [
     ("half (:30)", "half_past", "same: both count INTO"),
     ("quarter (:15)", "quarter_past", "crossed: PL counts FROM"),
@@ -615,7 +492,6 @@ PL_RU_PAIRS = [
 
 
 def section_polish_vs_russian(report: Report) -> None:
-    """Two Slavic languages, the same clock times, construction held or crossed."""
     report.head("Polish against Russian — same times, construction matched or crossed")
 
     for label, models in (("all four models", PL_RU_PAIRS),
@@ -653,22 +529,11 @@ def section_polish_vs_russian(report: Report) -> None:
                   f"  {format_p(p)} [exact {p:.2e}]")
         print()
 
-    # Do not say "Polish is the lower-resourced of the two" here. On the one
-    # proxy available (Wikipedia article counts) that is false: ru 2.12M vs
-    # pl 1.71M. The design argument below needs no measurement at all.
     print("  Corpus share is the same quantity in both halves of this comparison,")
     print("  so it cannot produce an effect that appears on one clock form and")
     print("  vanishes on another. The variable is the construction.")
 
 
-# German. German counts into the coming hour exactly as Russian does, but only
-# with a closed set of three lexical items (halb, viertel, dreiviertel). There
-# is no German form for 07:20 that counts into the eighth hour, so the
-# counting-from cell is the language's only option there. Direction of counting
-# is held constant across the two cells and productivity is varied.
-#
-# The models are listed smallest first, because the result is a scale effect
-# and the ordering is the claim.
 GERMAN_RUNS = [
     ("Qwen2.5-3B", "3B", "results/de2_qwen3b.jsonl"),
     ("Phi-3.5-mini", "3.8B", "results/de2_phi.jsonl"),
@@ -676,7 +541,6 @@ GERMAN_RUNS = [
     ("gpt-oss-120b", "120B", "results/de2_gptoss120b.jsonl"),
 ]
 
-# difficulty label in tasks_time_de2.json -> what the cell is
 GERMAN_CELLS = [
     ("literal", "digital", "health check"),
     ("n_minutes", "counting-from", "N nach X, the only option German has"),
@@ -687,7 +551,6 @@ GERMAN_CELLS = [
 
 
 def section_german(report: Report) -> None:
-    """German: the direction of counting held constant, productivity varied."""
     report.head("German — a closed counting-into set, across four model sizes")
 
     available = [(n, s, p) for n, s, p in GERMAN_RUNS if os.path.exists(p)]
@@ -716,9 +579,6 @@ def section_german(report: Report) -> None:
     print(f"    counting-into {into_ok}/{into_n} vs counting-from {from_ok}/{from_n}"
           f"   {format_p(p)} [exact {p:.2e}]")
 
-    # The scale claim: the same cell, the two largest models against the two
-    # smallest. This is the dissociation the section exists for, because the
-    # Russian productive form does not move with scale at all.
     small = available[:2]
     large = available[2:]
     if len(small) == 2 and len(large) == 2:
@@ -737,7 +597,6 @@ def section_german(report: Report) -> None:
         print(f"    counting-into, two large {l_ok}/{l_n} vs two small {s_ok}/{s_n}"
               f"   {format_p(p)} [exact {p:.2e}]")
 
-    # Per model, within German, so the reader can see which models break.
     print()
     print("    within German, counting-into against counting-from, per model:")
     for name, size, path in available:
@@ -761,11 +620,6 @@ def section_german(report: Report) -> None:
     print("    German-against-German comparisons above are unaffected.")
 
 
-# Case variation. The main probe sits in one frame, which takes the accusative
-# throughout, so it tests one surface shape of an inflecting paradigm. This
-# probe varies the carrier frame: на + accusative (the existing frame), с +
-# genitive, к + dative. English carries the same three frames and has no case,
-# which is the control for the frame being harder than the morphology.
 TASKS_CASE = "data/tasks_time_case.json"
 CASE_RUNS = [
     ("Qwen2.5-3B", "results/case_qwen3b.jsonl"),
@@ -784,7 +638,6 @@ def _case_ids(frame: str, category: str) -> List[str]:
 
 
 def section_case(report: Report) -> None:
-    """Does the same construction get harder in an oblique case?"""
     report.head("Case variation — the same construction in three frames")
 
     available = [(n, p) for n, p in CASE_RUNS if os.path.exists(p)]
@@ -794,9 +647,6 @@ def section_case(report: Report) -> None:
     print(f"  models: {', '.join(n for n, _ in available)}")
     print()
 
-    # The health check first. Digits do not inflect, so this cell must be flat
-    # across the three frames in both languages or the frame itself is broken
-    # and nothing below it can be read.
     print(f"    {'cell':<24}" + "".join(f"{c:>22}" for _, c in CASE_FRAMES))
     totals: Dict[str, Dict[str, List[int]]] = {}
     for category in ("literal", "half_past", "n_minutes"):
@@ -834,8 +684,6 @@ def section_case(report: Report) -> None:
         print(f"    {lost} episodes crashed and are excluded from every count")
         print("    above; they are infrastructure failures, not model behaviour.")
 
-    # The load-bearing comparison: the frequent fixed phrase is the only cell
-    # with room to move, since the productive form is already at floor.
     print()
     for category in ("half_past", "n_minutes"):
         acc = totals[category]["accusative"]
@@ -848,9 +696,6 @@ def section_case(report: Report) -> None:
         print(f"    {category:<12} Russian accusative {acc[0]}/{acc[1]}"
               f" vs oblique {obl[0]}/{obl[1]}   {format_p(p)} [exact {p:.2e}]")
 
-    # Each oblique frame against the accusative separately. F60 registered the
-    # pooled comparison; these are a check that pooling hid nothing, and the
-    # paper reports them as such rather than as tests in their own right.
     for case in ("genitive", "dative"):
         acc = totals["half_past"]["accusative"]
         obl = totals["half_past"][case]
@@ -859,8 +704,6 @@ def section_case(report: Report) -> None:
         print(f"    half_past    Russian accusative {acc[0]}/{acc[1]}"
               f" vs {case} {obl[0]}/{obl[1]}   {format_p(p)} [exact {p:.2e}]")
 
-    # English across the same split, as the control. If English moves too, the
-    # frame is the difficulty and the Russian contrast means nothing.
     print()
     for category in ("half_past", "n_minutes"):
         acc = totals[category]["accusative"]
@@ -880,12 +723,6 @@ def section_case(report: Report) -> None:
     print("    cell, the wording is a live alternative explanation.")
 
 
-# The counting-into form German assembles rather than stores. halb acht is
-# 07:30 and is a stored phrase; zehn vor halb sieben is 06:20 and is built
-# from that phrase, with the surface number not the answer and the named hour
-# not yet arrived -- the profile that breaks in Russian. The from_hour cell
-# asks for the SAME clock times with byte-identical English, so a difference
-# between the two cannot be the task, the time or the English half.
 TASKS_HALB = "data/tasks_time_de_halb.json"
 HALB_RUNS = [
     ("Qwen2.5-3B", "3B", "results/halb_qwen3b.jsonl"),
@@ -910,7 +747,6 @@ def _halb_tasks() -> Dict[str, Dict[str, Any]]:
 
 
 def section_halb(report: Report) -> None:
-    """German's assembled counting-into form against its counting-from one."""
     report.head("German assembled counting-into — zehn vor halb against N nach")
 
     available = [(n, s, p) for n, s, p in HALB_RUNS if os.path.exists(p)]
@@ -930,11 +766,6 @@ def section_halb(report: Report) -> None:
             row.append(f"{sum(bool(r['success']) for r in rows)}/{len(rows)}")
         print(f"    {cell:<16}" + "".join(f"{c:>10}" for c in row))
 
-    # The English half of composed_nach renders 07:35 as "twenty five to
-    # eight", which is the subtractive form this project has found failing in
-    # English since the first probe. On the small models it is at floor, so
-    # the within-item ceiling does not hold there and that cell is excluded
-    # from the comparison below.
     print()
     print("    English control, composed_nach only:")
     row = []
@@ -947,8 +778,6 @@ def section_halb(report: Report) -> None:
     print("      Rendered 'twenty five to eight' — the English subtractive form,")
     print("      which fails in English too. That cell is excluded below.")
 
-    # The minimal pair: composed_vor against from_hour on the clock times the
-    # two cells share, per model.
     print()
     print("    minimal pair, same clock times, identical English:")
     for name, size, path in available:
@@ -975,12 +804,6 @@ def section_halb(report: Report) -> None:
     print("    ceiling and there is nothing to see.")
 
 
-# The bare condition. Every probe in this project is an agent task: a system
-# prompt listing ten tools, an instruction, a JSON tool call. Resolving the
-# clock phrase is one step buried inside that, so the agent runs cannot say
-# whether the construction is unresolvable or unresolvable under load. The
-# bare runs put the same sentences to the same models with none of the
-# machinery and ask only for the time.
 BARE_PAIRS = [
     ("gpt-oss-120b", "results/bare_gptoss120b.jsonl", "results/v2_gptoss120b.jsonl"),
     ("qwen3.8-27b", "results/bare_qwen38.jsonl", "results/v2_qwen38.jsonl"),
@@ -989,7 +812,6 @@ BARE_TASKS = "data/tasks_time_v2.json"
 
 
 def section_bare(report: Report) -> None:
-    """Does the failure need the agent frame at all?"""
     report.head("The bare condition — same sentences, no tools, no JSON")
 
     with open(BARE_TASKS, "r", encoding="utf-8") as handle:
@@ -1077,32 +899,15 @@ def section_frequency(report: Report) -> None:
     print("  English accuracy does not move. That dissociation is the result.")
 
 
-# --------------------------------------------------------------------------
-# checking a document against what we just computed
-# --------------------------------------------------------------------------
-
-# A trailing decimal point must be followed by digits. The first version was
-# `\.?[0-9]+\.?[0-9]*`, which happily matched ".024." at the end of a sentence
-# and then crashed converting it to a float — so the one tool that guards every
-# number in the paper silently stopped checking the moment the paper started
-# using the reporting convention the tool itself enforces.
 _NUM = r"(\.[0-9]+|[0-9]+(?:\.[0-9]+)?(?:[eE]-?[0-9]+)?)"
 P_EQUALS = re.compile(r"p\s*=\s*" + _NUM, re.IGNORECASE)
 P_LESS = re.compile(r"p\s*<\s*" + _NUM, re.IGNORECASE)
+CI_BRACKET = re.compile(r"\[\s*(\d{1,3}(?:\.\d)?)\s*[,–—-]\s*"
+                        r"(\d{1,3}(?:\.\d)?)\s*\]")
 
 
-def check_document(path: str, computed: List[float], alpha: float = ALPHA) -> int:
-    """
-    Check a document's p-values against what this script computed.
-
-    Two jobs now. The original one: catch a number no code here produced,
-    which is why this exists at all (F32 — five fabricated p-values).
-
-    The second, added after Kyle Gorman's review: enforce the reporting
-    convention. A document that prints `p = 1.4e-22` is not wrong, it is
-    reporting something a frequentist test does not license. That is a
-    defect the author should see before a reviewer does.
-    """
+def check_document(path: str, computed: List[float], alpha: float = ALPHA,
+                   bounds: Optional[List[float]] = None) -> int:
     if not os.path.exists(path):
         print(f"  !! {path} not found")
         return 0
@@ -1119,7 +924,6 @@ def check_document(path: str, computed: List[float], alpha: float = ALPHA) -> in
                       f"'{format_p(value, alpha)}' instead (Gorman, 2026-10-13)")
                 bad += 1
                 continue
-            # Two significant figures is what gets printed, so compare there.
             if not any(abs(value - c) <= 0.05 * max(value, c) for c in computed):
                 print(f"  {path}:{line_no}: p = {raw} is not a value this "
                       f"script computes")
@@ -1132,13 +936,21 @@ def check_document(path: str, computed: List[float], alpha: float = ALPHA) -> in
                       f"p this script computes is {smallest:.2g}")
                 bad += 1
 
+        if bounds:
+            for low, high in CI_BRACKET.findall(line):
+                for raw in (low, high):
+                    value = float(raw)
+                    if not any(abs(value - b) <= 0.051 for b in bounds):
+                        print(f"  {path}:{line_no}: the interval bound {raw} "
+                              f"is not one this script computes")
+                        bad += 1
+
     if not bad:
-        print(f"  {path}: p-values check out")
+        print(f"  {path}: p-values and intervals check out")
     return bad
 
 
 def main() -> int:
-    # Cyrillic category labels have to survive a Windows console.
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except (AttributeError, OSError):
@@ -1168,7 +980,8 @@ def main() -> int:
 
     if args.check:
         report.head("Checking documents against the computed values")
-        bad = sum(check_document(path, report.p_values) for path in args.check)
+        bad = sum(check_document(path, report.p_values, bounds=report.bounds)
+                  for path in args.check)
         if bad:
             print(f"\n  {bad} p-value(s) in the documents are not reproducible.")
             return 1
