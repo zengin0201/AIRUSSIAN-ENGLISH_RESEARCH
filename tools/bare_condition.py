@@ -74,7 +74,7 @@ def ask(model: str, base: str, key: str, sentence: str, retries: int = 4) -> tup
             return content, None
         except Exception as exc:  # noqa: BLE001 - reported, not swallowed
             last = f"{type(exc).__name__}: {exc}"
-            time.sleep(2 * (attempt + 1))
+            time.sleep(5 * (attempt + 1))
     return None, last
 
 
@@ -85,6 +85,9 @@ def main() -> int:
     parser.add_argument("--tasks", required=True)
     parser.add_argument("--arms", nargs="+", required=True)
     parser.add_argument("--out", required=True)
+    # Free-tier endpoints rate-limit hard enough to lose half a run.
+    # A pause between items costs minutes and saves the data.
+    parser.add_argument("--pause", type=float, default=0.0)
     args = parser.parse_args()
 
     base = os.environ.get("ALT_API_BASE", "")
@@ -121,6 +124,8 @@ def main() -> int:
                     "success": success, "error": error,
                 }, ensure_ascii=False) + "\n")
                 out.flush()
+                if args.pause:
+                    time.sleep(args.pause)
                 flag = "OK" if success else "--"
                 print(f"[{done}/{total}] {flag} {task['id']} {arm}  "
                       f"gold {gold}  got {answer}"

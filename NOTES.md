@@ -3806,3 +3806,38 @@ have opened in one sentence.
 Added to §4.4 as the eighth thing. `section_bare` in `stats.py` computes the
 comparisons. A second model, qwen3.8-27b, is running in both conditions so the
 claim does not rest on one.
+
+### F75 — the TeX builder has been dropping two figures since the heading was renamed
+
+Found while writing the Overleaf instructions, which is to say by accident and
+a month late.
+
+`FIGURE_BEFORE` in `paper/build_tex.py` is keyed on exact subsection titles.
+Section 4.4 has been called "Five", "Six", "Seven" and now "Eight things that
+do not explain it away". The polish and german figure blocks were keyed on
+"Five" and "Seven" respectively, so **both stopped matching and were silently
+left out of every `.tex` build after the rename** — while the body text went on
+citing Figure 4 and Figure 5.
+
+Nobody would have seen it until Overleaf produced a paper with two dangling
+references.
+
+**Why nothing caught it.** The test suite checks task files and typography;
+`--check` verifies p-values. Neither looks at whether the document the builder
+emits still contains what the document says it contains. Same class as F73,
+where the abstract described a different paper: our guards check numbers, not
+coherence.
+
+**Changed.** Keys are now stable fragments rather than exact titles, so a count
+in the heading cannot break them, and several figures may attach to one
+heading. More importantly the builder now **raises** if any figure block
+matched no heading, with the names of the blocks that would have vanished. A
+build that stops is better than a figure that disappears.
+
+Both figures are back: the `.tex` now carries main, error, frequency, polish
+and german.
+
+`OVERLEAF.md` written: the exact files to upload, the XeLaTeX requirement
+(fontspec, so pdfLaTeX cannot render the Cyrillic), and what to send back. The
+page count is the one number blocking the short/long decision and therefore any
+submission.
